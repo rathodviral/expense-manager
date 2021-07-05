@@ -23,5 +23,12 @@ const AppConstant = {
       },
     ],
   },
+  admin: {
+    apiPath: {
+      category: {
+        read: "read.php",
+      },
+    },
+  },
 };
 export default AppConstant;

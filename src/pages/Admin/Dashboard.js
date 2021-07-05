@@ -1,6 +1,8 @@
 import React from "react";
-import { makeStyles, Card, CardContent, Typography } from "@material-ui/core";
-import { AppDivider } from "../../components";
+import { makeStyles } from "@material-ui/core";
+import { AppCountText, AppCard } from "../../components";
+import { useContext } from "react";
+import { AdminContext } from "../../AdminContext";
 
 const useStyles = makeStyles({
   root: {
@@ -8,17 +10,34 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Dashboard() {
+export default function Dashboard(props) {
+  const { incomeCategoryList, expenseCategoryList } = useContext(AdminContext);
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Card className={classes.card} variant="outlined">
-        <CardContent>
-          <Typography className={classes.title}>Expense Manager</Typography>
-          <AppDivider />
-        </CardContent>
-      </Card>
+      {/* <DashboardCard
+        title="Expense"
+        count={expenseCategoryList.length}
+        color="#dc3545"
+      />
+      <DashboardCard
+        title="Income"
+        count={incomeCategoryList.length}
+        color="#28a745"
+      /> */}
+      <AppCard title="Expense">
+        <AppCountText
+          count={expenseCategoryList.length}
+          type="expense"
+        ></AppCountText>
+      </AppCard>
+      <AppCard title="Income">
+        <AppCountText
+          count={incomeCategoryList.length}
+          type="income"
+        ></AppCountText>
+      </AppCard>
     </div>
   );
 }

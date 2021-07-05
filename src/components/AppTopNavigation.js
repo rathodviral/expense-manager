@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { Menu, MenuItem } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import { AppConstant, AppStorage } from "../utilities";
+import IconButton from "@material-ui/core/Button";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import { useContext } from "react";
+import { AppContext } from "../AppContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,21 +20,53 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AppTopNavigation() {
   const classes = useStyles();
-  const { login } = AppConstant;
-  const appStorage = AppStorage();
+  const appCtx = useContext(AppContext);
+  const { username } = appCtx.getUserObject();
+  const [anchorEl, setAnchorEl] = useState(false);
 
-  const { username } = appStorage.getItemFromStorage(login.storage);
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const renderMenu = (
+    <Menu
+      id="simple-menu"
+      anchorEl={anchorEl}
+      keepMounted
+      open={Boolean(anchorEl)}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={handleMenuClose}>Add Expense</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Add Category</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+    </Menu>
+  );
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             {username}
           </Typography>
-          {username && <Button color="inherit">Logout</Button>}
+          {username && (
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-haspopup="true"
+              onClick={handleMenuClick}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
+      {renderMenu}
     </div>
   );
 }

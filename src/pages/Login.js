@@ -74,9 +74,9 @@ export default function Login() {
       const { isAdmin } = data;
       appStorage.setItemInStorage(login.storage, data);
       if (isAdmin) {
-        history.replace({ pathname: "/admin" });
+        history.replace({ pathname: "/admin/dashboard" });
       } else {
-        history.replace({ pathname: "/user" });
+        history.replace({ pathname: "/user/dashboard" });
       }
     }
   };
