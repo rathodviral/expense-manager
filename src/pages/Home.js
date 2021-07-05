@@ -40,7 +40,6 @@ export default function Home() {
   const appCtx = useContext(AppContext);
 
   useEffect(() => {
-    console.log(appCtx);
     const { username, isAdmin } = appCtx.getUserObject();
     if (username) {
       if (isAdmin) {
@@ -49,6 +48,7 @@ export default function Home() {
         history.replace({ pathname: "/user/dashboard" });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

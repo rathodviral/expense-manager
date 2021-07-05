@@ -4,6 +4,8 @@ import { AppTopNavigation } from "../../components";
 
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
+import Category from "./Category";
+import AddEditCategory from "./AddEditCategory";
 import { AdminContext } from "../../AdminContext";
 import { useEffect } from "react";
 import { AppApiFetch, AppConstant } from "../../utilities";
@@ -24,7 +26,9 @@ export default function Admin() {
   const appCtx = useContext(AppContext);
   const adminCtx = useContext(AdminContext);
   const {
-    admin: { apiPath },
+    admin: {
+      category: { apiPath },
+    },
   } = AppConstant;
 
   const getAdminDataEvent = async () => {
@@ -34,7 +38,7 @@ export default function Admin() {
       method: "GET",
       queryParams: { family, type },
     };
-    const response = await AppApiFetch(apiPath.category.read, options);
+    const response = await AppApiFetch(apiPath.read, options);
     const { status, data } = await response.json();
     if (status) {
       adminCtx.setAdminData(data);
@@ -53,6 +57,15 @@ export default function Admin() {
         <Switch>
           <Route exact path={`${path}/dashboard`}>
             <Dashboard></Dashboard>
+          </Route>
+          <Route exact path={`${path}/:type`}>
+            <Category></Category>
+          </Route>
+          <Route exact path={`${path}/:type/:page`}>
+            <AddEditCategory getAdminData={getAdminDataEvent}></AddEditCategory>
+          </Route>
+          <Route exact path={`${path}/:type/:page/:categoryId`}>
+            <AddEditCategory getAdminData={getAdminDataEvent}></AddEditCategory>
           </Route>
         </Switch>
       </div>

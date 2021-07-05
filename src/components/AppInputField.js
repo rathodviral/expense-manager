@@ -6,6 +6,8 @@ export default function AppInputField(props) {
     margin = "normal",
     isDisabled = false,
     isError = false,
+    multiline = false,
+    rows = null,
     name,
     label,
     type,
@@ -30,6 +32,8 @@ export default function AppInputField(props) {
       label={label}
       helperText={helperText}
       defaultValue={value}
+      multiline={multiline}
+      rows={rows}
       onChange={(e) => handleChange(e.target.value, name)}
     />
   );

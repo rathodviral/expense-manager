@@ -8,6 +8,8 @@ import IconButton from "@material-ui/core/Button";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { useContext } from "react";
 import { AppContext } from "../AppContext";
+import { AppConstant, AppStorage } from "../utilities";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,15 +23,22 @@ const useStyles = makeStyles((theme) => ({
 export default function AppTopNavigation() {
   const classes = useStyles();
   const appCtx = useContext(AppContext);
+  const history = useHistory();
   const { username } = appCtx.getUserObject();
   const [anchorEl, setAnchorEl] = useState(false);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleLogoutClick = (event) => {
+    const { login } = AppConstant;
+    AppStorage.removeItemFromStorage(login.storage);
+    history.replace({ pathname: "/login" });
   };
 
   const renderMenu = (
@@ -42,7 +51,7 @@ export default function AppTopNavigation() {
     >
       <MenuItem onClick={handleMenuClose}>Add Expense</MenuItem>
       <MenuItem onClick={handleMenuClose}>Add Category</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );
 

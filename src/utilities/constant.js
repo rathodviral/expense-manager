@@ -10,6 +10,7 @@ const AppConstant = {
         helperText: null,
         isDisabled: false,
         isError: false,
+        multiline: false,
         value: "",
       },
       {
@@ -19,15 +20,41 @@ const AppConstant = {
         helperText: null,
         isDisabled: false,
         isError: false,
+        multiline: false,
         value: "",
       },
     ],
   },
   admin: {
-    apiPath: {
-      category: {
+    category: {
+      apiPath: {
         read: "read.php",
+        create: "create.php",
+        update: "update.php",
       },
+      fields: [
+        {
+          name: "name",
+          label: "Category Name",
+          type: "text",
+          helperText: null,
+          isDisabled: false,
+          isError: false,
+          multiline: false,
+          value: "",
+        },
+        {
+          name: "detail",
+          label: "Category Detail",
+          type: "text",
+          helperText: null,
+          isDisabled: false,
+          isError: false,
+          multiline: true,
+          rows: 4,
+          value: "",
+        },
+      ],
     },
   },
 };

@@ -1,8 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import { AppCountText, AppCard } from "../../components";
+import { AppCountText, AppCard, AppButton } from "../../components";
 import { useContext } from "react";
 import { AdminContext } from "../../AdminContext";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles({
   root: {
@@ -13,31 +14,40 @@ const useStyles = makeStyles({
 export default function Dashboard(props) {
   const { incomeCategoryList, expenseCategoryList } = useContext(AdminContext);
   const classes = useStyles();
+  const history = useHistory();
+  const cardList = [
+    { title: "Expense", type: "expense", count: expenseCategoryList.length },
+    { title: "Income", type: "income", count: incomeCategoryList.length },
+  ];
+
+  const Card = (props) => {
+    const { title, type, count } = props;
+    return (
+      <AppCard title={title}>
+        <AppCountText
+          count={count}
+          type={type}
+          onClick={(e) => {
+            history.push(type);
+          }}
+        ></AppCountText>
+        <AppButton
+          onClick={(e) => {
+            history.push(`${type}/add`);
+          }}
+          type={type}
+        >
+          Add {title} Category
+        </AppButton>
+      </AppCard>
+    );
+  };
 
   return (
     <div className={classes.root}>
-      {/* <DashboardCard
-        title="Expense"
-        count={expenseCategoryList.length}
-        color="#dc3545"
-      />
-      <DashboardCard
-        title="Income"
-        count={incomeCategoryList.length}
-        color="#28a745"
-      /> */}
-      <AppCard title="Expense">
-        <AppCountText
-          count={expenseCategoryList.length}
-          type="expense"
-        ></AppCountText>
-      </AppCard>
-      <AppCard title="Income">
-        <AppCountText
-          count={incomeCategoryList.length}
-          type="income"
-        ></AppCountText>
-      </AppCard>
+      {cardList.map((card, i) => (
+        <Card key={i} title={card.title} type={card.type} count={card.count} />
+      ))}
     </div>
   );
 }

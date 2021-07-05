@@ -4,6 +4,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 const useStyles = makeStyles({
   count: {
     textAlign: "center",
+    cursor: "pointer",
   },
   expense: {
     color: "#dc3545",
@@ -15,9 +16,13 @@ const useStyles = makeStyles({
 
 export default function AppCountText(props) {
   const classes = useStyles();
-  const { count, type } = props;
+  const { count, type, onClick } = props;
   return (
-    <Typography className={`${classes.count} ${classes[type]}`} variant="h3">
+    <Typography
+      className={`${classes.count} ${classes[type]}`}
+      variant="h3"
+      onClick={onClick}
+    >
       {count}
     </Typography>
   );

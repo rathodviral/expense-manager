@@ -20,10 +20,9 @@ const AppContextProvider = (props) => {
   };
 
   const getUserObject = () => {
-    const appStorage = AppStorage();
     const { login } = AppConstant;
     return (
-      appStorage.getItemFromStorage(login.storage) || {
+      AppStorage.getItemFromStorage(login.storage) || {
         username: null,
         isAdmin: null,
       }

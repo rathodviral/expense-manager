@@ -11,9 +11,10 @@ const useStyles = makeStyles({
     marginTop: "1rem",
   },
   title: {
+    fontSize: "1.5rem",
     fontWeight: 500,
-    fontSize: "1.25rem",
     textAlign: "center",
+    textTransform: "capitalize",
   },
 });
 

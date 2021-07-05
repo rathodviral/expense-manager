@@ -9,19 +9,17 @@ const AdminContextProvider = (props) => {
 
   const createList = (isExpense) => {
     const { category, subCategory } = adminData;
-    return category.filter((x) => {
+    const list = category.filter((x) => x.isExpense === isExpense);
+    return list.map((x) => {
       const subCategoryList = subCategory.filter((y) => y.categoryId === x.id);
-      if (x.isExpense === isExpense) {
-        return {
-          ...x,
-          subCategoryList,
-        };
-      }
+      return {
+        ...x,
+        subCategoryList: subCategoryList,
+      };
     });
   };
 
   useEffect(() => {
-    console.log(adminData);
     setIncomeCategoryList(createList(false));
     setExpenseCategoryList(createList(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
