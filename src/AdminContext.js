@@ -15,6 +15,7 @@ const AdminContextProvider = (props) => {
       return {
         ...x,
         subCategoryList: subCategoryList,
+        isOpen: false,
       };
     });
   };

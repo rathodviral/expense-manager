@@ -11,7 +11,7 @@ import {
 import { AppContext } from "../../AppContext";
 import { AdminContext } from "../../AdminContext";
 
-export default function AddEditCategory(props) {
+export default function AddEditSubCategory(props) {
   const { getAdminData, showToaster } = props;
   const { type, page, categoryId } = useParams();
   const appCtx = useContext(AppContext);
@@ -91,7 +91,7 @@ export default function AddEditCategory(props) {
 
   return (
     <div>
-      <AppCard title={`${page} ${type} Categories`}>
+      <AppCard title={`${page} ${type} Sub Categories`}>
         <form noValidate autoComplete="off">
           {formFields &&
             formFields.map((field, i) => (
@@ -101,7 +101,7 @@ export default function AddEditCategory(props) {
                 handleChange={handleChange}
               ></AppInputField>
             ))}
-          <AppButton onClick={formSubmit}>Save Category</AppButton>
+          <AppButton onClick={formSubmit}>Save Sub Category</AppButton>
         </form>
       </AppCard>
     </div>

@@ -12,8 +12,30 @@ export const validateObject = (formData, fields) => {
     }
   });
 };
+
+export const setEmptyObject = (fields) => {
+  return fields.map((x) => {
+    return {
+      ...x,
+      isError: false,
+      value: "",
+      helperText: `${x.label}, Added`,
+    };
+  });
+};
+
+export const setValuesInObject = (formData, fields) => {
+  return fields.map((x) => {
+    return {
+      ...x,
+      isError: false,
+      value: formData[x.name],
+    };
+  });
+};
+
 export const windowScrollTop = (formData, fields) => {
   setTimeout(() => {
     window.scrollTo(0, 0);
-  }, 300);
+  }, 100);
 };

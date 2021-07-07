@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { AppTopNavigation } from "../../components";
-
+import React, { useContext, useState } from "react";
+import { makeStyles } from "@material-ui/core";
+import { AppTopNavigation, AppSnackbar } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Category from "./Category";
 import AddEditCategory from "./AddEditCategory";
+import AddEditSubCategory from "./AddEditSubCategory";
 import { AdminContext } from "../../AdminContext";
 import { useEffect } from "react";
 import { AppApiFetch, AppConstant } from "../../utilities";
@@ -31,6 +31,9 @@ export default function Admin() {
     },
   } = AppConstant;
 
+  const defaultToasterObj = { isOpen: false, message: "" };
+  const [toasterObj, setToasterObj] = useState(defaultToasterObj);
+
   const getAdminDataEvent = async () => {
     const { family } = appCtx.getUserObject();
     const type = "category";
@@ -45,6 +48,17 @@ export default function Admin() {
     }
   };
 
+  const showToaster = (message) => {
+    setToasterObj({ isOpen: true, message });
+  };
+
+  const handleToasterClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setToasterObj(defaultToasterObj);
+  };
+
   useEffect(() => {
     getAdminDataEvent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +67,10 @@ export default function Admin() {
   return (
     <div className={classes.root}>
       <AppTopNavigation></AppTopNavigation>
+      <AppSnackbar
+        {...toasterObj}
+        handleToasterClose={handleToasterClose}
+      ></AppSnackbar>
       <div className={classes.dashboard}>
         <Switch>
           <Route exact path={`${path}/dashboard`}>
@@ -62,10 +80,28 @@ export default function Admin() {
             <Category></Category>
           </Route>
           <Route exact path={`${path}/:type/:page`}>
-            <AddEditCategory getAdminData={getAdminDataEvent}></AddEditCategory>
+            <AddEditCategory
+              getAdminData={getAdminDataEvent}
+              showToaster={showToaster}
+            ></AddEditCategory>
           </Route>
           <Route exact path={`${path}/:type/:page/:categoryId`}>
-            <AddEditCategory getAdminData={getAdminDataEvent}></AddEditCategory>
+            <AddEditCategory
+              getAdminData={getAdminDataEvent}
+              showToaster={showToaster}
+            ></AddEditCategory>
+          </Route>
+          <Route exact path={`${path}/:type/:page/:categoryId`}>
+            <AddEditSubCategory
+              getAdminData={getAdminDataEvent}
+              showToaster={showToaster}
+            ></AddEditSubCategory>
+          </Route>
+          <Route exact path={`${path}/:type/:page/:categoryId/:subCategoryId`}>
+            <AddEditSubCategory
+              getAdminData={getAdminDataEvent}
+              showToaster={showToaster}
+            ></AddEditSubCategory>
           </Route>
         </Switch>
       </div>

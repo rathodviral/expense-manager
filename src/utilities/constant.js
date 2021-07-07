@@ -29,8 +29,8 @@ const AppConstant = {
     category: {
       apiPath: {
         read: "read.php",
-        create: "create.php",
-        update: "update.php",
+        create: "category/create.php",
+        update: "category/update.php",
       },
       fields: [
         {

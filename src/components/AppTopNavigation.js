@@ -31,8 +31,9 @@ export default function AppTopNavigation() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (page) => {
     setAnchorEl(null);
+    history.replace({ pathname: page });
   };
 
   const handleLogoutClick = (event) => {
@@ -49,8 +50,15 @@ export default function AppTopNavigation() {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Add Expense</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Add Category</MenuItem>
+      <MenuItem onClick={(e) => handleMenuClose("/admin/dashboard")}>
+        Dashboard
+      </MenuItem>
+      <MenuItem onClick={(e) => handleMenuClose("/admin/expense/add")}>
+        Add Expense Category
+      </MenuItem>
+      <MenuItem onClick={(e) => handleMenuClose("/admin/income/add")}>
+        Add Income Category
+      </MenuItem>
       <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 
 export default function AppInputField(props) {
@@ -16,6 +16,12 @@ export default function AppInputField(props) {
     handleChange,
   } = props;
 
+  const [fieldValue, setFieldValue] = useState(value);
+
+  useEffect(() => {
+    setFieldValue(value);
+  }, [value]);
+
   return (
     <TextField
       variant="outlined"
@@ -31,7 +37,7 @@ export default function AppInputField(props) {
       id={name}
       label={label}
       helperText={helperText}
-      defaultValue={value}
+      value={fieldValue}
       multiline={multiline}
       rows={rows}
       onChange={(e) => handleChange(e.target.value, name)}
