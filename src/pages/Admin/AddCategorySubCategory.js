@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
 import {
@@ -6,48 +6,39 @@ import {
   AppConstant,
   setValuesInObject,
   validateObject,
-  windowScrollTop,
 } from "../../utilities";
 import { AppContext } from "../../AppContext";
+import { Typography } from "@material-ui/core";
 import { AdminContext } from "../../AdminContext";
 
-export default function AddEditCategory(props) {
+export default function AddCategorySubCategory(props) {
   const { getAdminData, showToaster } = props;
-  const { type, page, categoryId } = useParams();
+  const { type, categoryId } = useParams();
   const appCtx = useContext(AppContext);
-  const adminCtx = useContext(AdminContext);
-  const categoryList = adminCtx[`${type}CategoryList`] || [];
+  const { getListObj } = useContext(AdminContext);
   const isExpense = type === "expense";
-  const isEdit = page === "edit";
+  const isSubCategory = categoryId && categoryId !== "";
   const {
-    admin: { category },
+    admin: { category, subCategory },
   } = AppConstant;
-  const [formFields, setFormFields] = useState(category.fields);
 
-  useEffect(() => {
-    if (isEdit && categoryList.length > 0) {
-      updateFieldsValue();
-    }
-    if (!isEdit && categoryList.length > 0) {
-      setFormFields(category.fields);
-    }
-    windowScrollTop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryList]);
-
-  const updateFieldsValue = () => {
-    const mFormData = categoryList.find((x) => x.id === categoryId);
-    const mFormsFields = category.fields.map((x) => {
-      return {
-        ...x,
-        value: mFormData[x.name],
-      };
-    });
-    setFormFields(mFormsFields);
+  const getList = (key) => {
+    return key
+      ? isSubCategory
+        ? subCategory[key]
+        : category[key]
+      : isSubCategory
+      ? subCategory
+      : category;
   };
+
+  const [formFields, setFormFields] = useState(getList("fields"));
 
   const getFormData = () => {
     let obj = { isExpense };
+    if (isSubCategory) {
+      obj["categoryId"] = categoryId;
+    }
     formFields.forEach((field) => {
       const { name, value } = field;
       obj[name] = value;
@@ -58,40 +49,45 @@ export default function AddEditCategory(props) {
   const handleChange = (value, name) => {
     const formData = getFormData();
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, [...category.fields]);
+    const fields = setValuesInObject(modifiedFormdata, getList("fields"));
     setFormFields(fields);
   };
 
   const formSubmit = async () => {
     const formData = getFormData();
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, [...category.fields]);
+      const fields = validateObject(formData, getList("fields"));
       setFormFields(fields);
       return;
     }
     const { family } = appCtx.getUserObject();
-    const {
-      apiPath: { update, create },
-    } = category;
+    const { create } = getList("apiPath");
+
     const options = {
-      method: isEdit ? "PUT" : "POST",
-      body: isEdit ? { ...formData, isActive: true, id: categoryId } : formData,
+      method: "POST",
+      body: formData,
       queryParams: { family },
     };
 
-    const response = await AppApiFetch(isEdit ? update : create, options);
+    const response = await AppApiFetch(create, options);
     const { status } = await response.json();
     if (status) {
       getAdminData();
+      setFormFields(getList("fields"));
     } else {
       showToaster("Some Issue");
-      setFormFields(category.fields);
+      setFormFields(getList("fields"));
     }
   };
 
   return (
     <div>
-      <AppCard title={`${page} ${type} Categories`}>
+      <AppCard title={`Add ${type} ${isSubCategory ? "Sub " : ""} Categories`}>
+        {isSubCategory && (
+          <Typography variant="h6" style={{ textAlign: "center" }}>
+            {getListObj(isExpense, categoryId, "name")}
+          </Typography>
+        )}
         <form noValidate autoComplete="off">
           {formFields &&
             formFields.map((field, i) => (
@@ -101,7 +97,9 @@ export default function AddEditCategory(props) {
                 handleChange={handleChange}
               ></AppInputField>
             ))}
-          <AppButton onClick={formSubmit}>Save Category</AppButton>
+          <AppButton onClick={formSubmit}>
+            Save {isSubCategory && "Sub "}Category
+          </AppButton>
         </form>
       </AppCard>
     </div>

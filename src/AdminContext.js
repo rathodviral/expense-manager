@@ -20,6 +20,12 @@ const AdminContextProvider = (props) => {
     });
   };
 
+  const getListObj = (isExpense, categoryId, key) => {
+    const list = isExpense ? expenseCategoryList : incomeCategoryList;
+    const obj = categoryId ? list.find((x) => x.id === categoryId) : list;
+    return list.length > 0 ? (key && categoryId ? obj[key] : obj) : "";
+  };
+
   useEffect(() => {
     setIncomeCategoryList(createList(false));
     setExpenseCategoryList(createList(true));
@@ -30,6 +36,7 @@ const AdminContextProvider = (props) => {
     <AdminContext.Provider
       value={{
         setAdminData,
+        getListObj,
         incomeCategoryList,
         expenseCategoryList,
       }}

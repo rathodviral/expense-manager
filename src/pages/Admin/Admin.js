@@ -4,8 +4,7 @@ import { AppTopNavigation, AppSnackbar } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Category from "./Category";
-import AddEditCategory from "./AddEditCategory";
-import AddEditSubCategory from "./AddEditSubCategory";
+import AddCategorySubCategory from "./AddCategorySubCategory";
 import { AdminContext } from "../../AdminContext";
 import { useEffect } from "react";
 import { AppApiFetch, AppConstant } from "../../utilities";
@@ -77,31 +76,22 @@ export default function Admin() {
             <Dashboard></Dashboard>
           </Route>
           <Route exact path={`${path}/:type`}>
-            <Category></Category>
-          </Route>
-          <Route exact path={`${path}/:type/:page`}>
-            <AddEditCategory
+            <Category
               getAdminData={getAdminDataEvent}
               showToaster={showToaster}
-            ></AddEditCategory>
+            ></Category>
           </Route>
-          <Route exact path={`${path}/:type/:page/:categoryId`}>
-            <AddEditCategory
+          <Route exact path={`${path}/:type/add`}>
+            <AddCategorySubCategory
               getAdminData={getAdminDataEvent}
               showToaster={showToaster}
-            ></AddEditCategory>
+            ></AddCategorySubCategory>
           </Route>
-          <Route exact path={`${path}/:type/:page/:categoryId`}>
-            <AddEditSubCategory
+          <Route exact path={`${path}/:type/add/:categoryId`}>
+            <AddCategorySubCategory
               getAdminData={getAdminDataEvent}
               showToaster={showToaster}
-            ></AddEditSubCategory>
-          </Route>
-          <Route exact path={`${path}/:type/:page/:categoryId/:subCategoryId`}>
-            <AddEditSubCategory
-              getAdminData={getAdminDataEvent}
-              showToaster={showToaster}
-            ></AddEditSubCategory>
+            ></AddCategorySubCategory>
           </Route>
         </Switch>
       </div>

@@ -8,7 +8,10 @@ export const validateObject = (formData, fields) => {
         helperText: `Enter ${x.label}, it's required field`,
       };
     } else {
-      return x;
+      return {
+        ...x,
+        value: formData[x.name],
+      };
     }
   });
 };
