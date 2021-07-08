@@ -46,12 +46,12 @@ export default function AppTopNavigation() {
   };
 
   const adminMenuItem = [
-    { name: "Dashboard", path: "/admin/dashboard" },
-    { name: "User Dashboard", path: "/user/dashboard" },
+    { name: "Dashboard", path: "/admin" },
+    { name: "User Dashboard", path: "/user" },
     { name: "Add Expense Category", path: "/admin/expense/add" },
     { name: "Add Income Category", path: "/admin/income/add" },
   ];
-  const userMenuItem = [{ name: "User Dashboard", path: "/user/dashboard" }];
+  const userMenuItem = [{ name: "User Dashboard", path: "/user/" }];
 
   const renderMenu = (
     <Menu

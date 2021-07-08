@@ -53,7 +53,7 @@ export default function Admin() {
       <AppTopNavigation></AppTopNavigation>
       <div className={classes.dashboard}>
         <Switch>
-          <Route exact path={`${path}/dashboard`}>
+          <Route exact path={`${path}`}>
             <Dashboard></Dashboard>
           </Route>
           <Route exact path={`${path}/:type`}>

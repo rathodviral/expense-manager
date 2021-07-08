@@ -5,7 +5,6 @@ const useStyles = makeStyles({
   count: {
     textAlign: "center",
     cursor: "pointer",
-    fontSize: "2rem",
     fontWeight: 500,
   },
   expense: {

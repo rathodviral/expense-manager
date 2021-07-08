@@ -63,9 +63,9 @@ export default function Login() {
       const { isAdmin } = data;
       AppStorage.setItemInStorage(login.storage, data);
       if (isAdmin) {
-        history.replace({ pathname: "/admin/dashboard" });
+        history.replace({ pathname: "/admin" });
       } else {
-        history.replace({ pathname: "/user/dashboard" });
+        history.replace({ pathname: "/user" });
       }
     } else {
       showSnackbar(message);

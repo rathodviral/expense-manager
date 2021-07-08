@@ -27,12 +27,12 @@ export default function Dashboard(props) {
           count={count}
           type={type}
           onClick={(e) => {
-            history.push(type);
+            history.push(`/admin/${type}`);
           }}
         ></AppCountText>
         <AppButton
           onClick={(e) => {
-            history.push(`${type}/add`);
+            history.push(`/admin/${type}/add`);
           }}
           type={type}
         >

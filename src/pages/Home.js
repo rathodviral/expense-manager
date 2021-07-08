@@ -42,9 +42,9 @@ export default function Home() {
     const { username, isAdmin } = getUserObject();
     if (username) {
       if (isAdmin) {
-        history.replace({ pathname: "/admin/dashboard" });
+        history.replace({ pathname: "/admin" });
       } else {
-        history.replace({ pathname: "/user/dashboard" });
+        history.replace({ pathname: "/user" });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

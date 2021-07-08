@@ -22,7 +22,6 @@ export default function Dashboard(props) {
   const classes = useStyles();
   const history = useHistory();
   const { getMonth } = AppDate;
-  console.log(totalIncome, totalExpense, totalPaidExpense, totalUnpaidExpense);
   const cardList = [
     {
       title: `Balance of ${getMonth}`,
@@ -54,6 +53,7 @@ export default function Dashboard(props) {
     const { title, type, count, isButtonShow, text } = props;
     return (
       <AppCard title={title}>
+        {text && <AppInfoText text={text} type={type}></AppInfoText>}
         <AppCurrencyCountText
           count={count}
           type={type}
@@ -61,8 +61,6 @@ export default function Dashboard(props) {
             history.push(type);
           }}
         ></AppCurrencyCountText>
-        {text && <AppInfoText text={text} type={type}></AppInfoText>}
-
         {isButtonShow && (
           <AppButton
             onClick={(e) => {

@@ -47,7 +47,7 @@ export default function User() {
       <AppTopNavigation></AppTopNavigation>
       <div className={classes.dashboard}>
         <Switch>
-          <Route exact path={`${path}/dashboard`}>
+          <Route exact path={`${path}`}>
             <Dashboard></Dashboard>
           </Route>
         </Switch>

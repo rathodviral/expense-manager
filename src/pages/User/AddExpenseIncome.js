@@ -1,10 +1,5 @@
 import React, { useContext, useState } from "react";
-import {
-  AppCard,
-  AppInputField,
-  AppButton,
-  AppSelectField,
-} from "../../components";
+import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
 import {
   AppApiFetch,
@@ -14,7 +9,7 @@ import {
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../../contexts";
 
-export default function AddCategorySubCategory(props) {
+export default function AddExpenseIncome(props) {
   const { getAdminData } = props;
   const { type, categoryId } = useParams();
   const { showSnackbar, getUserObject } = useContext(AppContext);
@@ -59,15 +54,13 @@ export default function AddCategorySubCategory(props) {
       queryParams: { family },
     };
 
-    console.log(formData);
-
-    // const response = await AppApiFetch(create, options);
-    // const { status, message } = await response.json();
-    // showSnackbar(message);
-    // setFormFields(listFields);
-    // if (status) {
-    //   getAdminData();
-    // }
+    const response = await AppApiFetch(create, options);
+    const { status, message } = await response.json();
+    showSnackbar(message);
+    setFormFields(listFields);
+    if (status) {
+      getAdminData();
+    }
   };
 
   return (
@@ -80,17 +73,13 @@ export default function AddCategorySubCategory(props) {
         )}
         <form noValidate autoComplete="off">
           {formFields &&
-            formFields.map((field, i) =>
-              field.type === "select" ? (
-                <AppSelectField
-                  {...field}
-                  key={i}
-                  handleChange={handleChange}
-                />
-              ) : (
-                <AppInputField {...field} key={i} handleChange={handleChange} />
-              )
-            )}
+            formFields.map((field, i) => (
+              <AppInputField
+                {...field}
+                key={i}
+                handleChange={handleChange}
+              ></AppInputField>
+            ))}
           <AppButton onClick={formSubmit}>
             Save {isSubCategory && "Sub "}Category
           </AppButton>
