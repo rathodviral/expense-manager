@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppInputField, AppCard, AppButton } from "../components";
 import {
@@ -6,8 +6,10 @@ import {
   AppApiFetch,
   AppStorage,
   validateObject,
+  setValuesInObject,
 } from "../utilities";
 import { useHistory } from "react-router-dom";
+import { AppContext } from "../contexts";
 
 const useStyles = makeStyles({
   root: {
@@ -22,17 +24,29 @@ const useStyles = makeStyles({
 export default function Login() {
   const classes = useStyles();
   const history = useHistory();
+  const { showSnackbar } = useContext(AppContext);
 
   const { login } = AppConstant;
   const [formFields, setFormFields] = useState(login.fields);
-  const [formData, setFormData] = useState({ username: "", password: "" });
+
+  const getFormData = () => {
+    let obj = {};
+    formFields.forEach((field) => {
+      const { name, value } = field;
+      obj[name] = value;
+    });
+    return obj;
+  };
 
   const handleChange = (value, type) => {
+    const formData = getFormData();
     const modifiedFormdata = { ...formData, [type]: value };
-    setFormData(modifiedFormdata);
+    const fields = setValuesInObject(modifiedFormdata, login.fields);
+    setFormFields(fields);
   };
 
   const formSubmit = async () => {
+    const formData = getFormData();
     if (Object.keys(formData).some((x) => formData[x] === "")) {
       const fields = validateObject(formData, login.fields);
       setFormFields(fields);
@@ -44,7 +58,7 @@ export default function Login() {
     };
 
     const response = await AppApiFetch(login.apiPath, options);
-    const { status, data } = await response.json();
+    const { status, data, message } = await response.json();
     if (status) {
       const { isAdmin } = data;
       AppStorage.setItemInStorage(login.storage, data);
@@ -53,6 +67,8 @@ export default function Login() {
       } else {
         history.replace({ pathname: "/user/dashboard" });
       }
+    } else {
+      showSnackbar(message);
     }
   };
 

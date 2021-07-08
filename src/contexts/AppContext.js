@@ -1,5 +1,5 @@
-import React, { createContext, useEffect } from "react";
-import { AppConstant, AppStorage } from "./utilities";
+import React, { createContext, useEffect, useState } from "react";
+import { AppConstant, AppStorage } from "../utilities";
 
 export const AppContext = createContext();
 
@@ -38,6 +38,38 @@ const AppContextProvider = (props) => {
     return isAdmin;
   };
 
+  const defaultSnackbarObj = { isOpen: false, message: "" };
+  const [snackbarObj, setSnackbarObj] = useState(defaultSnackbarObj);
+
+  const showSnackbar = (message) => {
+    setSnackbarObj({ isOpen: true, message });
+  };
+
+  const hideSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarObj(defaultSnackbarObj);
+  };
+
+  const defaultAlertDialogObj = {
+    isOpen: false,
+    title: "",
+    message: "",
+    agreeBtnText: "Agree",
+    disagreeBtnText: "Disagree",
+  };
+
+  const [alertDialogObj, setAlertDialogObj] = useState(defaultAlertDialogObj);
+
+  const showAlertDialogObj = (obj) => {
+    setAlertDialogObj({ ...obj, isOpen: true });
+  };
+
+  const hideAlertDialogObj = (event, reason) => {
+    setAlertDialogObj(defaultAlertDialogObj);
+  };
+
   useEffect(() => {
     //   body.setAttribute("data-typography", "poppins");
     resizeWindow();
@@ -52,6 +84,12 @@ const AppContextProvider = (props) => {
         getUserObject,
         isUserAuthorize,
         isRoleAdmin,
+        snackbarObj,
+        showSnackbar,
+        hideSnackbar,
+        alertDialogObj,
+        showAlertDialogObj,
+        hideAlertDialogObj,
       }}
     >
       {props.children}

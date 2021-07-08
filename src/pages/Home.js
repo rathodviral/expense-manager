@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { makeStyles, Card, CardMedia } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
-import { useContext } from "react";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../contexts";
 
 const useStyles = makeStyles({
   root: {
@@ -37,10 +36,10 @@ const useStyles = makeStyles({
 export default function Home() {
   const classes = useStyles();
   const history = useHistory();
-  const appCtx = useContext(AppContext);
+  const { getUserObject } = useContext(AppContext);
 
   useEffect(() => {
-    const { username, isAdmin } = appCtx.getUserObject();
+    const { username, isAdmin } = getUserObject();
     if (username) {
       if (isAdmin) {
         history.replace({ pathname: "/admin/dashboard" });

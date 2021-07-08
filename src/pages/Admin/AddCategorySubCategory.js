@@ -3,36 +3,21 @@ import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
 import {
   AppApiFetch,
-  AppConstant,
   setValuesInObject,
   validateObject,
 } from "../../utilities";
-import { AppContext } from "../../AppContext";
 import { Typography } from "@material-ui/core";
-import { AdminContext } from "../../AdminContext";
+import { AdminContext, AppContext } from "../../contexts";
 
 export default function AddCategorySubCategory(props) {
-  const { getAdminData, showToaster } = props;
+  const { getAdminData } = props;
   const { type, categoryId } = useParams();
-  const appCtx = useContext(AppContext);
-  const { getListObj } = useContext(AdminContext);
+  const { showSnackbar, getUserObject } = useContext(AppContext);
+  const { getListObj, getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
   const isSubCategory = categoryId && categoryId !== "";
-  const {
-    admin: { category, subCategory },
-  } = AppConstant;
-
-  const getList = (key) => {
-    return key
-      ? isSubCategory
-        ? subCategory[key]
-        : category[key]
-      : isSubCategory
-      ? subCategory
-      : category;
-  };
-
-  const [formFields, setFormFields] = useState(getList("fields"));
+  const listFields = getListFromConstant(isSubCategory, "fields");
+  const [formFields, setFormFields] = useState(listFields);
 
   const getFormData = () => {
     let obj = { isExpense };
@@ -49,19 +34,19 @@ export default function AddCategorySubCategory(props) {
   const handleChange = (value, name) => {
     const formData = getFormData();
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, getList("fields"));
+    const fields = setValuesInObject(modifiedFormdata, listFields);
     setFormFields(fields);
   };
 
   const formSubmit = async () => {
     const formData = getFormData();
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, getList("fields"));
+      const fields = validateObject(formData, listFields);
       setFormFields(fields);
       return;
     }
-    const { family } = appCtx.getUserObject();
-    const { create } = getList("apiPath");
+    const { family } = getUserObject();
+    const { create } = getListFromConstant("apiPath");
 
     const options = {
       method: "POST",
@@ -70,13 +55,11 @@ export default function AddCategorySubCategory(props) {
     };
 
     const response = await AppApiFetch(create, options);
-    const { status } = await response.json();
+    const { status, message } = await response.json();
+    showSnackbar(message);
+    setFormFields(listFields);
     if (status) {
       getAdminData();
-      setFormFields(getList("fields"));
-    } else {
-      showToaster("Some Issue");
-      setFormFields(getList("fields"));
     }
   };
 

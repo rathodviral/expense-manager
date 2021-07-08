@@ -7,12 +7,12 @@ import {
   AppDialog,
   AppListItem,
 } from "../../components";
-import { AdminContext } from "../../AdminContext";
+import { AdminContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
 
 export default function Category(props) {
-  const { getAdminData, showToaster } = props;
+  const { getAdminData } = props;
   const { type } = useParams();
   const adminCtx = useContext(AdminContext);
   const defaultList = adminCtx[`${type}CategoryList`];
@@ -74,7 +74,6 @@ export default function Category(props) {
           dialogObj={dialogObj}
           toggleDialog={toggleDialog}
           getAdminData={getAdminData}
-          showToaster={showToaster}
         ></AppDialog>
       </AppCard>
     </div>

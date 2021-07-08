@@ -88,5 +88,36 @@ const AppConstant = {
       ],
     },
   },
+  expense: {
+    apiPath: {
+      read: "read.php",
+      create: "exp_data/create.php",
+      update: "exp_data/update.php",
+      delete: "exp_data/delete.php",
+    },
+    storage: "EXPENSE-INFO",
+    fields: [
+      {
+        name: "username",
+        label: "Username",
+        type: "text",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: "",
+      },
+      {
+        name: "password",
+        label: "Password",
+        type: "password",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: "",
+      },
+    ],
+  },
 };
 export default AppConstant;

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Menu, MenuItem } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/Button";
+import React, { useState, useContext } from "react";
+import {
+  makeStyles,
+  Menu,
+  MenuItem,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { useContext } from "react";
-import { AppContext } from "../AppContext";
+import { AppContext } from "../contexts";
 import { AppConstant, AppStorage } from "../utilities";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,14 +19,15 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    textTransform: "capitalize",
   },
 }));
 
 export default function AppTopNavigation() {
   const classes = useStyles();
-  const appCtx = useContext(AppContext);
+  const { getUserObject } = useContext(AppContext);
   const history = useHistory();
-  const { username } = appCtx.getUserObject();
+  const { username, isAdmin, family } = getUserObject();
   const [anchorEl, setAnchorEl] = useState(false);
 
   const handleMenuClick = (event) => {
@@ -42,6 +45,14 @@ export default function AppTopNavigation() {
     history.replace({ pathname: "/login" });
   };
 
+  const adminMenuItem = [
+    { name: "Dashboard", path: "/admin/dashboard" },
+    { name: "User Dashboard", path: "/user/dashboard" },
+    { name: "Add Expense Category", path: "/admin/expense/add" },
+    { name: "Add Income Category", path: "/admin/income/add" },
+  ];
+  const userMenuItem = [{ name: "User Dashboard", path: "/user/dashboard" }];
+
   const renderMenu = (
     <Menu
       id="simple-menu"
@@ -50,15 +61,18 @@ export default function AppTopNavigation() {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={(e) => handleMenuClose("/admin/dashboard")}>
-        Dashboard
-      </MenuItem>
-      <MenuItem onClick={(e) => handleMenuClose("/admin/expense/add")}>
-        Add Expense Category
-      </MenuItem>
-      <MenuItem onClick={(e) => handleMenuClose("/admin/income/add")}>
-        Add Income Category
-      </MenuItem>
+      {isAdmin &&
+        adminMenuItem.map((item, i) => (
+          <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
+            {item.name}
+          </MenuItem>
+        ))}
+      {!isAdmin &&
+        userMenuItem.map((item, i) => (
+          <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
+            {item.name}
+          </MenuItem>
+        ))}
       <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );
@@ -68,7 +82,7 @@ export default function AppTopNavigation() {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            {username}
+            {username} {family}
           </Typography>
           {username && (
             <IconButton

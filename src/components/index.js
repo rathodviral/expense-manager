@@ -8,3 +8,4 @@ export { default as AppSnackbar } from "./AppSnackbar";
 export { default as AppDialog } from "./AppDialog";
 export { default as AppListItem } from "./AppListItem";
 export { default as AddEditListItem } from "./EditListItem";
+export { default as AppAlertDialog } from "./AppAlertDialog";

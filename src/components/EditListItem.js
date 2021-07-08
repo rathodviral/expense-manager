@@ -1,46 +1,20 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppInputField, AppButton, AppDivider } from ".";
 import { useHistory, useParams } from "react-router-dom";
-import {
-  AppApiFetch,
-  AppConstant,
-  setValuesInObject,
-  validateObject,
-} from "../utilities";
-import { AppContext } from "../AppContext";
+import { AppApiFetch, setValuesInObject, validateObject } from "../utilities";
 import { Typography } from "@material-ui/core";
-import { AdminContext } from "../AdminContext";
+import { AdminContext, AppContext } from "../contexts";
 
 export default function EditListItem(props) {
-  const {
-    getAdminData,
-    showToaster,
-    isSubCategory,
-    id,
-    name,
-    detail,
-    categoryId,
-  } = props;
+  const { getAdminData, isSubCategory, id, name, detail, categoryId } = props;
   const history = useHistory();
   const { type } = useParams();
-  const appCtx = useContext(AppContext);
-  const { getListObj } = useContext(AdminContext);
+  const { showSnackbar, getUserObject } = useContext(AppContext);
+  const { getListObj, getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
-  const {
-    admin: { category, subCategory },
-  } = AppConstant;
+  const listFields = getListFromConstant(isSubCategory, "fields");
 
-  const getList = (key) => {
-    return key
-      ? isSubCategory
-        ? subCategory[key]
-        : category[key]
-      : isSubCategory
-      ? subCategory
-      : category;
-  };
-
-  const [formFields, setFormFields] = useState(getList("fields"));
+  const [formFields, setFormFields] = useState(listFields);
 
   useEffect(() => {
     updateFieldsValue();
@@ -49,8 +23,7 @@ export default function EditListItem(props) {
 
   const updateFieldsValue = () => {
     const mFormData = { name, detail };
-    const fields = getList("fields");
-    const mFormsFields = fields.map((x) => {
+    const mFormsFields = listFields.map((x) => {
       return {
         ...x,
         value: mFormData[x.name],
@@ -74,21 +47,19 @@ export default function EditListItem(props) {
   const InputChange = (value, name) => {
     const formData = getFormData();
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, getList("fields"));
+    const fields = setValuesInObject(modifiedFormdata, listFields);
     setFormFields(fields);
   };
 
   const formSubmit = async () => {
     const formData = getFormData();
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, getList("fields"));
+      const fields = validateObject(formData, listFields);
       setFormFields(fields);
-      console.log(fields);
-
       return;
     }
-    const { family } = appCtx.getUserObject();
-    const { update } = getList("apiPath");
+    const { family } = getUserObject();
+    const { update } = getListFromConstant("apiPath");
     const options = {
       method: "PUT",
       body: { ...formData, isActive: true, id },
@@ -96,12 +67,12 @@ export default function EditListItem(props) {
     };
 
     const response = await AppApiFetch(update, options);
-    const { status } = await response.json();
+    const { status, message } = await response.json();
+    showSnackbar(message);
     if (status) {
       getAdminData();
     } else {
-      showToaster("Some Issue");
-      setFormFields(category.fields);
+      setFormFields(listFields);
     }
   };
 

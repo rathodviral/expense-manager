@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { AppConstant } from "../utilities";
 
 export const AdminContext = createContext();
 
@@ -20,6 +21,19 @@ const AdminContextProvider = (props) => {
     });
   };
 
+  const getListFromConstant = (isSubCategory, key) => {
+    const {
+      admin: { category, subCategory },
+    } = AppConstant;
+    return key
+      ? isSubCategory
+        ? subCategory[key]
+        : category[key]
+      : isSubCategory
+      ? subCategory
+      : category;
+  };
+
   const getListObj = (isExpense, categoryId, key) => {
     const list = isExpense ? expenseCategoryList : incomeCategoryList;
     const obj = categoryId ? list.find((x) => x.id === categoryId) : list;
@@ -39,6 +53,7 @@ const AdminContextProvider = (props) => {
         getListObj,
         incomeCategoryList,
         expenseCategoryList,
+        getListFromConstant,
       }}
     >
       {props.children}

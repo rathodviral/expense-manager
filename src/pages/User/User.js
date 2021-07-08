@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppTopNavigation } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
-import Category from "./Category";
-import AddCategorySubCategory from "./AddCategorySubCategory";
-import { AdminContext, AppContext } from "../../contexts";
-import { useEffect } from "react";
+import { AppContext, UserContext } from "../../contexts";
 import { AppApiFetch, AppConstant } from "../../utilities";
 
 const useStyles = makeStyles({
@@ -18,33 +15,30 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Admin() {
+export default function User() {
   const classes = useStyles();
   const { path } = useRouteMatch();
   const { getUserObject } = useContext(AppContext);
-  const { setAdminData } = useContext(AdminContext);
+  const { setUserData } = useContext(UserContext);
   const {
-    admin: {
-      category: { apiPath },
-    },
+    expense: { apiPath },
   } = AppConstant;
 
-  const getAdminDataEvent = async () => {
+  const getUserDataEvent = async () => {
     const { family } = getUserObject();
-    const type = "category";
     const options = {
       method: "GET",
-      queryParams: { family, type },
+      queryParams: { family },
     };
     const response = await AppApiFetch(apiPath.read, options);
     const { status, data } = await response.json();
     if (status) {
-      setAdminData(data);
+      setUserData(data);
     }
   };
 
   useEffect(() => {
-    getAdminDataEvent();
+    getUserDataEvent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,24 +46,11 @@ export default function Admin() {
     <div className={classes.root}>
       <AppTopNavigation></AppTopNavigation>
       <div className={classes.dashboard}>
-        <Switch>
+        {/* <Switch>
           <Route exact path={`${path}/dashboard`}>
             <Dashboard></Dashboard>
           </Route>
-          <Route exact path={`${path}/:type`}>
-            <Category getAdminData={getAdminDataEvent}></Category>
-          </Route>
-          <Route exact path={`${path}/:type/add`}>
-            <AddCategorySubCategory
-              getAdminData={getAdminDataEvent}
-            ></AddCategorySubCategory>
-          </Route>
-          <Route exact path={`${path}/:type/add/:categoryId`}>
-            <AddCategorySubCategory
-              getAdminData={getAdminDataEvent}
-            ></AddCategorySubCategory>
-          </Route>
-        </Switch>
+        </Switch> */}
       </div>
     </div>
   );
