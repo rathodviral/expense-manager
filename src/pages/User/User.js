@@ -46,11 +46,11 @@ export default function User() {
     <div className={classes.root}>
       <AppTopNavigation></AppTopNavigation>
       <div className={classes.dashboard}>
-        {/* <Switch>
+        <Switch>
           <Route exact path={`${path}/dashboard`}>
             <Dashboard></Dashboard>
           </Route>
-        </Switch> */}
+        </Switch>
       </div>
     </div>
   );

@@ -42,3 +42,10 @@ export const windowScrollTop = (formData, fields) => {
     window.scrollTo(0, 0);
   }, 100);
 };
+
+export const getCurrencyFormat = (count) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(count);
+};

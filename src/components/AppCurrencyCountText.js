@@ -1,4 +1,4 @@
-import React from "react";
+// new Intl.NumberFormat('en-IN').format(number)import React from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AppCountText(props) {
+export default function AppCurrencyCountText(props) {
   const classes = useStyles();
   const { count, type, onClick } = props;
   return (
@@ -25,7 +25,10 @@ export default function AppCountText(props) {
       variant="h3"
       onClick={onClick}
     >
-      {count}
+      {new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(count)}
     </Typography>
   );
 }

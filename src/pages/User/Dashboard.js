@@ -1,8 +1,14 @@
 import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core";
-import { AppCountText, AppCard, AppButton } from "../../components";
-import { AdminContext } from "../../contexts";
+import {
+  AppCurrencyCountText,
+  AppCard,
+  AppButton,
+  AppInfoText,
+} from "../../components";
+import { UserContext } from "../../contexts";
 import { useHistory } from "react-router";
+import { AppDate, getCurrencyFormat } from "../../utilities";
 
 const useStyles = makeStyles({
   root: {
@@ -11,33 +17,62 @@ const useStyles = makeStyles({
 });
 
 export default function Dashboard(props) {
-  const { incomeCategoryList, expenseCategoryList } = useContext(AdminContext);
+  const { totalIncome, totalExpense, totalPaidExpense, totalUnpaidExpense } =
+    useContext(UserContext);
   const classes = useStyles();
   const history = useHistory();
+  const { getMonth } = AppDate;
+  console.log(totalIncome, totalExpense, totalPaidExpense, totalUnpaidExpense);
   const cardList = [
-    { title: "Expense", type: "expense", count: expenseCategoryList.length },
-    { title: "Income", type: "income", count: incomeCategoryList.length },
+    {
+      title: `Balance of ${getMonth}`,
+      type: totalIncome - totalPaidExpense > 0 ? "income" : "expense",
+      count: totalIncome - totalPaidExpense,
+      isButtonShow: false,
+      text: `${getCurrencyFormat(totalIncome)} - ${getCurrencyFormat(
+        totalPaidExpense
+      )}`,
+    },
+    {
+      title: "Expense",
+      type: "expense",
+      count: totalExpense,
+      isButtonShow: true,
+      text: `${getCurrencyFormat(totalUnpaidExpense)} + ${getCurrencyFormat(
+        totalPaidExpense
+      )}`,
+    },
+    {
+      title: "Income",
+      type: "income",
+      count: totalIncome,
+      isButtonShow: true,
+    },
   ];
 
   const Card = (props) => {
-    const { title, type, count } = props;
+    const { title, type, count, isButtonShow, text } = props;
     return (
       <AppCard title={title}>
-        <AppCountText
+        <AppCurrencyCountText
           count={count}
           type={type}
           onClick={(e) => {
             history.push(type);
           }}
-        ></AppCountText>
-        <AppButton
-          onClick={(e) => {
-            history.push(`${type}/add`);
-          }}
-          type={type}
-        >
-          Add {title} Category
-        </AppButton>
+        ></AppCurrencyCountText>
+        {text && <AppInfoText text={text} type={type}></AppInfoText>}
+
+        {isButtonShow && (
+          <AppButton
+            onClick={(e) => {
+              history.push(`${type}/add`);
+            }}
+            type={type}
+          >
+            Add {title}
+          </AppButton>
+        )}
       </AppCard>
     );
   };
@@ -45,7 +80,7 @@ export default function Dashboard(props) {
   return (
     <div className={classes.root}>
       {cardList.map((card, i) => (
-        <Card key={i} title={card.title} type={card.type} count={card.count} />
+        <Card key={i} {...card} />
       ))}
     </div>
   );

@@ -13,6 +13,10 @@ const UserContextProvider = (props) => {
   const [expenseCategoryList, setExpenseCategoryList] = useState([]);
   const [incomeUserList, setIncomeUserList] = useState([]);
   const [expenseUserList, setExpenseUserList] = useState([]);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [totalPaidExpense, setTotalPaidExpense] = useState(0);
+  const [totalUnpaidExpense, setTotalUnpaidExpense] = useState(0);
 
   const createCategoryList = (isExpense) => {
     const { category, subCategory } = userData;
@@ -30,6 +34,20 @@ const UserContextProvider = (props) => {
   const createUserList = (isExpense) => {
     const { expense } = userData;
     return expense.filter((x) => x.isExpense === isExpense);
+  };
+
+  const totalCalcuation = (isExpense, isPaid) => {
+    const { expense } = userData;
+    const list = expense.filter((x) => x.isExpense === isExpense);
+    const filterdList =
+      isPaid !== undefined
+        ? list.filter((x) => x.isPaid === isPaid).map((x) => x.amount)
+        : list.map((x) => x.amount);
+    return filterdList.length > 0
+      ? filterdList.reduce(
+          (accumulator, currentValue) => accumulator + currentValue
+        )
+      : 0;
   };
 
   const getCategoryListFromConstant = (isSubCategory, key) => {
@@ -50,6 +68,10 @@ const UserContextProvider = (props) => {
     setExpenseCategoryList(createCategoryList(true));
     setIncomeUserList(createUserList(false));
     setExpenseUserList(createUserList(true));
+    setTotalIncome(totalCalcuation(false));
+    setTotalExpense(totalCalcuation(true));
+    setTotalPaidExpense(totalCalcuation(true, true));
+    setTotalUnpaidExpense(totalCalcuation(true, false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]);
 
@@ -62,6 +84,10 @@ const UserContextProvider = (props) => {
         incomeUserList,
         expenseUserList,
         getCategoryListFromConstant,
+        totalIncome,
+        totalExpense,
+        totalPaidExpense,
+        totalUnpaidExpense,
       }}
     >
       {props.children}
