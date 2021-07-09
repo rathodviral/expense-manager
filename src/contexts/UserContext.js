@@ -50,17 +50,9 @@ const UserContextProvider = (props) => {
       : 0;
   };
 
-  const getCategoryListFromConstant = (isSubCategory, key) => {
-    const {
-      admin: { category, subCategory },
-    } = AppConstant;
-    return key
-      ? isSubCategory
-        ? subCategory[key]
-        : category[key]
-      : isSubCategory
-      ? subCategory
-      : category;
+  const getDataFromConstant = (key) => {
+    const { expense } = AppConstant;
+    return expense[key];
   };
 
   useEffect(() => {
@@ -83,7 +75,7 @@ const UserContextProvider = (props) => {
         expenseCategoryList,
         incomeUserList,
         expenseUserList,
-        getCategoryListFromConstant,
+        getDataFromConstant,
         totalIncome,
         totalExpense,
         totalPaidExpense,

@@ -1,6 +1,6 @@
 export const validateObject = (formData, fields) => {
   return fields.map((x) => {
-    if (formData[x.name] === "") {
+    if (!formData[x.name] || formData[x.name] === "") {
       return {
         ...x,
         isError: true,

@@ -11,9 +11,9 @@ export default function AppSelectField(props) {
     label,
     value,
     handleChange,
+    helperText = "",
     options = [],
   } = props;
-
   const [fieldValue, setFieldValue] = useState(value);
 
   useEffect(() => {
@@ -25,9 +25,10 @@ export default function AppSelectField(props) {
     <Autocomplete
       id={name}
       options={options}
-      renderOption={(option) => <React.Fragment>{option.name}</React.Fragment>}
+      getOptionLabel={(option) => (option.name ? option.name : "")}
+      // renderOption={(option) => <React.Fragment>{option.name}</React.Fragment>}
       value={fieldValue}
-      onChange={(event, newValue) => handleChange(newValue.id, name)}
+      onChange={(event, newValue) => handleChange(newValue, name)}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -38,6 +39,9 @@ export default function AppSelectField(props) {
           variant="outlined"
           size="small"
           label={label}
+          disabled={isDisabled}
+          error={isError}
+          helperText={helperText}
           fullWidth
         />
       )}

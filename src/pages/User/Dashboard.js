@@ -64,7 +64,7 @@ export default function Dashboard(props) {
         {isButtonShow && (
           <AppButton
             onClick={(e) => {
-              history.push(`${type}/add`);
+              history.push(`user/${type}/add`);
             }}
             type={type}
           >
