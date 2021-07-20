@@ -5,7 +5,7 @@ import {
   AppInputField,
   AppDivider,
   AppDialog,
-  AppListItem,
+  AppAccordion,
 } from "../../components";
 import { AdminContext } from "../../contexts";
 import { useParams } from "react-router-dom";
@@ -62,11 +62,11 @@ export default function Category(props) {
         <AppDivider />
         <List component="div" disablePadding>
           {categoryList.map((item, i) => (
-            <AppListItem
+            <AppAccordion
               key={i}
               {...item}
               listItemClick={listItemClick}
-            ></AppListItem>
+            ></AppAccordion>
           ))}
         </List>
         <AppDialog

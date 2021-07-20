@@ -1,90 +1,110 @@
 import React from "react";
 import {
-  List,
   ListItem,
   ListItemIcon,
   ListItemText,
   IconButton,
-  Collapse,
   makeStyles,
+  Typography,
+  Chip,
 } from "@material-ui/core";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
 import EditIcon from "@material-ui/icons/Edit";
+import { AppDate } from "../utilities";
 
 const useStyles = makeStyles((theme) => ({
-  nested: {
-    paddingLeft: theme.spacing(6),
+  noPadding: {
+    paddingLeft: 0,
+    paddingRight: 0,
+    borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+  },
+  displayFlex: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  chipPosition: {
+    position: "relative",
+    top: "-2px",
+    left: "5px",
+  },
+  dateFontSize: {
+    fontSize: "0.875rem",
+    margin: 0,
+  },
+  categoryFontStyle: {
+    fontSize: "1rem",
+    margin: 0,
+    textTransform: "capitalize",
   },
 }));
 
 export default function AppListItem(props) {
   const classes = useStyles();
   const {
-    name,
-    id,
-    isOpen,
+    amount,
+    date,
+    isPaid,
+    category,
+    categoryName,
     detail,
-    isExpense,
-    subCategoryList = [],
+    user,
+    subCategoryName,
     listItemClick,
+    note,
+    id,
   } = props;
-  const [open, setOpen] = React.useState(isOpen);
-  const toggleCollapse = () => {
-    setOpen(!open);
-  };
+
   return (
-    <React.Fragment>
-      <ListItem button onClick={toggleCollapse}>
-        <ListItemIcon>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              listItemClick(false, { name, id, detail, isExpense });
-            }}
-          >
-            <EditIcon />
-          </IconButton>
-        </ListItemIcon>
-        <ListItemText
-          primary={name}
-          secondary={
-            subCategoryList.length > 0
-              ? `Sub Categories (${subCategoryList.length})`
-              : ""
-          }
-        />
-        {subCategoryList.length > 0 ? (
-          open ? (
-            <ExpandLess />
-          ) : (
-            <ExpandMore />
-          )
-        ) : (
-          ""
-        )}
-      </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        {subCategoryList.length > 0 && (
-          <List component="div" disablePadding>
-            {subCategoryList.map((item, i) => (
-              <ListItem button key={i} className={classes.nested}>
-                <ListItemText primary={item.name} />
-                <IconButton
+    <ListItem className={classes.noPadding}>
+      <ListItemIcon>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            listItemClick(false, { id, category, detail });
+          }}
+        >
+          <EditIcon />
+        </IconButton>
+      </ListItemIcon>
+      <ListItemText
+        primary={
+          <div>
+            <div className={classes.displayFlex}>
+              <Typography variant="h6">
+                {new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(amount)}
+                <Chip
+                  className={classes.chipPosition}
+                  label={isPaid ? "Paid" : "Not Paid"}
+                  color={isPaid ? "primary" : "secondary"}
                   size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    listItemClick(true, item);
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Collapse>
-    </React.Fragment>
+                />
+              </Typography>
+              <p className={classes.dateFontSize}>
+                {AppDate.getDateIntoString(date, "MMM, Do YYYY")}
+              </p>
+            </div>
+            <div className={classes.displayFlex}>
+              <p className={classes.categoryFontStyle}>
+                <b>{subCategoryName}</b> <small>of</small> <b>{categoryName}</b>
+              </p>
+            </div>
+            <div className={classes.displayFlex}>
+              <p className={classes.dateFontSize}>
+                <b>Added By : </b> {user}
+              </p>
+            </div>
+            <div className={classes.displayFlex}>
+              <p className={classes.dateFontSize}>
+                <b>Details : </b> {note}
+              </p>
+            </div>
+          </div>
+        }
+      />
+    </ListItem>
   );
 }

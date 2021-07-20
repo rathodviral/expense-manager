@@ -18,7 +18,7 @@ const calculateDates = (m) => {
 
 const AppDate = {
   getMonth: moment(new Date()).format("MMMM"),
-  getDateIntoString: (dateObj, format = "YYYY-MM-DD") => {
+  getDateIntoString: (dateObj = new Date(), format = "YYYY-MM-DD") => {
     const date = typeof dateObj === "string" ? new Date(dateObj) : dateObj;
     return moment(date).format(format);
   },
@@ -26,9 +26,10 @@ const AppDate = {
     start: moment().startOf("month").format("YYYY-MM-DD"),
     end: moment().endOf("month").format("YYYY-MM-DD"),
   },
-  geLast3MonthsDates: [0, 1, 2].map((x) => {
+  getLast3MonthsDates: [0, 1, 2].map((x) => {
     return calculateDates(x);
   }),
+  getPreviousThirdDay: moment().subtract(3, "days"),
 };
 
 export default AppDate;

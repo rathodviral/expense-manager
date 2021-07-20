@@ -18,22 +18,41 @@ const UserContextProvider = (props) => {
   const [totalPaidExpense, setTotalPaidExpense] = useState(0);
   const [totalUnpaidExpense, setTotalUnpaidExpense] = useState(0);
 
-  const createCategoryList = (isExpense) => {
+  const createCategoryList = (isExpense, subCategoryAdd = true) => {
     const { category, subCategory } = userData;
     const list = category.filter((x) => x.isExpense === isExpense);
-    return list.map((x) => {
-      const subCategoryList = subCategory.filter((y) => y.categoryId === x.id);
-      return {
-        ...x,
-        subCategoryList: subCategoryList,
-        isOpen: false,
-      };
-    });
+    return subCategoryAdd
+      ? list.map((x) => {
+          const subCategoryList = subCategory.filter(
+            (y) => y.categoryId === x.id
+          );
+          return {
+            ...x,
+            subCategoryList: subCategoryList,
+            isOpen: false,
+          };
+        })
+      : list;
+  };
+
+  const createSubCategoryList = (isExpense) => {
+    const { subCategory } = userData;
+    return subCategory.filter((x) => x.isExpense === isExpense);
   };
 
   const createUserList = (isExpense) => {
     const { expense } = userData;
-    return expense.filter((x) => x.isExpense === isExpense);
+    const list = expense.filter((x) => x.isExpense === isExpense);
+    const catList = createCategoryList(isExpense, false);
+    const subCatList = createSubCategoryList(isExpense);
+    return list.map((x) => {
+      const { category, detail } = x;
+      return {
+        ...x,
+        categoryName: catList.find((y) => y.id === category).name,
+        subCategoryName: subCatList.find((y) => y.id === detail).name,
+      };
+    });
   };
 
   const totalCalcuation = (isExpense, isPaid) => {

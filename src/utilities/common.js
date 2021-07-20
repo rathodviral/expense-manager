@@ -1,3 +1,5 @@
+import AppDate from "./date";
+
 export const validateObject = (formData, fields) => {
   return fields.map((x) => {
     if (!formData[x.name] || formData[x.name] === "") {
@@ -49,4 +51,28 @@ export const getCurrencyFormat = (count) => {
     style: "currency",
     currency: "INR",
   }).format(count);
+};
+
+export const getObjectFormData = (formFields, withFilter = false) => {
+  let obj = {};
+  formFields.forEach((field) => {
+    const { name, value, type } = field;
+    if (withFilter) {
+      if (type === "select") {
+        obj[name] = value && value.id ? value.id : value;
+      } else if (type === "date") {
+        console.log(value);
+        obj[name] = typeof value ? AppDate.getDateIntoString(value) : null;
+      } else {
+        if (name === "amount") {
+          obj[name] = Number(value);
+        } else {
+          obj[name] = value;
+        }
+      }
+    } else {
+      obj[name] = value;
+    }
+  });
+  return obj;
 };

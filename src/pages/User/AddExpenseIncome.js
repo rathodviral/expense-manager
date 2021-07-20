@@ -4,6 +4,7 @@ import {
   AppInputField,
   AppButton,
   AppSelectField,
+  AppDateField,
 } from "../../components";
 import { useParams } from "react-router-dom";
 import {
@@ -13,6 +14,7 @@ import {
 } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
+import { getObjectFormData } from "../../utilities/common";
 
 export default function AddExpenseIncome(props) {
   const { getUserDataEvent } = props;
@@ -60,24 +62,29 @@ export default function AddExpenseIncome(props) {
 
   const getFormData = (withFilter = false) => {
     const { username } = getUserObject();
-    let obj = { isExpense, user: username, isPaid };
-    formFields.forEach((field) => {
-      const { name, value, type } = field;
-      if (withFilter) {
-        if (type === "select") {
-          obj[name] = value && value.id ? value.id : value;
-        } else {
-          if (name === "amount") {
-            obj[name] = Number(value);
-          } else {
-            obj[name] = value;
-          }
-        }
-      } else {
-        obj[name] = value;
-      }
-    });
-    return obj;
+    // let obj = { isExpense, user: username, isPaid };
+    // formFields.forEach((field) => {
+    //   const { name, value, type } = field;
+    //   if (withFilter) {
+    //     if (type === "select") {
+    //       obj[name] = value && value.id ? value.id : value;
+    //     } else {
+    //       if (name === "amount") {
+    //         obj[name] = Number(value);
+    //       } else {
+    //         obj[name] = value;
+    //       }
+    //     }
+    //   } else {
+    //     obj[name] = value;
+    //   }
+    // });
+    return {
+      isExpense,
+      user: username,
+      isPaid,
+      ...getObjectFormData(formFields, withFilter),
+    };
   };
 
   const handleChange = (value, name) => {
@@ -143,17 +150,33 @@ export default function AddExpenseIncome(props) {
       <AppCard title={`Add ${type}`}>
         <form noValidate autoComplete="off">
           {formFields &&
-            formFields.map((field, i) =>
-              field.type === "select" ? (
-                <AppSelectField
-                  {...field}
-                  key={i}
-                  handleChange={handleChange}
-                />
-              ) : (
-                <AppInputField {...field} key={i} handleChange={handleChange} />
-              )
-            )}
+            formFields.map((field, i) => {
+              if (field.type === "date") {
+                return (
+                  <AppDateField
+                    {...field}
+                    key={i}
+                    handleChange={handleChange}
+                  />
+                );
+              } else if (field.type === "select") {
+                return (
+                  <AppSelectField
+                    {...field}
+                    key={i}
+                    handleChange={handleChange}
+                  />
+                );
+              } else {
+                return (
+                  <AppInputField
+                    {...field}
+                    key={i}
+                    handleChange={handleChange}
+                  />
+                );
+              }
+            })}
           <FormControlLabel
             control={
               <Switch
