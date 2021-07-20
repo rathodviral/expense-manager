@@ -26,7 +26,7 @@ export default function AppListItem(props) {
     isOpen,
     detail,
     isExpense,
-    subCategoryList,
+    subCategoryList = [],
     listItemClick,
   } = props;
   const [open, setOpen] = React.useState(isOpen);
@@ -66,22 +66,24 @@ export default function AppListItem(props) {
         )}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {subCategoryList.map((item, i) => (
-            <ListItem button key={i} className={classes.nested}>
-              <ListItemText primary={item.name} />
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  listItemClick(true, item);
-                }}
-              >
-                <EditIcon />
-              </IconButton>
-            </ListItem>
-          ))}
-        </List>
+        {subCategoryList.length > 0 && (
+          <List component="div" disablePadding>
+            {subCategoryList.map((item, i) => (
+              <ListItem button key={i} className={classes.nested}>
+                <ListItemText primary={item.name} />
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    listItemClick(true, item);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Collapse>
     </React.Fragment>
   );

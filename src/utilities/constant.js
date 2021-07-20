@@ -117,7 +117,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: "",
+        value: null,
         options: [],
       },
       {
@@ -128,7 +128,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: "",
+        value: null,
         options: [],
       },
       {

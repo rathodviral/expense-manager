@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard";
 import { AppContext, UserContext } from "../../contexts";
 import { AppApiFetch, AppConstant } from "../../utilities";
 import AddExpenseIncome from "./AddExpenseIncome";
+import Category from "./Category";
 
 const useStyles = makeStyles({
   root: {
@@ -50,6 +51,9 @@ export default function User() {
         <Switch>
           <Route exact path={`${path}`}>
             <Dashboard></Dashboard>
+          </Route>
+          <Route exact path={`${path}/:type`}>
+            <Category></Category>
           </Route>
           <Route exact path={`${path}/:type/add`}>
             <AddExpenseIncome></AddExpenseIncome>

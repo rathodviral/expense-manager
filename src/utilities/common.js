@@ -21,8 +21,9 @@ export const setEmptyObject = (fields) => {
     return {
       ...x,
       isError: false,
-      value: "",
-      helperText: `${x.label}, Added`,
+      value:
+        fields.name === "note" || fields.name === "amount" ? "" : fields.value,
+      // helperText: `${x.label}, Added`,
     };
   });
 };

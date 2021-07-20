@@ -22,7 +22,7 @@ export default function AddExpenseIncome(props) {
     useContext(UserContext);
   const isExpense = type === "expense";
   const defailtFields = getDataFromConstant("fields");
-
+  const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
   const [modifiedFields, setModifiedFields] = useState([]);
   const [formFields, setFormFields] = useState([]);
   const [isPaid, setPaid] = useState(true);
@@ -40,27 +40,22 @@ export default function AddExpenseIncome(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomeCategoryList, expenseCategoryList]);
 
+  const getOptions = (value) => {
+    return {
+      id: value.id,
+      name: value.name,
+    };
+  };
+
   const getCategoryOptions = () => {
-    const l = isExpense ? expenseCategoryList : incomeCategoryList;
-    return l.map((x) => {
-      return {
-        id: x.id,
-        name: x.name,
-      };
-    });
+    return typeList.map(getOptions);
   };
 
   const getSubCategoryOptions = (category) => {
-    const l = isExpense ? expenseCategoryList : incomeCategoryList;
-    const { subCategoryList } = l.find((x) => x.id === category) || {
+    const { subCategoryList } = typeList.find((x) => x.id === category) || {
       subCategoryList: [],
     };
-    return subCategoryList.map((x) => {
-      return {
-        id: x.id,
-        name: x.name,
-      };
-    });
+    return subCategoryList.map(getOptions);
   };
 
   const getFormData = (withFilter = false) => {
@@ -88,14 +83,22 @@ export default function AddExpenseIncome(props) {
   const handleChange = (value, name) => {
     const formData = getFormData();
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, modifiedFields);
     if (name === "category") {
-      const subList = value && value.id ? getSubCategoryOptions(value.id) : [];
+      modifiedFormdata.detail = null;
+    }
+    const fields = setValuesInObject(modifiedFormdata, modifiedFields);
+    setFieldValueChange(modifiedFormdata, fields);
+  };
+
+  const setFieldValueChange = (modifiedFormdata, fields) => {
+    if (modifiedFormdata.category && modifiedFormdata.category.id) {
+      const subList = modifiedFormdata.category.id
+        ? getSubCategoryOptions(modifiedFormdata.category.id)
+        : [];
       const fieldsWithOptions = fields.map((element) => {
         return {
           ...element,
           options: element.name === "detail" ? subList : element.options,
-          value: element.name === "detail" ? "" : element.value,
         };
       });
       setFormFields(fieldsWithOptions);
@@ -106,13 +109,11 @@ export default function AddExpenseIncome(props) {
 
   const formSubmit = async () => {
     const formData = getFormData(true);
-    console.log(formData);
-    console.log(modifiedFields);
 
     if (Object.values(formData).some((item) => !item || item === "")) {
       const fD = getFormData();
       const fields = validateObject(fD, modifiedFields);
-      setFormFields(fields);
+      setFieldValueChange(fD, fields);
       return;
     }
     const { family } = getUserObject();
@@ -124,13 +125,17 @@ export default function AddExpenseIncome(props) {
       queryParams: { family },
     };
 
-    // const response = await AppApiFetch(create, options);
-    // const { status, message } = await response.json();
-    // showSnackbar(message);
-    // setFormFields(listFields);
-    // if (status) {
-    //   getUserDataEvent();
-    // }
+    const response = await AppApiFetch(create, options);
+    const { status, message } = await response.json();
+    showSnackbar(message);
+    if (status) {
+      const fD = getFormData();
+      fD.note = "";
+      fD.amount = "";
+      const fields = setValuesInObject(fD, modifiedFields);
+      setFieldValueChange(fD, fields);
+      getUserDataEvent();
+    }
   };
 
   return (

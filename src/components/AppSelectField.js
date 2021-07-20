@@ -29,6 +29,7 @@ export default function AppSelectField(props) {
       // renderOption={(option) => <React.Fragment>{option.name}</React.Fragment>}
       value={fieldValue}
       onChange={(event, newValue) => handleChange(newValue, name)}
+      autoHighlight
       renderInput={(params) => (
         <TextField
           {...params}
