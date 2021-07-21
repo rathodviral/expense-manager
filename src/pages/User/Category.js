@@ -2,18 +2,19 @@ import React, { useContext, useState, useEffect } from "react";
 import { List } from "@material-ui/core";
 import {
   AppCard,
-  AppInputField,
   AppDivider,
   AppDialog,
   AppListItem,
-  AppDateField,
-  AppSelectField,
-  AppButton,
+  AppCurrencyCountText,
+  AppFilterDialog,
 } from "../../components";
 import { UserContext } from "../../contexts";
 import { useParams } from "react-router-dom";
-import { AppDate, setValuesInObject, windowScrollTop } from "../../utilities";
-import { getObjectFormData } from "../../utilities/common";
+import { setValuesInObject, windowScrollTop } from "../../utilities";
+import {
+  getObjectFormData,
+  isValueNullOrUndefined,
+} from "../../utilities/common";
 
 export default function Category(props) {
   const { getAdminData } = props;
@@ -36,11 +37,12 @@ export default function Category(props) {
   const [formFields, setFormFields] = useState([]);
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogObj, setDialogObj] = useState(false);
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
+  const [dialogObj, setDialogObj] = useState({ name: "" });
 
   useEffect(() => {
     windowScrollTop();
-    resetFormExpenseIncomeList();
+    resetButtonClick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultList, defaultExpenseList]);
 
@@ -73,7 +75,6 @@ export default function Category(props) {
 
   const getFormData = (withFilter = false) => {
     return {
-      isExpense,
       ...getObjectFormData(formFields, withFilter),
     };
   };
@@ -101,20 +102,21 @@ export default function Category(props) {
     }
   };
 
-  const searchFormExpenseIncomeList = () => {
+  const filterButtonClick = () => {
     const formData = getFormData(true);
-    let list = defaultExpenseList;
+    console.log(formData);
+    let list = [...defaultExpenseList];
     Object.keys(formData).forEach((x) => {
       const val = formData[x];
-      if (val && val !== "") {
+      if (isValueNullOrUndefined(val)) {
         list = list.filter((y) => y[x] === val);
       }
     });
-    console.log(list, formData);
-    // setExpenseIncomeList(list);
+    setExpenseIncomeList(list);
+    toggleFilterDialog(false);
   };
 
-  const resetFormExpenseIncomeList = () => {
+  const resetButtonClick = () => {
     const fieldsWithOptions = defailtFields.map((element) => {
       const { name, type } = element;
       let list = [];
@@ -136,57 +138,45 @@ export default function Category(props) {
     setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
   };
 
-  const listItemClick = (isSubCategory, value) => {
+  const getEditItemDialog = (isSubCategory, value) => {
     toggleDialog(true);
     setDialogObj({ ...value, isSubCategory });
+  };
+
+  const getFilterDialog = () => {
+    toggleFilterDialog(true);
   };
 
   const toggleDialog = (flag) => {
     setOpenDialog(flag);
   };
+  const toggleFilterDialog = (flag) => {
+    setOpenFilterDialog(flag);
+  };
+
+  const getTotal = () => {
+    return expenseIncomeList.length > 0
+      ? expenseIncomeList
+          .map((x) => x.amount)
+          .reduce((accumulator, currentValue) => accumulator + currentValue)
+      : 0;
+  };
 
   return (
     <div>
-      <AppCard title={`${type} Categories`}>
-        <form noValidate autoComplete="off">
-          {formFields &&
-            formFields.map((field, i) => {
-              if (field.type === "date") {
-                return (
-                  <AppDateField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else if (field.type === "select") {
-                return (
-                  <AppSelectField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else {
-                return (
-                  <AppInputField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              }
-            })}
-        </form>
-        <AppButton onClick={searchFormExpenseIncomeList}>Search</AppButton>
-        <AppButton onClick={resetFormExpenseIncomeList}>Reset</AppButton>
+      <AppCard title={`${type} List`}>
+        <AppCurrencyCountText
+          count={getTotal()}
+          type={type}
+          onClick={(e) => getFilterDialog()}
+        ></AppCurrencyCountText>
         <AppDivider />
         <List component="div" disablePadding>
           {expenseIncomeList.map((item, i) => (
             <AppListItem
               key={i}
               {...item}
-              listItemClick={listItemClick}
+              listItemClick={getEditItemDialog}
             ></AppListItem>
           ))}
         </List>
@@ -196,6 +186,15 @@ export default function Category(props) {
           toggleDialog={toggleDialog}
           getAdminData={getAdminData}
         ></AppDialog>
+        <AppFilterDialog
+          openDialog={openFilterDialog}
+          toggleDialog={toggleFilterDialog}
+          title={`Filter ${type} List`}
+          formFields={formFields}
+          handleChange={handleChange}
+          filterButtonClick={filterButtonClick}
+          resetButtonClick={resetButtonClick}
+        ></AppFilterDialog>
       </AppCard>
     </div>
   );

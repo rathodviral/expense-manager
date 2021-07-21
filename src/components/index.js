@@ -14,3 +14,4 @@ export { default as AppInfoText } from "./AppInfoText";
 export { default as AppSelectField } from "./AppSelectField";
 export { default as AppDateField } from "./AppDateField";
 export { default as AppAccordion } from "./AppAccordion";
+export { default as AppFilterDialog } from "./AppFilterDialog";

@@ -59,10 +59,10 @@ export const getObjectFormData = (formFields, withFilter = false) => {
     const { name, value, type } = field;
     if (withFilter) {
       if (type === "select") {
-        obj[name] = value && value.id ? value.id : value;
+        obj[name] =
+          value && isValueNullOrUndefined(value.id) ? value.id : value;
       } else if (type === "date") {
-        console.log(value);
-        obj[name] = typeof value ? AppDate.getDateIntoString(value) : null;
+        obj[name] = value ? AppDate.getDateIntoString(value) : null;
       } else {
         if (name === "amount") {
           obj[name] = Number(value);
@@ -75,4 +75,8 @@ export const getObjectFormData = (formFields, withFilter = false) => {
     }
   });
   return obj;
+};
+
+export const isValueNullOrUndefined = (value) => {
+  return value !== null && value !== undefined;
 };

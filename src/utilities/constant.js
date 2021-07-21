@@ -178,7 +178,7 @@ const AppConstant = {
       },
       {
         name: "isPaid",
-        label: "Select Paid/Unpaid",
+        label: "Select Paid/Not Paid",
         type: "select",
         helperText: null,
         isDisabled: false,
@@ -187,7 +187,7 @@ const AppConstant = {
         value: null,
         options: [
           { id: true, name: "Paid" },
-          { id: false, name: "Unpaid" },
+          { id: false, name: "Not Paid" },
         ],
       },
       {
