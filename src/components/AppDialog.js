@@ -28,16 +28,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AppDialog(props) {
-  const { openDialog, dialogObj, toggleDialog, getAdminData, showToaster } =
-    props;
+  const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
   const classes = useStyles();
-  const { getUserObject, showAlertDialogObj } = useContext(AppContext);
+  const { getUserObject, showAlertDialogObj, showSnackbar } =
+    useContext(AppContext);
 
   const alertBtnClickDeleteListItem = (isDelete) => {
     if (isDelete) {
       deleteListItem();
     }
   };
+
   const alertDeleteListItem = () => {
     const { isSubCategory, name } = dialogObj;
     const title = `${isSubCategory ? "Sub " : ""} Category`;
@@ -65,11 +66,11 @@ export default function AppDialog(props) {
     const response = await AppApiFetch(apiPath.delete, options);
     const { status } = await response.json();
     if (status) {
-      showToaster(`${isSubCategory ? "Sub " : ""} Category Deleted.`);
+      showSnackbar(`${isSubCategory ? "Sub " : ""} Category Deleted.`);
       getAdminData();
       toggleDialog(false);
     } else {
-      showToaster("Some Issue");
+      showSnackbar("Some Issue");
     }
   };
 
@@ -104,11 +105,7 @@ export default function AppDialog(props) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <EditListItem
-        {...dialogObj}
-        getAdminData={getAdminData}
-        showToaster={showToaster}
-      ></EditListItem>
+      <EditListItem {...dialogObj} getAdminData={getAdminData}></EditListItem>
     </Dialog>
   );
 }

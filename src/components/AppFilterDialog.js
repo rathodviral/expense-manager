@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   makeStyles,
   IconButton,
@@ -9,10 +9,12 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/Delete";
 import AppDateField from "./AppDateField";
 import AppSelectField from "./AppSelectField";
 import AppInputField from "./AppInputField";
 import AppButton from "./AppButton";
+import { AppContext, UserContext } from "../contexts";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -37,11 +39,31 @@ export default function AppFilterDialog(props) {
     formFields,
     title,
     handleChange,
-    filterButtonClick,
-    resetButtonClick,
+    emitEvents,
+    isFilter = true,
+    editObj = null,
   } = props;
 
   const classes = useStyles();
+
+  const { showAlertDialogObj } = useContext(AppContext);
+
+  const alertBtnClickDeleteListItem = (isDelete) => {
+    if (isDelete) {
+      emitEvents("delete");
+    }
+  };
+
+  const alertDeleteListItem = () => {
+    const obj = {
+      title: `Delete ${title}`,
+      message: `Are you sure, you want to delete ${title}.`,
+      agreeBtnText: "Agree",
+      disagreeBtnText: "Disagree",
+      dialogBtnClick: alertBtnClickDeleteListItem,
+    };
+    showAlertDialogObj(obj);
+  };
 
   return (
     <Dialog
@@ -60,9 +82,20 @@ export default function AppFilterDialog(props) {
           >
             <CloseIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title} noWrap={true}>
             {title}
           </Typography>
+          {!isFilter && (
+            <IconButton
+              className={classes.saveButton}
+              edge="start"
+              color="inherit"
+              onClick={(e) => alertDeleteListItem()}
+              aria-label="close"
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
@@ -96,8 +129,12 @@ export default function AppFilterDialog(props) {
               }
             })}
         </form>
-        <AppButton onClick={filterButtonClick}>Filter</AppButton>
-        <AppButton onClick={resetButtonClick}>Reset</AppButton>
+        {isFilter && (
+          <div>
+            <AppButton onClick={() => emitEvents("filter")}>Filter</AppButton>
+            <AppButton onClick={() => emitEvents("reset")}>Reset</AppButton>
+          </div>
+        )}
       </div>
     </Dialog>
   );

@@ -3,7 +3,7 @@ import { List } from "@material-ui/core";
 import {
   AppCard,
   AppDivider,
-  AppDialog,
+  AppEditExpenseIncomeDialog,
   AppListItem,
   AppCurrencyCountText,
   AppFilterDialog,
@@ -27,7 +27,7 @@ export default function Category(props) {
     expenseUserList,
     getDataFromConstant,
   } = useContext(UserContext);
-  const defailtFields = getDataFromConstant("listFields");
+  const defaultFields = getDataFromConstant("listFields");
   const defaultList = isExpense ? expenseCategoryList : incomeCategoryList;
   const defaultExpenseList = isExpense ? expenseUserList : incomeUserList;
 
@@ -38,7 +38,7 @@ export default function Category(props) {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
-  const [dialogObj, setDialogObj] = useState({ name: "" });
+  const [editObj, setEditObj] = useState({ category: "" });
 
   useEffect(() => {
     windowScrollTop();
@@ -117,7 +117,7 @@ export default function Category(props) {
   };
 
   const resetButtonClick = () => {
-    const fieldsWithOptions = defailtFields.map((element) => {
+    const fieldsWithOptions = defaultFields.map((element) => {
       const { name, type } = element;
       let list = [];
       if (name === "category") {
@@ -138,9 +138,9 @@ export default function Category(props) {
     setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
   };
 
-  const getEditItemDialog = (isSubCategory, value) => {
+  const getEditItemDialog = (isSubCategory, obj) => {
     toggleDialog(true);
-    setDialogObj({ ...value, isSubCategory });
+    setEditObj({ ...obj });
   };
 
   const getFilterDialog = () => {
@@ -150,8 +150,17 @@ export default function Category(props) {
   const toggleDialog = (flag) => {
     setOpenDialog(flag);
   };
+
   const toggleFilterDialog = (flag) => {
     setOpenFilterDialog(flag);
+  };
+
+  const emitEvents = (type) => {
+    if (type === "filter") {
+      filterButtonClick();
+    } else if (type === "reset") {
+      resetButtonClick();
+    }
   };
 
   const getTotal = () => {
@@ -180,20 +189,21 @@ export default function Category(props) {
             ></AppListItem>
           ))}
         </List>
-        <AppDialog
+        <AppEditExpenseIncomeDialog
           openDialog={openDialog}
-          dialogObj={dialogObj}
           toggleDialog={toggleDialog}
+          editObj={{ ...editObj, type }}
           getAdminData={getAdminData}
-        ></AppDialog>
+          defaultList={defaultList}
+        ></AppEditExpenseIncomeDialog>
         <AppFilterDialog
           openDialog={openFilterDialog}
           toggleDialog={toggleFilterDialog}
           title={`Filter ${type} List`}
           formFields={formFields}
           handleChange={handleChange}
-          filterButtonClick={filterButtonClick}
-          resetButtonClick={resetButtonClick}
+          emitEvents={emitEvents}
+          isFilter={true}
         ></AppFilterDialog>
       </AppCard>
     </div>

@@ -15,3 +15,4 @@ export { default as AppSelectField } from "./AppSelectField";
 export { default as AppDateField } from "./AppDateField";
 export { default as AppAccordion } from "./AppAccordion";
 export { default as AppFilterDialog } from "./AppFilterDialog";
+export { default as AppEditExpenseIncomeDialog } from "./AppEditExpenseIncomeDialog";

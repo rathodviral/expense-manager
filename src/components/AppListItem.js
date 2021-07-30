@@ -55,8 +55,24 @@ export default function AppListItem(props) {
   } = props;
 
   return (
-    <ListItem className={classes.noPadding}>
-      <ListItemIcon>
+    <ListItem
+      className={classes.noPadding}
+      button
+      onClick={(e) =>
+        listItemClick(false, {
+          id,
+          amount,
+          date,
+          isPaid,
+          category,
+          detail,
+          note,
+          categoryName,
+          subCategoryName,
+        })
+      }
+    >
+      {/* <ListItemIcon>
         <IconButton
           size="small"
           onClick={(e) => {
@@ -66,7 +82,7 @@ export default function AppListItem(props) {
         >
           <EditIcon />
         </IconButton>
-      </ListItemIcon>
+      </ListItemIcon> */}
       <ListItemText
         primary={
           <div>
@@ -97,11 +113,13 @@ export default function AppListItem(props) {
                 <b>Added By : </b> {user}
               </p>
             </div>
-            <div className={classes.displayFlex}>
-              <p className={classes.dateFontSize}>
-                <b>Details : </b> {note}
-              </p>
-            </div>
+            {note && (
+              <div className={classes.displayFlex}>
+                <p className={classes.dateFontSize}>
+                  <b>Details : </b> {note}
+                </p>
+              </div>
+            )}
           </div>
         }
       />
