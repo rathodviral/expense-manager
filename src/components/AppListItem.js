@@ -1,14 +1,11 @@
 import React from "react";
 import {
   ListItem,
-  ListItemIcon,
   ListItemText,
-  IconButton,
   makeStyles,
   Typography,
   Chip,
 } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
 import { AppDate } from "../utilities";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,9 +41,7 @@ export default function AppListItem(props) {
     amount,
     date,
     isPaid,
-    category,
     categoryName,
-    detail,
     user,
     subCategoryName,
     listItemClick,
@@ -58,19 +53,7 @@ export default function AppListItem(props) {
     <ListItem
       className={classes.noPadding}
       button
-      onClick={(e) =>
-        listItemClick(false, {
-          id,
-          amount,
-          date,
-          isPaid,
-          category,
-          detail,
-          note,
-          categoryName,
-          subCategoryName,
-        })
-      }
+      onClick={(e) => listItemClick(id)}
     >
       {/* <ListItemIcon>
         <IconButton

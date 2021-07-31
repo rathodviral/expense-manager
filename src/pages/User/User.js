@@ -53,7 +53,7 @@ export default function User() {
             <Dashboard></Dashboard>
           </Route>
           <Route exact path={`${path}/:type`}>
-            <Category></Category>
+            <Category getUserData={getUserDataEvent}></Category>
           </Route>
           <Route exact path={`${path}/:type/add`}>
             <AddExpenseIncome></AddExpenseIncome>

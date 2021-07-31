@@ -17,7 +17,7 @@ import {
 } from "../../utilities/common";
 
 export default function Category(props) {
-  const { getAdminData } = props;
+  const { getUserData } = props;
   const { type } = useParams();
   const isExpense = type === "expense";
   const {
@@ -38,11 +38,12 @@ export default function Category(props) {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
-  const [editObj, setEditObj] = useState({ category: "" });
+  const [editObj, setEditObj] = useState(null);
 
   useEffect(() => {
     windowScrollTop();
     resetButtonClick();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultList, defaultExpenseList]);
 
@@ -104,7 +105,6 @@ export default function Category(props) {
 
   const filterButtonClick = () => {
     const formData = getFormData(true);
-    console.log(formData);
     let list = [...defaultExpenseList];
     Object.keys(formData).forEach((x) => {
       const val = formData[x];
@@ -134,13 +134,17 @@ export default function Category(props) {
     });
     setDefaultFormFields(fieldsWithOptions);
     setFormFields(fieldsWithOptions);
-
     setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
+    if (editObj) {
+      const { id } = editObj;
+      const newEditObj = defaultExpenseList.find((x) => x.id === id);
+      setEditObj(newEditObj);
+    }
   };
 
-  const getEditItemDialog = (isSubCategory, obj) => {
+  const getEditItemDialog = (id) => {
     toggleDialog(true);
-    setEditObj({ ...obj });
+    setEditObj({ ...expenseIncomeList.find((x) => x.id === id) });
   };
 
   const getFilterDialog = () => {
@@ -192,8 +196,8 @@ export default function Category(props) {
         <AppEditExpenseIncomeDialog
           openDialog={openDialog}
           toggleDialog={toggleDialog}
-          editObj={{ ...editObj, type }}
-          getAdminData={getAdminData}
+          editObj={{ ...editObj, isExpense }}
+          getUserData={getUserData}
           defaultList={defaultList}
         ></AppEditExpenseIncomeDialog>
         <AppFilterDialog

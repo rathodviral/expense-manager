@@ -7,6 +7,8 @@ import {
   Dialog,
   AppBar,
   Toolbar,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -41,20 +43,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AppEditExpenseIncomeDialog(props) {
   const classes = useStyles();
 
-  const { openDialog, toggleDialog, editObj, getAdminData, defaultList } =
-    props;
+  const { openDialog, toggleDialog, editObj, getUserData, defaultList } = props;
 
-  const { subCategoryName, type, id, categoryName } = editObj;
-  const title = `Edit ${type} ${subCategoryName}`;
+  const { subCategoryName, id, categoryName, isExpense, user, note } = editObj;
+  const title = `Edit ${isExpense ? "Expense" : "Income"} ${subCategoryName}`;
 
-  const { getUserObject, getDataFromConstant } = useContext(UserContext);
-  const { showAlertDialogObj, showSnackbar } = useContext(AppContext);
+  const { getDataFromConstant } = useContext(UserContext);
+  const { getUserObject, showAlertDialogObj, showSnackbar } =
+    useContext(AppContext);
 
   const defaultFields = getDataFromConstant("fields");
-  const [defaultFormFields, setDefaultFormFields] = useState([]);
   const [formFields, setFormFields] = useState([]);
+  const [isPaid, setPaid] = useState(false);
 
   useEffect(() => {
+    const list = defaultList.map(getOptions);
+    const subList = getSubCategoryOptions(editObj.category);
     const fields = defaultFields.map((x) => {
       const { name } = x;
       return {
@@ -66,11 +70,18 @@ export default function AppEditExpenseIncomeDialog(props) {
                 name: name === "category" ? categoryName : subCategoryName,
               }
             : editObj[name],
+        options:
+          x.name === "category"
+            ? list
+            : name === "detail"
+            ? subList
+            : x.options || null,
       };
     });
+    setPaid(editObj.isPaid);
     setFormFields(fields);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultFields]);
+  }, [editObj]);
 
   const alertBtnClickDeleteListItem = (isDelete) => {
     if (isDelete) {
@@ -102,8 +113,8 @@ export default function AppEditExpenseIncomeDialog(props) {
     const response = await AppApiFetch(apiPath.delete, options);
     const { status } = await response.json();
     if (status) {
-      showSnackbar(`${type} Deleted.`);
-      getAdminData();
+      showSnackbar(`${isExpense ? "Expense" : "Income"} Deleted.`);
+      getUserData();
       toggleDialog(false);
     } else {
       showSnackbar("Some Issue");
@@ -112,18 +123,31 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const formSubmit = async () => {
     const formData = {
-      ...getObjectFormData(formFields),
+      ...getObjectFormData(formFields, true),
     };
     if (Object.values(formData).some((item) => item === "")) {
       const fields = validateObject(formData, defaultFields);
       setFormFields(fields);
       return;
     }
-    const { family } = getUserObject();
+    const { family, username } = getUserObject();
     const { update } = getDataFromConstant("apiPath");
+    const noteSplit = formData.note.split("--");
     const options = {
       method: "PUT",
-      body: { ...formData, isActive: true, id },
+      body: {
+        ...formData,
+        isPaid,
+        id,
+        user,
+        isExpense,
+        note:
+          user !== username
+            ? `${
+                noteSplit.length > 0 ? noteSplit[0] : note
+              }--Updated by ${username}`
+            : formData.note,
+      },
       queryParams: { family },
     };
 
@@ -131,7 +155,8 @@ export default function AppEditExpenseIncomeDialog(props) {
     const { status, message } = await response.json();
     showSnackbar(message);
     if (status) {
-      getAdminData();
+      getUserData();
+      toggleDialog(false);
     } else {
       setFormFields(defaultFields);
     }
@@ -159,7 +184,7 @@ export default function AppEditExpenseIncomeDialog(props) {
     if (name === "category") {
       modifiedFormdata.detail = null;
     }
-    const fields = setValuesInObject(modifiedFormdata, defaultFormFields);
+    const fields = setValuesInObject(modifiedFormdata, defaultFields);
     if (modifiedFormdata.category && modifiedFormdata.category.id) {
       const subList = modifiedFormdata.category.id
         ? getSubCategoryOptions(modifiedFormdata.category.id)
@@ -238,7 +263,20 @@ export default function AppEditExpenseIncomeDialog(props) {
               }
             })}
         </form>
-        <AppButton onClick={() => formSubmit()}>Save</AppButton>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isPaid}
+              onChange={(e) => setPaid(e.target.checked)}
+              name="checkedB"
+              color="primary"
+            />
+          }
+          label={isPaid ? "Paid" : "Not Paid"}
+        />
+        <AppButton onClick={() => formSubmit()}>
+          Update {isExpense ? "Expense" : "Income"}
+        </AppButton>
       </div>
     </Dialog>
   );
