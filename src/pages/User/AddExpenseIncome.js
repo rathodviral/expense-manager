@@ -9,12 +9,12 @@ import {
 import { useParams } from "react-router-dom";
 import {
   AppApiFetch,
-  setValuesInObject,
+  setValuesInFields,
   validateObject,
 } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
-import { getObjectFormData } from "../../utilities/common";
+import { getValuesFromFields } from "../../utilities/common";
 
 export default function AddExpenseIncome(props) {
   const { getUserDataEvent } = props;
@@ -83,7 +83,7 @@ export default function AddExpenseIncome(props) {
       isExpense,
       user: username,
       isPaid,
-      ...getObjectFormData(formFields, withFilter),
+      ...getValuesFromFields(formFields, withFilter),
     };
   };
 
@@ -93,7 +93,7 @@ export default function AddExpenseIncome(props) {
     if (name === "category") {
       modifiedFormdata.detail = null;
     }
-    const fields = setValuesInObject(modifiedFormdata, modifiedFields);
+    const fields = setValuesInFields(modifiedFormdata, modifiedFields);
     setFieldValueChange(modifiedFormdata, fields);
   };
 
@@ -139,7 +139,7 @@ export default function AddExpenseIncome(props) {
       const fD = getFormData();
       fD.note = "";
       fD.amount = "";
-      const fields = setValuesInObject(fD, modifiedFields);
+      const fields = setValuesInFields(fD, modifiedFields);
       setFieldValueChange(fD, fields);
       getUserDataEvent();
     }

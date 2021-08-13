@@ -3,8 +3,9 @@ import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
 import {
   AppApiFetch,
-  setValuesInObject,
+  setValuesInFields,
   validateObject,
+  getValuesFromFields,
 } from "../../utilities";
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../../contexts";
@@ -16,48 +17,40 @@ export default function AddCategorySubCategory(props) {
   const { getListObj, getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
   const isSubCategory = categoryId && categoryId !== "";
-  const listFields = getListFromConstant(isSubCategory, "fields");
-  const [formFields, setFormFields] = useState(listFields);
+  const defaultFields = getListFromConstant(isSubCategory, "fields");
 
-  const getFormData = () => {
-    let obj = { isExpense };
-    if (isSubCategory) {
-      obj["categoryId"] = categoryId;
-    }
-    formFields.forEach((field) => {
-      const { name, value } = field;
-      obj[name] = value;
-    });
-    return obj;
-  };
+  const [categoryFormFields, setCategoryFormFields] = useState(defaultFields);
 
   const handleChange = (value, name) => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(categoryFormFields);
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, listFields);
-    setFormFields(fields);
+    const fields = setValuesInFields(modifiedFormdata, defaultFields);
+    setCategoryFormFields(fields);
   };
 
   const formSubmit = async () => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(categoryFormFields);
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, listFields);
-      setFormFields(fields);
+      const fields = validateObject(formData, defaultFields);
+      setCategoryFormFields(fields);
       return;
     }
     const { family } = getUserObject();
     const { create } = getListFromConstant("apiPath");
-
     const options = {
       method: "POST",
-      body: formData,
+      body: {
+        ...formData,
+        isExpense,
+        categoryId: isSubCategory ? categoryId : undefined,
+      },
       queryParams: { family },
     };
 
     const response = await AppApiFetch(create, options);
     const { status, message } = await response.json();
     showSnackbar(message);
-    setFormFields(listFields);
+    setCategoryFormFields(defaultFields);
     if (status) {
       getAdminData();
     }
@@ -72,8 +65,8 @@ export default function AddCategorySubCategory(props) {
           </Typography>
         )}
         <form noValidate autoComplete="off">
-          {formFields &&
-            formFields.map((field, i) => (
+          {categoryFormFields &&
+            categoryFormFields.map((field, i) => (
               <AppInputField {...field} key={i} handleChange={handleChange} />
             ))}
           <AppButton onClick={formSubmit}>

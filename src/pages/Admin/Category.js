@@ -4,7 +4,7 @@ import {
   AppCard,
   AppInputField,
   AppDivider,
-  AppDialog,
+  AppEditCategorySubCategoryDialog,
   AppAccordion,
 } from "../../components";
 import { AdminContext } from "../../contexts";
@@ -16,9 +16,9 @@ export default function Category(props) {
   const { type } = useParams();
   const adminCtx = useContext(AdminContext);
   const defaultList = adminCtx[`${type}CategoryList`];
+
   const [categoryList, setCategoryList] = useState([]);
   const [searchText, setSearchText] = useState("");
-
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogObj, setDialogObj] = useState(false);
 
@@ -69,12 +69,12 @@ export default function Category(props) {
             ></AppAccordion>
           ))}
         </List>
-        <AppDialog
+        <AppEditCategorySubCategoryDialog
           openDialog={openDialog}
           dialogObj={dialogObj}
           toggleDialog={toggleDialog}
           getAdminData={getAdminData}
-        ></AppDialog>
+        ></AppEditCategorySubCategoryDialog>
       </AppCard>
     </div>
   );

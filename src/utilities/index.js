@@ -6,6 +6,9 @@ export {
   windowScrollTop,
   validateObject,
   setEmptyObject,
-  setValuesInObject,
+  setValuesInFields,
   getCurrencyFormat,
+  getValuesFromFields,
+  createOptions,
+  isValueNullOrUndefined,
 } from "./common.js";

@@ -6,7 +6,8 @@ import {
   AppApiFetch,
   AppStorage,
   validateObject,
-  setValuesInObject,
+  setValuesInFields,
+  getValuesFromFields,
 } from "../utilities";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../contexts";
@@ -25,38 +26,30 @@ export default function Login() {
   const classes = useStyles();
   const history = useHistory();
   const { showSnackbar } = useContext(AppContext);
-
   const { login } = AppConstant;
-  const [formFields, setFormFields] = useState(login.fields);
+  const defaultFields = login.fields;
 
-  const getFormData = () => {
-    let obj = {};
-    formFields.forEach((field) => {
-      const { name, value } = field;
-      obj[name] = value;
-    });
-    return obj;
-  };
+  const [loginFormFields, setLoginFormFields] = useState(defaultFields);
 
   const handleChange = (value, type) => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(loginFormFields);
     const modifiedFormdata = { ...formData, [type]: value };
-    const fields = setValuesInObject(modifiedFormdata, login.fields);
-    setFormFields(fields);
+    const fields = setValuesInFields(modifiedFormdata, defaultFields);
+    setLoginFormFields(fields);
   };
 
   const formSubmit = async () => {
-    const formData = getFormData();
-    if (Object.keys(formData).some((x) => formData[x] === "")) {
-      const fields = validateObject(formData, login.fields);
-      setFormFields(fields);
+    const formData = getValuesFromFields(loginFormFields);
+    if (Object.values(formData).some((item) => item === "")) {
+      const fields = validateObject(formData, defaultFields);
+      setLoginFormFields(fields);
       return;
     }
+
     const options = {
       method: "POST",
       body: formData,
     };
-
     const response = await AppApiFetch(login.apiPath, options);
     const { status, data, message } = await response.json();
     if (status) {
@@ -76,7 +69,7 @@ export default function Login() {
     <div className={classes.root}>
       <AppCard title="Expense Manager">
         <form noValidate autoComplete="off">
-          {formFields.map((field, i) => (
+          {loginFormFields.map((field, i) => (
             <AppInputField
               {...field}
               key={i}

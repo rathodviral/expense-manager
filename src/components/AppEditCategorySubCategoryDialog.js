@@ -27,7 +27,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AppDialog(props) {
+export default function AppEditCategorySubCategoryDialog(props) {
   const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
   const classes = useStyles();
   const { getUserObject, showAlertDialogObj, showSnackbar } =

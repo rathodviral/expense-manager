@@ -1,8 +1,8 @@
 import AppDate from "./date";
 
-export const validateObject = (formData, fields) => {
-  return fields.map((x) => {
-    if (!formData[x.name] || formData[x.name] === "") {
+export const validateObject = (formObject, defaultFields) => {
+  return defaultFields.map((x) => {
+    if (!formObject[x.name] || formObject[x.name] === "") {
       return {
         ...x,
         isError: true,
@@ -12,50 +12,38 @@ export const validateObject = (formData, fields) => {
     } else {
       return {
         ...x,
-        value: formData[x.name],
+        value: formObject[x.name],
       };
     }
   });
 };
 
-export const setEmptyObject = (fields) => {
-  return fields.map((x) => {
+export const setEmptyObject = (defaultFields) => {
+  return defaultFields.map((x) => {
     return {
       ...x,
       isError: false,
       value:
-        fields.name === "note" || fields.name === "amount" ? "" : fields.value,
-      // helperText: `${x.label}, Added`,
+        defaultFields.name === "note" || defaultFields.name === "amount"
+          ? ""
+          : defaultFields.value,
     };
   });
 };
 
-export const setValuesInObject = (formData, fields) => {
-  return fields.map((x) => {
+export const setValuesInFields = (formObject, defaultFields) => {
+  return defaultFields.map((x) => {
     return {
       ...x,
       isError: false,
-      value: formData[x.name],
+      value: formObject[x.name],
     };
   });
 };
 
-export const windowScrollTop = (formData, fields) => {
-  setTimeout(() => {
-    window.scrollTo(0, 0);
-  }, 100);
-};
-
-export const getCurrencyFormat = (count) => {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  }).format(count);
-};
-
-export const getObjectFormData = (formFields, withFilter = false) => {
+export const getValuesFromFields = (fields, withFilter = false) => {
   let obj = {};
-  formFields.forEach((field) => {
+  fields.forEach((field) => {
     const { name, value, type } = field;
     if (withFilter) {
       if (type === "select") {
@@ -77,6 +65,26 @@ export const getObjectFormData = (formFields, withFilter = false) => {
   return obj;
 };
 
+export const windowScrollTop = (formData, fields) => {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 100);
+};
+
+export const getCurrencyFormat = (count) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(count);
+};
+
 export const isValueNullOrUndefined = (value) => {
   return value !== null && value !== undefined;
+};
+
+export const createOptions = (value) => {
+  return {
+    id: value.id || value,
+    name: value.name || value,
+  };
 };

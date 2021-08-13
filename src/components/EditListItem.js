@@ -1,7 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppInputField, AppButton, AppDivider } from ".";
 import { useHistory, useParams } from "react-router-dom";
-import { AppApiFetch, setValuesInObject, validateObject } from "../utilities";
+import {
+  AppApiFetch,
+  setValuesInFields,
+  validateObject,
+  getValuesFromFields,
+} from "../utilities";
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../contexts";
 
@@ -12,9 +17,9 @@ export default function EditListItem(props) {
   const { showSnackbar, getUserObject } = useContext(AppContext);
   const { getListObj, getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
-  const listFields = getListFromConstant(isSubCategory, "fields");
+  const defaultFields = getListFromConstant(isSubCategory, "fields");
 
-  const [formFields, setFormFields] = useState(listFields);
+  const [formFields, setFormFields] = useState(defaultFields);
 
   useEffect(() => {
     updateFieldsValue();
@@ -22,39 +27,27 @@ export default function EditListItem(props) {
   }, []);
 
   const updateFieldsValue = () => {
-    const mFormData = { name, detail };
-    const mFormsFields = listFields.map((x) => {
+    const formData = { name, detail };
+    const fields = defaultFields.map((x) => {
       return {
         ...x,
-        value: mFormData[x.name],
+        value: formData[x.name],
       };
     });
-    setFormFields(mFormsFields);
-  };
-
-  const getFormData = () => {
-    let obj = { isExpense };
-    if (isSubCategory) {
-      obj["categoryId"] = categoryId;
-    }
-    formFields.forEach((field) => {
-      const { name, value } = field;
-      obj[name] = value;
-    });
-    return obj;
+    setFormFields(fields);
   };
 
   const InputChange = (value, name) => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(formFields);
     const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInObject(modifiedFormdata, listFields);
+    const fields = setValuesInFields(modifiedFormdata, defaultFields);
     setFormFields(fields);
   };
 
   const formSubmit = async () => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(formFields);
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, listFields);
+      const fields = validateObject(formData, defaultFields);
       setFormFields(fields);
       return;
     }
@@ -62,7 +55,13 @@ export default function EditListItem(props) {
     const { update } = getListFromConstant("apiPath");
     const options = {
       method: "PUT",
-      body: { ...formData, isActive: true, id },
+      body: {
+        ...formData,
+        isExpense,
+        categoryId: isSubCategory ? categoryId : undefined,
+        isActive: true,
+        id,
+      },
       queryParams: { family },
     };
 
@@ -72,7 +71,7 @@ export default function EditListItem(props) {
     if (status) {
       getAdminData();
     } else {
-      setFormFields(listFields);
+      setFormFields(defaultFields);
     }
   };
 

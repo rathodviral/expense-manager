@@ -10,13 +10,13 @@ import {
 } from "../../components";
 import { UserContext } from "../../contexts";
 import { useParams } from "react-router-dom";
-import { setValuesInObject, windowScrollTop } from "../../utilities";
+import { setValuesInFields, windowScrollTop } from "../../utilities";
 import {
-  getObjectFormData,
+  getValuesFromFields,
   isValueNullOrUndefined,
 } from "../../utilities/common";
 
-export default function Category(props) {
+export default function ExpenseIncomeList(props) {
   const { getUserData } = props;
   const { type } = useParams();
   const isExpense = type === "expense";
@@ -28,7 +28,9 @@ export default function Category(props) {
     getDataFromConstant,
   } = useContext(UserContext);
   const defaultFields = getDataFromConstant("listFields");
-  const defaultList = isExpense ? expenseCategoryList : incomeCategoryList;
+  const defaultCategoryList = isExpense
+    ? expenseCategoryList
+    : incomeCategoryList;
   const defaultExpenseList = isExpense ? expenseUserList : incomeUserList;
 
   const [expenseIncomeList, setExpenseIncomeList] = useState([]);
@@ -45,7 +47,7 @@ export default function Category(props) {
     resetButtonClick();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultList, defaultExpenseList]);
+  }, [defaultCategoryList, defaultExpenseList]);
 
   const getOptions = (value) => {
     return {
@@ -64,11 +66,13 @@ export default function Category(props) {
   };
 
   const getCategoryOptions = () => {
-    return defaultList.map(getOptions);
+    return defaultCategoryList.map(getOptions);
   };
 
   const getSubCategoryOptions = (category) => {
-    const { subCategoryList } = defaultList.find((x) => x.id === category) || {
+    const { subCategoryList } = defaultCategoryList.find(
+      (x) => x.id === category
+    ) || {
       subCategoryList: [],
     };
     return subCategoryList.map(getOptions);
@@ -76,7 +80,7 @@ export default function Category(props) {
 
   const getFormData = (withFilter = false) => {
     return {
-      ...getObjectFormData(formFields, withFilter),
+      ...getValuesFromFields(formFields, withFilter),
     };
   };
 
@@ -86,7 +90,7 @@ export default function Category(props) {
     if (name === "category") {
       modifiedFormdata.detail = null;
     }
-    const fields = setValuesInObject(modifiedFormdata, defaultFormFields);
+    const fields = setValuesInFields(modifiedFormdata, defaultFormFields);
     if (modifiedFormdata.category && modifiedFormdata.category.id) {
       const subList = modifiedFormdata.category.id
         ? getSubCategoryOptions(modifiedFormdata.category.id)
@@ -198,7 +202,7 @@ export default function Category(props) {
           toggleDialog={toggleDialog}
           editObj={{ ...editObj, isExpense }}
           getUserData={getUserData}
-          defaultList={defaultList}
+          defaultList={defaultCategoryList}
         ></AppEditExpenseIncomeDialog>
         <AppFilterDialog
           openDialog={openFilterDialog}

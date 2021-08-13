@@ -19,8 +19,8 @@ import AppButton from "./AppButton";
 import { AppContext, UserContext } from "../contexts";
 import { AppApiFetch, AppConstant } from "../utilities";
 import {
-  getObjectFormData,
-  setValuesInObject,
+  getValuesFromFields,
+  setValuesInFields,
   validateObject,
 } from "../utilities/common";
 
@@ -123,7 +123,7 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const formSubmit = async () => {
     const formData = {
-      ...getObjectFormData(formFields, true),
+      ...getValuesFromFields(formFields, true),
     };
     if (Object.values(formData).some((item) => item === "")) {
       const fields = validateObject(formData, defaultFields);
@@ -178,13 +178,13 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const handleChange = (value, name) => {
     const formData = {
-      ...getObjectFormData(formFields),
+      ...getValuesFromFields(formFields),
     };
     const modifiedFormdata = { ...formData, [name]: value };
     if (name === "category") {
       modifiedFormdata.detail = null;
     }
-    const fields = setValuesInObject(modifiedFormdata, defaultFields);
+    const fields = setValuesInFields(modifiedFormdata, defaultFields);
     if (modifiedFormdata.category && modifiedFormdata.category.id) {
       const subList = modifiedFormdata.category.id
         ? getSubCategoryOptions(modifiedFormdata.category.id)
