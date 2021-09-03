@@ -12,6 +12,7 @@ import { UserContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { setValuesInFields, windowScrollTop } from "../../utilities";
 import {
+  createOptions,
   getValuesFromFields,
   isValueNullOrUndefined,
 } from "../../utilities/common";
@@ -45,16 +46,8 @@ export default function ExpenseIncomeList(props) {
   useEffect(() => {
     windowScrollTop();
     resetButtonClick();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultCategoryList, defaultExpenseList]);
-
-  const getOptions = (value) => {
-    return {
-      id: value.id || value,
-      name: value.name || value,
-    };
-  };
 
   const sortByDate = (current, previous) =>
     new Date(previous.date) - new Date(current.date);
@@ -62,11 +55,11 @@ export default function ExpenseIncomeList(props) {
   const getUsersOptions = () => {
     const userList = defaultExpenseList.map((x) => x.user);
     const uniqUserList = [...new Set(userList)];
-    return uniqUserList.map(getOptions);
+    return uniqUserList.map(createOptions);
   };
 
   const getCategoryOptions = () => {
-    return defaultCategoryList.map(getOptions);
+    return defaultCategoryList.map(createOptions);
   };
 
   const getSubCategoryOptions = (category) => {
@@ -75,7 +68,7 @@ export default function ExpenseIncomeList(props) {
     ) || {
       subCategoryList: [],
     };
-    return subCategoryList.map(getOptions);
+    return subCategoryList.map(createOptions);
   };
 
   const getFormData = (withFilter = false) => {

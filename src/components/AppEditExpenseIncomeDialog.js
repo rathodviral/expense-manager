@@ -57,9 +57,16 @@ export default function AppEditExpenseIncomeDialog(props) {
   const [isPaid, setPaid] = useState(false);
 
   useEffect(() => {
+    const fields = setValues();
+    setPaid(editObj.isPaid);
+    setFormFields(fields);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editObj]);
+
+  const setValues = () => {
     const list = defaultList.map(getOptions);
     const subList = getSubCategoryOptions(editObj.category);
-    const fields = defaultFields.map((x) => {
+    return defaultFields.map((x) => {
       const { name } = x;
       return {
         ...x,
@@ -78,10 +85,7 @@ export default function AppEditExpenseIncomeDialog(props) {
             : x.options || null,
       };
     });
-    setPaid(editObj.isPaid);
-    setFormFields(fields);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editObj]);
+  };
 
   const alertBtnClickDeleteListItem = (isDelete) => {
     if (isDelete) {
@@ -125,8 +129,11 @@ export default function AppEditExpenseIncomeDialog(props) {
     const formData = {
       ...getValuesFromFields(formFields, true),
     };
-    if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, defaultFields);
+
+    if (Object.values(formData).some((item) => item === "" || item === null)) {
+      const dFields = setValues();
+      const fields = validateObject(formData, dFields);
+      console.log(fields);
       setFormFields(fields);
       return;
     }

@@ -7,7 +7,7 @@ export { default as AppButton } from "./AppButton";
 export { default as AppSnackbar } from "./AppSnackbar";
 export { default as AppEditCategorySubCategoryDialog } from "./AppEditCategorySubCategoryDialog";
 export { default as AppListItem } from "./AppListItem";
-export { default as AddEditListItem } from "./EditListItem";
+export { default as AppEditCategorySubCategory } from "./AppEditCategorySubCategory";
 export { default as AppAlertDialog } from "./AppAlertDialog";
 export { default as AppCurrencyCountText } from "./AppCurrencyCountText";
 export { default as AppInfoText } from "./AppInfoText";

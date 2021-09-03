@@ -31,7 +31,7 @@ export default function AddCategorySubCategory(props) {
   const formSubmit = async () => {
     const formData = getValuesFromFields(categoryFormFields);
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, defaultFields);
+      const fields = validateObject(formData, categoryFormFields);
       setCategoryFormFields(fields);
       return;
     }

@@ -5,6 +5,7 @@ export const validateObject = (formObject, defaultFields) => {
     if (!formObject[x.name] || formObject[x.name] === "") {
       return {
         ...x,
+        value: formObject[x.name],
         isError: true,
         label: "Error",
         helperText: `Enter ${x.label}, it's required field`,
@@ -12,7 +13,6 @@ export const validateObject = (formObject, defaultFields) => {
     } else {
       return {
         ...x,
-        value: formObject[x.name],
       };
     }
   });

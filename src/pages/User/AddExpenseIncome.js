@@ -14,7 +14,7 @@ import {
 } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
-import { getValuesFromFields } from "../../utilities/common";
+import { createOptions, getValuesFromFields } from "../../utilities/common";
 
 export default function AddExpenseIncome(props) {
   const { getUserDataEvent } = props;
@@ -42,53 +42,19 @@ export default function AddExpenseIncome(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomeCategoryList, expenseCategoryList]);
 
-  const getOptions = (value) => {
-    return {
-      id: value.id,
-      name: value.name,
-    };
-  };
-
   const getCategoryOptions = () => {
-    return typeList.map(getOptions);
+    return typeList.map(createOptions);
   };
 
   const getSubCategoryOptions = (category) => {
     const { subCategoryList } = typeList.find((x) => x.id === category) || {
       subCategoryList: [],
     };
-    return subCategoryList.map(getOptions);
-  };
-
-  const getFormData = (withFilter = false) => {
-    const { username } = getUserObject();
-    // let obj = { isExpense, user: username, isPaid };
-    // formFields.forEach((field) => {
-    //   const { name, value, type } = field;
-    //   if (withFilter) {
-    //     if (type === "select") {
-    //       obj[name] = value && value.id ? value.id : value;
-    //     } else {
-    //       if (name === "amount") {
-    //         obj[name] = Number(value);
-    //       } else {
-    //         obj[name] = value;
-    //       }
-    //     }
-    //   } else {
-    //     obj[name] = value;
-    //   }
-    // });
-    return {
-      isExpense,
-      user: username,
-      isPaid,
-      ...getValuesFromFields(formFields, withFilter),
-    };
+    return subCategoryList.map(createOptions);
   };
 
   const handleChange = (value, name) => {
-    const formData = getFormData();
+    const formData = getValuesFromFields(formFields);
     const modifiedFormdata = { ...formData, [name]: value };
     if (name === "category") {
       modifiedFormdata.detail = null;
@@ -115,20 +81,20 @@ export default function AddExpenseIncome(props) {
   };
 
   const formSubmit = async () => {
-    const formData = getFormData(true);
+    const formData = getValuesFromFields(formFields, true);
 
     if (Object.values(formData).some((item) => !item || item === "")) {
-      const fD = getFormData();
+      const fD = getValuesFromFields(formFields);
       const fields = validateObject(fD, modifiedFields);
       setFieldValueChange(fD, fields);
       return;
     }
-    const { family } = getUserObject();
+    const { family, username } = getUserObject();
     const { create } = getDataFromConstant("apiPath");
 
     const options = {
       method: "POST",
-      body: formData,
+      body: { ...formData, isExpense, user: username, isPaid },
       queryParams: { family },
     };
 
@@ -136,7 +102,7 @@ export default function AddExpenseIncome(props) {
     const { status, message } = await response.json();
     showSnackbar(message);
     if (status) {
-      const fD = getFormData();
+      const fD = getValuesFromFields(formFields);
       fD.note = "";
       fD.amount = "";
       const fields = setValuesInFields(fD, modifiedFields);

@@ -41,7 +41,7 @@ export default function Login() {
   const formSubmit = async () => {
     const formData = getValuesFromFields(loginFormFields);
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, defaultFields);
+      const fields = validateObject(formData, loginFormFields);
       setLoginFormFields(fields);
       return;
     }

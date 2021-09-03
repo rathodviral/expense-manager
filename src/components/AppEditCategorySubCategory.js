@@ -10,7 +10,7 @@ import {
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../contexts";
 
-export default function EditListItem(props) {
+export default function AppEditCategorySubCategory(props) {
   const { getAdminData, isSubCategory, id, name, detail, categoryId } = props;
   const history = useHistory();
   const { type } = useParams();
@@ -47,7 +47,7 @@ export default function EditListItem(props) {
   const formSubmit = async () => {
     const formData = getValuesFromFields(formFields);
     if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, defaultFields);
+      const fields = validateObject(formData, formFields);
       setFormFields(fields);
       return;
     }

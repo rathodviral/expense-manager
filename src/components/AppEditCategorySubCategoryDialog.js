@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditListItem from "./EditListItem";
+import AppEditCategorySubCategory from "./AppEditCategorySubCategory";
 import { AppApiFetch, AppConstant } from "../utilities";
 import { AppContext } from "../contexts";
 
@@ -105,7 +105,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <EditListItem {...dialogObj} getAdminData={getAdminData}></EditListItem>
+      <AppEditCategorySubCategory
+        {...dialogObj}
+        getAdminData={getAdminData}
+      ></AppEditCategorySubCategory>
     </Dialog>
   );
 }
