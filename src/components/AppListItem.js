@@ -47,6 +47,7 @@ export default function AppListItem(props) {
     listItemClick,
     note,
     id,
+    isExpense,
   } = props;
 
   return (
@@ -75,12 +76,14 @@ export default function AppListItem(props) {
                   style: "currency",
                   currency: "INR",
                 }).format(amount)}
-                <Chip
-                  className={classes.chipPosition}
-                  label={isPaid ? "Paid" : "Not Paid"}
-                  color={isPaid ? "primary" : "secondary"}
-                  size="small"
-                />
+                {isExpense && (
+                  <Chip
+                    className={classes.chipPosition}
+                    label={isPaid ? "Paid" : "Not Paid"}
+                    color={isPaid ? "primary" : "secondary"}
+                    size="small"
+                  />
+                )}
               </Typography>
               <p className={classes.dateFontSize}>
                 {AppDate.getDateIntoString(date, "MMM, Do YYYY")}

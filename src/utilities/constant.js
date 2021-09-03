@@ -98,8 +98,8 @@ const AppConstant = {
       delete: "exp_data/delete.php",
     },
     storage: "EXPENSE-INFO",
-    fields: [
-      {
+    fields: {
+      date: {
         name: "date",
         label: "Category date",
         type: "date",
@@ -107,9 +107,9 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: AppDate.getDateIntoString(),
+        value: new Date(),
       },
-      {
+      category: {
         name: "category",
         label: "Expense Category",
         type: "select",
@@ -120,7 +120,7 @@ const AppConstant = {
         value: null,
         options: [],
       },
-      {
+      detail: {
         name: "detail",
         label: "Expense Sub Category",
         type: "select",
@@ -131,7 +131,7 @@ const AppConstant = {
         value: null,
         options: [],
       },
-      {
+      amount: {
         name: "amount",
         label: "Expense Amount",
         type: "number",
@@ -141,7 +141,7 @@ const AppConstant = {
         multiline: false,
         value: "",
       },
-      {
+      note: {
         name: "note",
         label: "Expense Detail",
         type: "text",
@@ -152,9 +152,9 @@ const AppConstant = {
         rows: 3,
         value: "",
       },
-    ],
-    listFields: [
-      {
+    },
+    listFields: {
+      date: {
         name: "date",
         label: "Select date",
         type: "date",
@@ -165,7 +165,7 @@ const AppConstant = {
         value: null,
         minDate: false,
       },
-      {
+      user: {
         name: "user",
         label: "Select User",
         type: "select",
@@ -176,7 +176,7 @@ const AppConstant = {
         value: null,
         options: [],
       },
-      {
+      isPaid: {
         name: "isPaid",
         label: "Select Paid/Not Paid",
         type: "select",
@@ -190,7 +190,7 @@ const AppConstant = {
           { id: false, name: "Not Paid" },
         ],
       },
-      {
+      category: {
         name: "category",
         label: "Expense Category",
         type: "select",
@@ -201,7 +201,7 @@ const AppConstant = {
         value: null,
         options: [],
       },
-      {
+      detail: {
         name: "detail",
         label: "Expense Sub Category",
         type: "select",
@@ -212,7 +212,70 @@ const AppConstant = {
         value: null,
         options: [],
       },
-    ],
+    },
+  },
+  report: {
+    apiPath: {
+      read: "read.php",
+      create: "exp_data/create.php",
+      update: "exp_data/update.php",
+      delete: "exp_data/delete.php",
+    },
+    storage: "EXPENSE-INFO",
+    fields: {
+      startDate: {
+        name: "startDate",
+        label: "Start date",
+        type: "startDate",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: AppDate.getDateIntoString(),
+      },
+      endDate: {
+        name: "endDate",
+        label: "End date",
+        type: "endDate",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: AppDate.getDateIntoString(),
+      },
+      category: {
+        name: "category",
+        label: "Expense Category",
+        type: "select",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: null,
+        options: [],
+      },
+      detail: {
+        name: "detail",
+        label: "Expense Sub Category",
+        type: "select",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: null,
+        options: [],
+      },
+      amount: {
+        name: "amount",
+        label: "Expense Amount",
+        type: "number",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: "",
+      },
+    },
   },
 };
 export default AppConstant;

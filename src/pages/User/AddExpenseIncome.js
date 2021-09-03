@@ -3,18 +3,14 @@ import {
   AppCard,
   AppInputField,
   AppButton,
-  AppSelectField,
+  AppAutocompleteField,
   AppDateField,
 } from "../../components";
 import { useParams } from "react-router-dom";
-import {
-  AppApiFetch,
-  setValuesInFields,
-  validateObject,
-} from "../../utilities";
+import { AppApiFetch, AppDate } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
-import { createOptions, getValuesFromFields } from "../../utilities/common";
+import { createOptions, isFalsyValue } from "../../utilities/common";
 
 export default function AddExpenseIncome(props) {
   const { getUserDataEvent } = props;
@@ -23,70 +19,132 @@ export default function AddExpenseIncome(props) {
   const { incomeCategoryList, expenseCategoryList, getDataFromConstant } =
     useContext(UserContext);
   const isExpense = type === "expense";
-  const defailtFields = getDataFromConstant("fields");
+  const defaultFields = getDataFromConstant("fields");
   const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
-  const [modifiedFields, setModifiedFields] = useState([]);
-  const [formFields, setFormFields] = useState([]);
+
   const [isPaid, setPaid] = useState(true);
+  const [dateField, setDateField] = useState(null);
+  const [categoryField, setCategoryField] = useState(defaultFields.category);
+  const [detailField, setDetailField] = useState(defaultFields.detail);
+  const [amountField, setAmountField] = useState(null);
+  const [noteField, setNoteField] = useState(null);
 
   useEffect(() => {
-    const list = getCategoryOptions();
-    const fieldsWithOptions = defailtFields.map((element) => {
-      return {
-        ...element,
-        options: element.name === "category" ? list : element.options || null,
-      };
-    });
-    setModifiedFields(fieldsWithOptions);
-    setFormFields(fieldsWithOptions);
+    if (categoryField.options.length === 0) {
+      setValues(defaultFields);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [incomeCategoryList, expenseCategoryList]);
+  }, [typeList]);
 
-  const getCategoryOptions = () => {
-    return typeList.map(createOptions);
-  };
-
-  const getSubCategoryOptions = (category) => {
-    const { subCategoryList } = typeList.find((x) => x.id === category) || {
-      subCategoryList: [],
+  const getFormData = () => {
+    return {
+      date: AppDate.getDateIntoString(dateField.value),
+      category:
+        categoryField.value && categoryField.value.id
+          ? categoryField.value.id
+          : null,
+      detail:
+        detailField.value && detailField.value.id ? detailField.value.id : null,
+      amount: Number(amountField.value),
+      note: noteField.value,
+      isExpense,
+      isPaid,
     };
-    return subCategoryList.map(createOptions);
   };
 
-  const handleChange = (value, name) => {
-    const formData = getValuesFromFields(formFields);
-    const modifiedFormdata = { ...formData, [name]: value };
-    if (name === "category") {
-      modifiedFormdata.detail = null;
-    }
-    const fields = setValuesInFields(modifiedFormdata, modifiedFields);
-    setFieldValueChange(modifiedFormdata, fields);
+  const getFormFields = () => {
+    return {
+      dateField,
+      categoryField,
+      detailField,
+      amountField,
+      noteField,
+    };
   };
 
-  const setFieldValueChange = (modifiedFormdata, fields) => {
-    if (modifiedFormdata.category && modifiedFormdata.category.id) {
-      const subList = modifiedFormdata.category.id
-        ? getSubCategoryOptions(modifiedFormdata.category.id)
-        : [];
-      const fieldsWithOptions = fields.map((element) => {
-        return {
-          ...element,
-          options: element.name === "detail" ? subList : element.options,
+  const setValues = ({ date, category, detail, amount, note }) => {
+    const categoryList = typeList.map(createOptions);
+    const cField = {
+      ...category,
+      options: categoryList,
+    };
+    setDateField(date);
+    setCategoryField(cField);
+    setDetailField(detail);
+    setAmountField(amount);
+    setNoteField(note);
+  };
+
+  const setSubCategoryOptions = (categoryId) => {
+    const { subCategoryList } = categoryId
+      ? typeList.find((x) => x.id === categoryId)
+      : {
+          subCategoryList: [],
         };
-      });
-      setFormFields(fieldsWithOptions);
-    } else {
-      setFormFields(fields);
-    }
+    const subCatList = subCategoryList.map(createOptions);
+    const sField = {
+      ...detailField,
+      options: subCatList,
+      value: null,
+    };
+    setDetailField(sField);
+  };
+
+  const dateFieldChange = (value, name) => {
+    const field = { ...dateField, value };
+    setDateField(field);
+  };
+
+  const categoryFieldChange = (value, name) => {
+    const field = { ...categoryField, value };
+    setCategoryField(field);
+    setSubCategoryOptions(value && value.id ? value.id : null);
+  };
+
+  const subCategoryFieldChange = (value, name) => {
+    const field = { ...detailField, value };
+    setDetailField(field);
+  };
+
+  const amountFieldChange = (value, name) => {
+    const field = { ...amountField, value };
+    setAmountField(field);
+  };
+
+  const noteFieldChange = (value, name) => {
+    const field = { ...noteField, value };
+    setNoteField(field);
+  };
+
+  const validateObject = (formObject) => {
+    return {
+      ...formObject,
+      isError: true,
+      label: "Error",
+      helperText: `Enter ${formObject.label}, it's required field`,
+    };
+  };
+
+  const updateFieldValue = (key, obj) => {
+    if (key === "dateField") setDateField(obj);
+    if (key === "categoryField") setCategoryField(obj);
+    if (key === "detailField") setDetailField(obj);
+    if (key === "amountField") setAmountField(obj);
+    if (key === "noteField") setNoteField(obj);
   };
 
   const formSubmit = async () => {
-    const formData = getValuesFromFields(formFields, true);
-
-    if (Object.values(formData).some((item) => !item || item === "")) {
-      const fD = getValuesFromFields(formFields);
-      const fields = validateObject(fD, modifiedFields);
-      setFieldValueChange(fD, fields);
+    const formFields = getFormFields();
+    const formData = getFormData();
+    console.log(formData);
+    if (Object.values(formData).some((item) => isFalsyValue(item))) {
+      Object.keys(formFields).forEach((item) => {
+        const field = formFields[item];
+        const fieldObj = isFalsyValue(field.value)
+          ? validateObject(field)
+          : field;
+        updateFieldValue(item, fieldObj);
+      });
       return;
     }
     const { family, username } = getUserObject();
@@ -94,19 +152,19 @@ export default function AddExpenseIncome(props) {
 
     const options = {
       method: "POST",
-      body: { ...formData, isExpense, user: username, isPaid },
+      body: { ...formData, user: username },
       queryParams: { family },
     };
-
     const response = await AppApiFetch(create, options);
     const { status, message } = await response.json();
     showSnackbar(message);
     if (status) {
-      const fD = getValuesFromFields(formFields);
-      fD.note = "";
-      fD.amount = "";
-      const fields = setValuesInFields(fD, modifiedFields);
-      setFieldValueChange(fD, fields);
+      setValues({
+        ...defaultFields,
+        category: categoryField,
+        date: dateField,
+        detail: detailField,
+      });
       getUserDataEvent();
     }
   };
@@ -115,45 +173,34 @@ export default function AddExpenseIncome(props) {
     <div>
       <AppCard title={`Add ${type}`}>
         <form noValidate autoComplete="off">
-          {formFields &&
-            formFields.map((field, i) => {
-              if (field.type === "date") {
-                return (
-                  <AppDateField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else if (field.type === "select") {
-                return (
-                  <AppSelectField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else {
-                return (
-                  <AppInputField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              }
-            })}
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isPaid}
-                onChange={(e) => setPaid(e.target.checked)}
-                name="checkedB"
-                color="primary"
-              />
-            }
-            label={isPaid ? "Paid" : "Not Paid"}
+          <AppDateField
+            {...dateField}
+            minDate={AppDate.getLast3MonthsDates}
+            handleChange={dateFieldChange}
           />
+          <AppAutocompleteField
+            {...categoryField}
+            handleChange={categoryFieldChange}
+          />
+          <AppAutocompleteField
+            {...detailField}
+            handleChange={subCategoryFieldChange}
+          />
+          <AppInputField {...amountField} handleChange={amountFieldChange} />
+          <AppInputField {...noteField} handleChange={noteFieldChange} />
+          {isExpense && (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isPaid}
+                  onChange={(e) => setPaid(e.target.checked)}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label={isPaid ? "Paid" : "Not Paid"}
+            />
+          )}
           <AppButton onClick={formSubmit}>Save {type}</AppButton>
         </form>
       </AppCard>

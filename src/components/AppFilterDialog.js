@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   makeStyles,
   IconButton,
@@ -7,14 +7,14 @@ import {
   Dialog,
   AppBar,
   Toolbar,
+  Box,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "@material-ui/icons/Delete";
 import AppDateField from "./AppDateField";
-import AppSelectField from "./AppSelectField";
-import AppInputField from "./AppInputField";
+import AppAutocompleteField from "./AppAutocompleteField";
 import AppButton from "./AppButton";
-import { AppContext, UserContext } from "../contexts";
+import { UserContext } from "../contexts";
+import { AppDate, createOptions } from "../utilities";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -33,36 +33,101 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AppFilterDialog(props) {
-  const {
-    openDialog,
-    toggleDialog,
-    formFields,
-    title,
-    handleChange,
-    emitEvents,
-    isFilter = true,
-    editObj = null,
-  } = props;
+  const { openDialog, toggleDialog, title, emitEvents, defaultList, userList } =
+    props;
 
   const classes = useStyles();
+  const { getDataFromConstant } = useContext(UserContext);
 
-  const { showAlertDialogObj } = useContext(AppContext);
+  const defaultFields = getDataFromConstant("listFields");
 
-  const alertBtnClickDeleteListItem = (isDelete) => {
-    if (isDelete) {
-      emitEvents("delete");
+  const [paidField, setPaidField] = useState(true);
+  const [dateField, setDateField] = useState(null);
+  const [categoryField, setCategoryField] = useState(defaultFields.category);
+  const [detailField, setDetailField] = useState(defaultFields.detail);
+  const [userField, setUserField] = useState(null);
+
+  useEffect(() => {
+    if (defaultList.length > 0) {
+      setValues(defaultFields);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultList]);
+
+  const getFormData = () => {
+    return {
+      date: dateField.value ? AppDate.getDateIntoString(dateField.value) : null,
+      category:
+        categoryField.value && categoryField.value.id
+          ? categoryField.value.id
+          : null,
+      detail:
+        detailField.value && detailField.value.id ? detailField.value.id : null,
+      user: userField.value && userField.value.id ? userField.value.id : null,
+      isPaid: paidField.value && paidField.value.id ? paidField.value.id : null,
+    };
   };
 
-  const alertDeleteListItem = () => {
-    const obj = {
-      title: `Delete ${title}`,
-      message: `Are you sure, you want to delete ${title}.`,
-      agreeBtnText: "Agree",
-      disagreeBtnText: "Disagree",
-      dialogBtnClick: alertBtnClickDeleteListItem,
+  const setValues = ({ date, category, detail, amount, user, isPaid }) => {
+    const categoryList = defaultList.map(createOptions);
+    const cField = {
+      ...category,
+      options: categoryList,
     };
-    showAlertDialogObj(obj);
+    setDetailField(detail);
+    setDateField(date);
+    setCategoryField(cField);
+    setUserField({ ...user, options: userList });
+    setPaidField(isPaid);
+  };
+
+  const setSubCategoryOptions = (categoryId) => {
+    const { subCategoryList } = categoryId
+      ? defaultList.find((x) => x.id === categoryId)
+      : {
+          subCategoryList: [],
+        };
+    const subCatList = subCategoryList.map(createOptions);
+    const sField = {
+      ...detailField,
+      options: subCatList,
+      value: null,
+    };
+    setDetailField(sField);
+  };
+
+  const dateFieldChange = (value, name) => {
+    const field = { ...dateField, value };
+    setDateField(field);
+  };
+
+  const categoryFieldChange = (value, name) => {
+    const field = { ...categoryField, value };
+    setCategoryField(field);
+    setSubCategoryOptions(value && value.id ? value.id : null);
+  };
+
+  const subCategoryFieldChange = (value, name) => {
+    const field = { ...detailField, value };
+    setDetailField(field);
+  };
+  const paidFieldChange = (value, name) => {
+    const field = { ...paidField, value };
+    setPaidField(field);
+  };
+
+  const userFieldChange = (value, name) => {
+    const field = { ...userField, value };
+    setUserField(field);
+  };
+
+  const resetEvent = () => {
+    setValues(defaultFields);
+  };
+
+  const filterEvent = () => {
+    const formData = getFormData();
+    emitEvents(formData);
   };
 
   return (
@@ -85,56 +150,34 @@ export default function AppFilterDialog(props) {
           <Typography variant="h6" className={classes.title} noWrap={true}>
             {title}
           </Typography>
-          {!isFilter && (
-            <IconButton
-              className={classes.saveButton}
-              edge="start"
-              color="inherit"
-              onClick={(e) => alertDeleteListItem()}
-              aria-label="close"
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
         <form noValidate autoComplete="off">
-          {formFields &&
-            formFields.map((field, i) => {
-              if (field.type === "date") {
-                return (
-                  <AppDateField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else if (field.type === "select") {
-                return (
-                  <AppSelectField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              } else {
-                return (
-                  <AppInputField
-                    {...field}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                );
-              }
-            })}
+          <AppDateField
+            {...dateField}
+            minDate={AppDate.getLast3MonthsDates}
+            handleChange={dateFieldChange}
+          />
+          <AppAutocompleteField
+            {...categoryField}
+            handleChange={categoryFieldChange}
+          />
+          <AppAutocompleteField
+            {...detailField}
+            handleChange={subCategoryFieldChange}
+          />
+          <AppAutocompleteField {...userField} handleChange={userFieldChange} />
+          <AppAutocompleteField {...paidField} handleChange={paidFieldChange} />
         </form>
-        {isFilter && (
-          <div>
-            <AppButton onClick={() => emitEvents("filter")}>Filter</AppButton>
-            <AppButton onClick={() => emitEvents("reset")}>Reset</AppButton>
-          </div>
-        )}
+        <Box display="flex" flexDirection="row">
+          <Box pr={1} width="50%">
+            <AppButton onClick={filterEvent}>Filter</AppButton>
+          </Box>
+          <Box pl={1} width="50%">
+            <AppButton onClick={resetEvent}>Reset</AppButton>
+          </Box>
+        </Box>
       </div>
     </Dialog>
   );

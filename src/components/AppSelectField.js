@@ -1,10 +1,26 @@
 import React, { useState, useEffect } from "react";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
 
 export default function AppSelectField(props) {
+  const classes = useStyles();
   const {
-    margin = "normal",
     isDisabled = false,
     isError = false,
     name,
@@ -12,6 +28,7 @@ export default function AppSelectField(props) {
     value,
     handleChange,
     helperText = "",
+    defaultValue = null,
     options = [],
   } = props;
   const [fieldValue, setFieldValue] = useState(value);
@@ -20,32 +37,34 @@ export default function AppSelectField(props) {
     setFieldValue(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
-
   return (
-    <Autocomplete
-      id={name}
-      options={options}
-      getOptionLabel={(option) => (option.name ? option.name : "")}
-      // renderOption={(option) => <React.Fragment>{option.name}</React.Fragment>}
-      value={fieldValue}
-      onChange={(event, newValue) => handleChange(newValue, name)}
-      autoHighlight
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          margin={margin}
-          variant="outlined"
-          size="small"
-          label={label}
-          disabled={isDisabled}
-          error={isError}
-          helperText={helperText}
-          fullWidth
-        />
-      )}
-    />
+    <FormControl
+      variant="outlined"
+      className={classes.formControl}
+      disabled={isDisabled}
+      error={isError}
+    >
+      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+        {label}
+      </InputLabel>
+      <Select
+        labelId={name}
+        id={name}
+        value={fieldValue}
+        onChange={handleChange}
+        displayEmpty
+        className={classes.selectEmpty}
+      >
+        {defaultValue && (
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+        )}
+        {options.map((option) => (
+          <MenuItem value={option}>{option.name || option}</MenuItem>
+        ))}
+      </Select>
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
+    </FormControl>
   );
 }

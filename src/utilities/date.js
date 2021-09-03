@@ -30,6 +30,7 @@ const AppDate = {
     return calculateDates(x);
   }),
   getPreviousThirdDay: moment().subtract(3, "days"),
+  getPreviousThreeMonth: moment().subtract(6, "months"),
 };
 
 export default AppDate;

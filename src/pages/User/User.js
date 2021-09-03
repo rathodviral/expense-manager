@@ -7,6 +7,7 @@ import { AppContext, UserContext } from "../../contexts";
 import { AppApiFetch, AppConstant } from "../../utilities";
 import AddExpenseIncome from "./AddExpenseIncome";
 import ExpenseIncomeList from "./ExpenseIncomeList";
+import Report from "./Report";
 
 const useStyles = makeStyles({
   root: {
@@ -61,6 +62,9 @@ export default function User() {
             <AddExpenseIncome
               getUserDataEvent={getUserDataEvent}
             ></AddExpenseIncome>
+          </Route>
+          <Route exact path={`${path}/:type/report`}>
+            <Report getDataEvent={getUserDataEvent}></Report>
           </Route>
         </Switch>
       </div>

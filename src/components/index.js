@@ -11,7 +11,7 @@ export { default as AppEditCategorySubCategory } from "./AppEditCategorySubCateg
 export { default as AppAlertDialog } from "./AppAlertDialog";
 export { default as AppCurrencyCountText } from "./AppCurrencyCountText";
 export { default as AppInfoText } from "./AppInfoText";
-export { default as AppSelectField } from "./AppSelectField";
+export { default as AppAutocompleteField } from "./AppAutocompleteField";
 export { default as AppDateField } from "./AppDateField";
 export { default as AppAccordion } from "./AppAccordion";
 export { default as AppFilterDialog } from "./AppFilterDialog";

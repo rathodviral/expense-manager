@@ -5,6 +5,7 @@ import {
   AppCard,
   AppButton,
   AppInfoText,
+  AppDivider,
 } from "../../components";
 import { UserContext } from "../../contexts";
 import { useHistory } from "react-router";
@@ -31,6 +32,10 @@ export default function Dashboard(props) {
       text: `${getCurrencyFormat(totalIncome)} - ${getCurrencyFormat(
         totalPaidExpense
       )}`,
+      textList: [
+        { title: "Income", text: getCurrencyFormat(totalIncome) },
+        { title: "Paid Expense", text: getCurrencyFormat(totalPaidExpense) },
+      ],
     },
     {
       title: "Expense",
@@ -40,6 +45,13 @@ export default function Dashboard(props) {
       text: `${getCurrencyFormat(totalUnpaidExpense)} + ${getCurrencyFormat(
         totalPaidExpense
       )}`,
+      textList: [
+        {
+          title: "Unpaid",
+          text: getCurrencyFormat(totalUnpaidExpense),
+        },
+        { title: "Paid", text: getCurrencyFormat(totalPaidExpense) },
+      ],
     },
     {
       title: "Income",
@@ -50,10 +62,17 @@ export default function Dashboard(props) {
   ];
 
   const Card = (props) => {
-    const { title, type, count, isButtonShow, text } = props;
+    const { title, type, count, isButtonShow, text, textList } = props;
     return (
       <AppCard title={title}>
-        {text && <AppInfoText text={text} type={type}></AppInfoText>}
+        {text && (
+          <AppInfoText
+            text={text}
+            type={type}
+            textList={textList}
+          ></AppInfoText>
+        )}
+        {text && <AppDivider />}
         <AppCurrencyCountText
           count={count}
           type={type}

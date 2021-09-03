@@ -82,6 +82,10 @@ export const isValueNullOrUndefined = (value) => {
   return value !== null && value !== undefined;
 };
 
+export const isFalsyValue = (value) => {
+  return value === null || value === undefined || value === "";
+};
+
 export const createOptions = (value) => {
   return {
     id: value.id || value,

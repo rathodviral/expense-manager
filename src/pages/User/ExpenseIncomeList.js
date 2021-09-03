@@ -10,12 +10,8 @@ import {
 } from "../../components";
 import { UserContext } from "../../contexts";
 import { useParams } from "react-router-dom";
-import { setValuesInFields, windowScrollTop } from "../../utilities";
-import {
-  createOptions,
-  getValuesFromFields,
-  isValueNullOrUndefined,
-} from "../../utilities/common";
+import { windowScrollTop } from "../../utilities";
+import { createOptions, isValueNullOrUndefined } from "../../utilities/common";
 
 export default function ExpenseIncomeList(props) {
   const { getUserData } = props;
@@ -26,9 +22,7 @@ export default function ExpenseIncomeList(props) {
     expenseCategoryList,
     incomeUserList,
     expenseUserList,
-    getDataFromConstant,
   } = useContext(UserContext);
-  const defaultFields = getDataFromConstant("listFields");
   const defaultCategoryList = isExpense
     ? expenseCategoryList
     : incomeCategoryList;
@@ -36,10 +30,7 @@ export default function ExpenseIncomeList(props) {
 
   const [expenseIncomeList, setExpenseIncomeList] = useState([]);
 
-  const [defaultFormFields, setDefaultFormFields] = useState([]);
-  const [formFields, setFormFields] = useState([]);
-
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openEditItemDialog, setOpenEditItemDialog] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [editObj, setEditObj] = useState(null);
 
@@ -58,79 +49,7 @@ export default function ExpenseIncomeList(props) {
     return uniqUserList.map(createOptions);
   };
 
-  const getCategoryOptions = () => {
-    return defaultCategoryList.map(createOptions);
-  };
-
-  const getSubCategoryOptions = (category) => {
-    const { subCategoryList } = defaultCategoryList.find(
-      (x) => x.id === category
-    ) || {
-      subCategoryList: [],
-    };
-    return subCategoryList.map(createOptions);
-  };
-
-  const getFormData = (withFilter = false) => {
-    return {
-      ...getValuesFromFields(formFields, withFilter),
-    };
-  };
-
-  const handleChange = (value, name) => {
-    const formData = getFormData();
-    const modifiedFormdata = { ...formData, [name]: value };
-    if (name === "category") {
-      modifiedFormdata.detail = null;
-    }
-    const fields = setValuesInFields(modifiedFormdata, defaultFormFields);
-    if (modifiedFormdata.category && modifiedFormdata.category.id) {
-      const subList = modifiedFormdata.category.id
-        ? getSubCategoryOptions(modifiedFormdata.category.id)
-        : [];
-      const fieldsWithOptions = fields.map((element) => {
-        return {
-          ...element,
-          options: element.name === "detail" ? subList : element.options,
-        };
-      });
-      setFormFields(fieldsWithOptions);
-    } else {
-      setFormFields(fields);
-    }
-  };
-
-  const filterButtonClick = () => {
-    const formData = getFormData(true);
-    let list = [...defaultExpenseList];
-    Object.keys(formData).forEach((x) => {
-      const val = formData[x];
-      if (isValueNullOrUndefined(val)) {
-        list = list.filter((y) => y[x] === val);
-      }
-    });
-    setExpenseIncomeList(list);
-    toggleFilterDialog(false);
-  };
-
   const resetButtonClick = () => {
-    const fieldsWithOptions = defaultFields.map((element) => {
-      const { name, type } = element;
-      let list = [];
-      if (name === "category") {
-        list = getCategoryOptions();
-      } else if (name === "user") {
-        list = getUsersOptions();
-      } else {
-        list = element.options || [];
-      }
-      return {
-        ...element,
-        options: type === "select" ? list : null,
-      };
-    });
-    setDefaultFormFields(fieldsWithOptions);
-    setFormFields(fieldsWithOptions);
     setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
     if (editObj) {
       const { id } = editObj;
@@ -139,28 +58,37 @@ export default function ExpenseIncomeList(props) {
     }
   };
 
-  const getEditItemDialog = (id) => {
-    toggleDialog(true);
+  const showEditItemDialog = (id) => {
+    toggleEditItemDialog(true);
     setEditObj({ ...expenseIncomeList.find((x) => x.id === id) });
   };
 
-  const getFilterDialog = () => {
+  const showFilterDialog = () => {
     toggleFilterDialog(true);
   };
 
-  const toggleDialog = (flag) => {
-    setOpenDialog(flag);
+  const toggleEditItemDialog = (flag) => {
+    setOpenEditItemDialog(flag);
   };
 
   const toggleFilterDialog = (flag) => {
     setOpenFilterDialog(flag);
   };
 
-  const emitEvents = (type) => {
-    if (type === "filter") {
-      filterButtonClick();
-    } else if (type === "reset") {
+  const emitEvents = (obj) => {
+    if (obj === "reset") {
       resetButtonClick();
+    } else {
+      let list = [...defaultExpenseList];
+      Object.keys(obj).forEach((x) => {
+        const val = obj[x];
+        if (isValueNullOrUndefined(val)) {
+          console.log(val);
+          list = list.filter((y) => y[x] === val);
+        }
+      });
+      setExpenseIncomeList(list);
+      toggleFilterDialog(false);
     }
   };
 
@@ -178,7 +106,7 @@ export default function ExpenseIncomeList(props) {
         <AppCurrencyCountText
           count={getTotal()}
           type={type}
-          onClick={(e) => getFilterDialog()}
+          onClick={showFilterDialog}
         ></AppCurrencyCountText>
         <AppDivider />
         <List component="div" disablePadding>
@@ -186,13 +114,13 @@ export default function ExpenseIncomeList(props) {
             <AppListItem
               key={i}
               {...item}
-              listItemClick={getEditItemDialog}
+              listItemClick={showEditItemDialog}
             ></AppListItem>
           ))}
         </List>
         <AppEditExpenseIncomeDialog
-          openDialog={openDialog}
-          toggleDialog={toggleDialog}
+          openDialog={openEditItemDialog}
+          toggleDialog={toggleEditItemDialog}
           editObj={{ ...editObj, isExpense }}
           getUserData={getUserData}
           defaultList={defaultCategoryList}
@@ -201,10 +129,9 @@ export default function ExpenseIncomeList(props) {
           openDialog={openFilterDialog}
           toggleDialog={toggleFilterDialog}
           title={`Filter ${type} List`}
-          formFields={formFields}
-          handleChange={handleChange}
           emitEvents={emitEvents}
-          isFilter={true}
+          defaultList={defaultCategoryList}
+          userList={getUsersOptions()}
         ></AppFilterDialog>
       </AppCard>
     </div>
