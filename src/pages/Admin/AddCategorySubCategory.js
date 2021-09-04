@@ -1,12 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
-import {
-  AppApiFetch,
-  setValuesInFields,
-  validateObject,
-  getValuesFromFields,
-} from "../../utilities";
+import { AppApiFetch, isFalsyValue } from "../../utilities";
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../../contexts";
 
@@ -19,30 +14,78 @@ export default function AddCategorySubCategory(props) {
   const isSubCategory = categoryId && categoryId !== "";
   const defaultFields = getListFromConstant(isSubCategory, "fields");
 
-  const [categoryFormFields, setCategoryFormFields] = useState(defaultFields);
+  const [nameField, setNameField] = useState(null);
+  const [detailField, setDetailField] = useState(null);
 
-  const handleChange = (value, name) => {
-    const formData = getValuesFromFields(categoryFormFields);
-    const modifiedFormdata = { ...formData, [name]: value };
-    const fields = setValuesInFields(modifiedFormdata, defaultFields);
-    setCategoryFormFields(fields);
+  useEffect(() => {
+    setValues(defaultFields);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultFields]);
+
+  const getFormData = () => {
+    return {
+      name: nameField.value,
+      detail: detailField.value,
+    };
+  };
+
+  const getFormFields = () => {
+    return {
+      nameField,
+      detailField,
+    };
+  };
+
+  const setValues = ({ name, detail }) => {
+    setNameField(name);
+    setDetailField(detail);
+  };
+
+  const nameFieldChange = (value, name) => {
+    const field = { ...nameField, value };
+    setNameField(field);
+  };
+
+  const detailFieldChange = (value, name) => {
+    const field = { ...detailField, value };
+    setDetailField(field);
+  };
+
+  const validateObject = (formObject) => {
+    return {
+      ...formObject,
+      isError: true,
+      label: "Error",
+      helperText: `Enter ${formObject.label}, it's required field`,
+    };
+  };
+
+  const updateFieldValue = (key, obj) => {
+    if (key === "name") setNameField(obj);
+    if (key === "detail") setDetailField(obj);
   };
 
   const formSubmit = async () => {
-    const formData = getValuesFromFields(categoryFormFields);
-    if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, categoryFormFields);
-      setCategoryFormFields(fields);
+    const formFields = getFormFields();
+    const formData = getFormData();
+    if (Object.values(formData).some((item) => isFalsyValue(item))) {
+      Object.keys(formFields).forEach((item) => {
+        const field = formFields[item];
+        const fieldObj = isFalsyValue(field.value)
+          ? validateObject(field)
+          : field;
+        updateFieldValue(item, fieldObj);
+      });
       return;
     }
     const { family } = getUserObject();
-    const { create } = getListFromConstant("apiPath");
+    const { create } = getListFromConstant(isSubCategory, "apiPath");
     const options = {
       method: "POST",
       body: {
         ...formData,
-        isExpense,
         categoryId: isSubCategory ? categoryId : undefined,
+        isExpense,
       },
       queryParams: { family },
     };
@@ -50,7 +93,7 @@ export default function AddCategorySubCategory(props) {
     const response = await AppApiFetch(create, options);
     const { status, message } = await response.json();
     showSnackbar(message);
-    setCategoryFormFields(defaultFields);
+    setValues(defaultFields);
     if (status) {
       getAdminData();
     }
@@ -65,10 +108,8 @@ export default function AddCategorySubCategory(props) {
           </Typography>
         )}
         <form noValidate autoComplete="off">
-          {categoryFormFields &&
-            categoryFormFields.map((field, i) => (
-              <AppInputField {...field} key={i} handleChange={handleChange} />
-            ))}
+          <AppInputField {...nameField} handleChange={nameFieldChange} />
+          <AppInputField {...detailField} handleChange={detailFieldChange} />
           <AppButton onClick={formSubmit}>
             Save {isSubCategory && "Sub "}Category
           </AppButton>

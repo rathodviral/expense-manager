@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import {
   makeStyles,
   IconButton,
@@ -10,9 +11,9 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AppEditCategorySubCategory from "./AppEditCategorySubCategory";
-import { AppApiFetch, AppConstant } from "../utilities";
-import { AppContext } from "../contexts";
+import { AppApiFetch, AppConstant, isFalsyValue } from "../utilities";
+import { AdminContext, AppContext } from "../contexts";
+import { AppButton, AppDivider, AppInputField } from ".";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -28,10 +29,71 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AppEditCategorySubCategoryDialog(props) {
-  const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
   const classes = useStyles();
+  const history = useHistory();
+  const { type } = useParams();
+
   const { getUserObject, showAlertDialogObj, showSnackbar } =
     useContext(AppContext);
+  const { getListObj, getListFromConstant } = useContext(AdminContext);
+
+  const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
+  const { isSubCategory, id, categoryId } = dialogObj;
+  const isExpense = type === "expense";
+  const defaultFields = getListFromConstant(isSubCategory, "fields");
+  const [nameField, setNameField] = useState(null);
+  const [detailField, setDetailField] = useState(null);
+  console.log(dialogObj);
+  useEffect(() => {
+    setValues(defaultFields);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogObj]);
+
+  const getFormData = () => {
+    return {
+      name: nameField.value,
+      detail: detailField.value,
+      isExpense,
+      isActive: true,
+      id,
+    };
+  };
+
+  const getFormFields = () => {
+    return {
+      nameField,
+      detailField,
+    };
+  };
+
+  const setValues = ({ name, detail }) => {
+    setNameField({ ...name, value: dialogObj.name });
+    setDetailField({ ...detail, value: dialogObj.detail });
+  };
+
+  const nameFieldChange = (value, name) => {
+    const field = { ...nameField, value };
+    setNameField(field);
+  };
+
+  const detailFieldChange = (value, name) => {
+    const field = { ...detailField, value };
+    setDetailField(field);
+  };
+
+  const validateObject = (formObject) => {
+    return {
+      ...formObject,
+      isError: true,
+      label: "Error",
+      helperText: `Enter ${formObject.label}, it's required field`,
+    };
+  };
+
+  const updateFieldValue = (key, obj) => {
+    if (key === "name") setNameField(obj);
+    if (key === "detail") setDetailField(obj);
+  };
 
   const alertBtnClickDeleteListItem = (isDelete) => {
     if (isDelete) {
@@ -74,6 +136,36 @@ export default function AppEditCategorySubCategoryDialog(props) {
     }
   };
 
+  const formSubmit = async () => {
+    const formFields = getFormFields();
+    const formData = getFormData();
+    if (Object.values(formData).some((item) => isFalsyValue(item))) {
+      Object.keys(formFields).forEach((item) => {
+        const field = formFields[item];
+        const fieldObj = isFalsyValue(field.value)
+          ? validateObject(field)
+          : field;
+        updateFieldValue(item, fieldObj);
+      });
+      return;
+    }
+    const { family } = getUserObject();
+    const { update } = getListFromConstant(isSubCategory, "apiPath");
+    const options = {
+      method: "PUT",
+      body: { ...formData, categoryId: isSubCategory ? categoryId : undefined },
+      queryParams: { family },
+    };
+    const response = await AppApiFetch(update, options);
+    const { status, message } = await response.json();
+    showSnackbar(message);
+    if (status) {
+      getAdminData();
+    } else {
+      setValues(defaultFields);
+    }
+  };
+
   return (
     <Dialog
       fullScreen
@@ -105,10 +197,24 @@ export default function AppEditCategorySubCategoryDialog(props) {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <AppEditCategorySubCategory
-        {...dialogObj}
-        getAdminData={getAdminData}
-      ></AppEditCategorySubCategory>
+      <div style={{ padding: "1rem" }}>
+        {isSubCategory && (
+          <Typography variant="h6" style={{ textAlign: "center" }}>
+            Edit Sub Category for {getListObj(isExpense, categoryId, "name")}
+          </Typography>
+        )}
+        {isSubCategory && <AppDivider />}
+        <form noValidate autoComplete="off">
+          <AppInputField {...nameField} handleChange={nameFieldChange} />
+          <AppInputField {...detailField} handleChange={detailFieldChange} />
+          <AppButton onClick={formSubmit}>Save Detail</AppButton>
+          {!isSubCategory && (
+            <AppButton onClick={(e) => history.push(`${type}/add/${id}`)}>
+              Add Sub Category
+            </AppButton>
+          )}
+        </form>
+      </div>
     </Dialog>
   );
 }

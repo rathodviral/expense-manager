@@ -4,8 +4,8 @@ const AppConstant = {
   login: {
     apiPath: "auth.php",
     storage: "USER-INFO",
-    fields: [
-      {
+    fields: {
+      username: {
         name: "username",
         label: "Username",
         type: "text",
@@ -15,7 +15,7 @@ const AppConstant = {
         multiline: false,
         value: "",
       },
-      {
+      password: {
         name: "password",
         label: "Password",
         type: "password",
@@ -25,7 +25,7 @@ const AppConstant = {
         multiline: false,
         value: "",
       },
-    ],
+    },
   },
   admin: {
     category: {
@@ -35,8 +35,8 @@ const AppConstant = {
         update: "category/update.php",
         delete: "category/delete.php",
       },
-      fields: [
-        {
+      fields: {
+        name: {
           name: "name",
           label: "Category Name",
           type: "text",
@@ -46,7 +46,7 @@ const AppConstant = {
           multiline: false,
           value: "",
         },
-        {
+        detail: {
           name: "detail",
           label: "Category Detail",
           type: "text",
@@ -57,7 +57,7 @@ const AppConstant = {
           rows: 4,
           value: "",
         },
-      ],
+      },
     },
     subCategory: {
       apiPath: {
@@ -65,8 +65,8 @@ const AppConstant = {
         update: "sub_category/update.php",
         delete: "sub_category/delete.php",
       },
-      fields: [
-        {
+      fields: {
+        name: {
           name: "name",
           label: "Sub Category Name",
           type: "text",
@@ -76,7 +76,7 @@ const AppConstant = {
           multiline: false,
           value: "",
         },
-        {
+        detail: {
           name: "detail",
           label: "Sub Category Detail",
           type: "text",
@@ -87,7 +87,7 @@ const AppConstant = {
           rows: 4,
           value: "",
         },
-      ],
+      },
     },
   },
   expense: {

@@ -1,13 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppInputField, AppCard, AppButton } from "../components";
 import {
   AppConstant,
   AppApiFetch,
   AppStorage,
-  validateObject,
-  setValuesInFields,
-  getValuesFromFields,
+  isFalsyValue,
 } from "../utilities";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../contexts";
@@ -29,23 +27,70 @@ export default function Login() {
   const { login } = AppConstant;
   const defaultFields = login.fields;
 
-  const [loginFormFields, setLoginFormFields] = useState(defaultFields);
+  const [userField, setUserField] = useState(null);
+  const [passwordField, setPasswordField] = useState(null);
 
-  const handleChange = (value, type) => {
-    const formData = getValuesFromFields(loginFormFields);
-    const modifiedFormdata = { ...formData, [type]: value };
-    const fields = setValuesInFields(modifiedFormdata, defaultFields);
-    setLoginFormFields(fields);
+  useEffect(() => {
+    setValues(defaultFields);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultFields]);
+
+  const getFormData = () => {
+    return {
+      username: userField.value,
+      password: passwordField.value,
+    };
+  };
+
+  const getFormFields = () => {
+    return {
+      userField,
+      passwordField,
+    };
+  };
+
+  const setValues = ({ username, password }) => {
+    setUserField(username);
+    setPasswordField(password);
+  };
+
+  const usernameFieldChange = (value, name) => {
+    const field = { ...userField, value };
+    setUserField(field);
+  };
+
+  const passwordFieldChange = (value, name) => {
+    const field = { ...passwordField, value };
+    setPasswordField(field);
+  };
+
+  const validateObject = (formObject) => {
+    return {
+      ...formObject,
+      isError: true,
+      label: "Error",
+      helperText: `Enter ${formObject.label}, it's required field`,
+    };
+  };
+
+  const updateFieldValue = (key, obj) => {
+    if (key === "userField") setUserField(obj);
+    if (key === "passwordField") setPasswordField(obj);
   };
 
   const formSubmit = async () => {
-    const formData = getValuesFromFields(loginFormFields);
-    if (Object.values(formData).some((item) => item === "")) {
-      const fields = validateObject(formData, loginFormFields);
-      setLoginFormFields(fields);
+    const formFields = getFormFields();
+    const formData = getFormData();
+    if (Object.values(formData).some((item) => isFalsyValue(item))) {
+      Object.keys(formFields).forEach((item) => {
+        const field = formFields[item];
+        const fieldObj = isFalsyValue(field.value)
+          ? validateObject(field)
+          : field;
+        updateFieldValue(item, fieldObj);
+      });
       return;
     }
-
     const options = {
       method: "POST",
       body: formData,
@@ -69,13 +114,11 @@ export default function Login() {
     <div className={classes.root}>
       <AppCard title="Expense Manager">
         <form noValidate autoComplete="off">
-          {loginFormFields.map((field, i) => (
-            <AppInputField
-              {...field}
-              key={i}
-              handleChange={handleChange}
-            ></AppInputField>
-          ))}
+          <AppInputField {...userField} handleChange={usernameFieldChange} />
+          <AppInputField
+            {...passwordField}
+            handleChange={passwordFieldChange}
+          />
           <AppButton onClick={formSubmit}>Login</AppButton>
         </form>
       </AppCard>

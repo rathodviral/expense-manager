@@ -8,7 +8,6 @@ import AddCategorySubCategory from "./AddCategorySubCategory";
 import { AdminContext, AppContext } from "../../contexts";
 import { useEffect } from "react";
 import { AppApiFetch, AppConstant } from "../../utilities";
-import Report from "../User/Report";
 
 const useStyles = makeStyles({
   root: {
