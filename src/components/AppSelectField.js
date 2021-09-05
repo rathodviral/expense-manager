@@ -10,8 +10,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
+    width: "100%",
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -43,8 +42,9 @@ export default function AppSelectField(props) {
       className={classes.formControl}
       disabled={isDisabled}
       error={isError}
+      size="small"
     >
-      <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+      <InputLabel id="demo-simple-select-placeholder-label-label">
         {label}
       </InputLabel>
       <Select
@@ -52,7 +52,6 @@ export default function AppSelectField(props) {
         id={name}
         value={fieldValue}
         onChange={handleChange}
-        displayEmpty
         className={classes.selectEmpty}
       >
         {defaultValue && (

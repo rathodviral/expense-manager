@@ -64,7 +64,7 @@ export default function User() {
             ></AddExpenseIncome>
           </Route>
           <Route exact path={`${path}/:type/report`}>
-            <Report getDataEvent={getUserDataEvent}></Report>
+            <Report></Report>
           </Route>
         </Switch>
       </div>

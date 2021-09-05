@@ -11,7 +11,11 @@ import {
 import { UserContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
-import { createOptions, isValueNullOrUndefined } from "../../utilities/common";
+import {
+  isValueNullOrUndefined,
+  sortByDate,
+  getUsersOptions,
+} from "../../utilities/common";
 
 export default function ExpenseIncomeList(props) {
   const { getUserData } = props;
@@ -22,11 +26,14 @@ export default function ExpenseIncomeList(props) {
     expenseCategoryList,
     incomeUserList,
     expenseUserList,
+    getDataFromConstant,
   } = useContext(UserContext);
   const defaultCategoryList = isExpense
     ? expenseCategoryList
     : incomeCategoryList;
   const defaultExpenseList = isExpense ? expenseUserList : incomeUserList;
+
+  const defaultFields = getDataFromConstant("listFields");
 
   const [expenseIncomeList, setExpenseIncomeList] = useState([]);
 
@@ -39,15 +46,6 @@ export default function ExpenseIncomeList(props) {
     resetButtonClick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultCategoryList, defaultExpenseList]);
-
-  const sortByDate = (current, previous) =>
-    new Date(previous.date) - new Date(current.date);
-
-  const getUsersOptions = () => {
-    const userList = defaultExpenseList.map((x) => x.user);
-    const uniqUserList = [...new Set(userList)];
-    return uniqUserList.map(createOptions);
-  };
 
   const resetButtonClick = () => {
     setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
@@ -83,7 +81,6 @@ export default function ExpenseIncomeList(props) {
       Object.keys(obj).forEach((x) => {
         const val = obj[x];
         if (isValueNullOrUndefined(val)) {
-          console.log(val);
           list = list.filter((y) => y[x] === val);
         }
       });
@@ -131,7 +128,8 @@ export default function ExpenseIncomeList(props) {
           title={`Filter ${type} List`}
           emitEvents={emitEvents}
           defaultList={defaultCategoryList}
-          userList={getUsersOptions()}
+          userList={getUsersOptions(defaultExpenseList)}
+          defaultFields={defaultFields}
         ></AppFilterDialog>
       </AppCard>
     </div>

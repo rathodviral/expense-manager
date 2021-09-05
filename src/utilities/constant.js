@@ -1,4 +1,5 @@
 import AppDate from "./date";
+const { start } = AppDate.getCurrentMonthDates;
 
 const AppConstant = {
   login: {
@@ -216,10 +217,7 @@ const AppConstant = {
   },
   report: {
     apiPath: {
-      read: "read.php",
-      create: "exp_data/create.php",
-      update: "exp_data/update.php",
-      delete: "exp_data/delete.php",
+      read: "exp_data/read_data_by_date.php",
     },
     storage: "EXPENSE-INFO",
     fields: {
@@ -231,7 +229,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: AppDate.getDateIntoString(),
+        value: start,
       },
       endDate: {
         name: "endDate",
@@ -242,6 +240,33 @@ const AppConstant = {
         isError: false,
         multiline: false,
         value: AppDate.getDateIntoString(),
+      },
+    },
+    listFields: {
+      user: {
+        name: "user",
+        label: "Select User",
+        type: "select",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: null,
+        options: [],
+      },
+      isPaid: {
+        name: "isPaid",
+        label: "Select Paid/Not Paid",
+        type: "select",
+        helperText: null,
+        isDisabled: false,
+        isError: false,
+        multiline: false,
+        value: null,
+        options: [
+          { id: true, name: "Paid" },
+          { id: false, name: "Not Paid" },
+        ],
       },
       category: {
         name: "category",
@@ -264,16 +289,6 @@ const AppConstant = {
         multiline: false,
         value: null,
         options: [],
-      },
-      amount: {
-        name: "amount",
-        label: "Expense Amount",
-        type: "number",
-        helperText: null,
-        isDisabled: false,
-        isError: false,
-        multiline: false,
-        value: "",
       },
     },
   },

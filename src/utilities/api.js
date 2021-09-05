@@ -1,5 +1,5 @@
-// const baseURL = "http://viralrathod.xyz/server";
-const baseURL = "http://localhost/expense-manager-server";
+const baseURL = "http://viralrathod.xyz/server";
+// const baseURL = "http://localhost/expense-manager-server";
 
 export default function AppApiFetch(apiEndPointName, options) {
   const {

@@ -7,7 +7,7 @@ import {
   AppInfoText,
   AppDivider,
 } from "../../components";
-import { UserContext } from "../../contexts";
+import { AppContext, UserContext } from "../../contexts";
 import { useHistory } from "react-router";
 import { AppDate, getCurrencyFormat } from "../../utilities";
 
@@ -21,7 +21,9 @@ export default function Dashboard(props) {
   const { totalIncome, totalExpense, totalPaidExpense, totalUnpaidExpense } =
     useContext(UserContext);
   const classes = useStyles();
+  const { getUserObject } = useContext(AppContext);
   const history = useHistory();
+  const { isAdmin } = getUserObject();
   const { getMonth } = AppDate;
   const cardList = [
     {
@@ -53,13 +55,16 @@ export default function Dashboard(props) {
         { title: "Paid", text: getCurrencyFormat(totalPaidExpense) },
       ],
     },
-    {
+  ];
+
+  if (isAdmin) {
+    cardList[2] = {
       title: "Income",
       type: "income",
       count: totalIncome,
       isButtonShow: true,
-    },
-  ];
+    };
+  }
 
   const Card = (props) => {
     const { title, type, count, isButtonShow, text, textList } = props;

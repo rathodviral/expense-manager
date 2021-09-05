@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   makeStyles,
   IconButton,
@@ -13,8 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import AppDateField from "./AppDateField";
 import AppAutocompleteField from "./AppAutocompleteField";
 import AppButton from "./AppButton";
-import { UserContext } from "../contexts";
-import { AppDate, createOptions } from "../utilities";
+import { AppDate, createOptions, isFalsyValue } from "../utilities";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -33,13 +32,16 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AppFilterDialog(props) {
-  const { openDialog, toggleDialog, title, emitEvents, defaultList, userList } =
-    props;
-
+  const {
+    openDialog,
+    toggleDialog,
+    title,
+    emitEvents,
+    defaultList,
+    userList,
+    defaultFields,
+  } = props;
   const classes = useStyles();
-  const { getDataFromConstant } = useContext(UserContext);
-
-  const defaultFields = getDataFromConstant("listFields");
 
   const [paidField, setPaidField] = useState(true);
   const [dateField, setDateField] = useState(null);
@@ -52,11 +54,14 @@ export default function AppFilterDialog(props) {
       setValues(defaultFields);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultList]);
+  }, [defaultList, userList]);
 
   const getFormData = () => {
     return {
-      date: dateField.value ? AppDate.getDateIntoString(dateField.value) : null,
+      date:
+        dateField && dateField.value
+          ? AppDate.getDateIntoString(dateField.value)
+          : null,
       category:
         categoryField.value && categoryField.value.id
           ? categoryField.value.id
@@ -64,11 +69,16 @@ export default function AppFilterDialog(props) {
       detail:
         detailField.value && detailField.value.id ? detailField.value.id : null,
       user: userField.value && userField.value.id ? userField.value.id : null,
-      isPaid: paidField.value && paidField.value.id ? paidField.value.id : null,
+      isPaid:
+        paidField.value && !isFalsyValue(paidField.value.id)
+          ? paidField.value.id
+          : null,
     };
   };
 
   const setValues = ({ date, category, detail, amount, user, isPaid }) => {
+    console.log(userList);
+
     const categoryList = defaultList.map(createOptions);
     const cField = {
       ...category,
@@ -123,6 +133,7 @@ export default function AppFilterDialog(props) {
 
   const resetEvent = () => {
     setValues(defaultFields);
+    emitEvents("reset");
   };
 
   const filterEvent = () => {
@@ -154,11 +165,13 @@ export default function AppFilterDialog(props) {
       </AppBar>
       <div style={{ padding: "1rem" }}>
         <form noValidate autoComplete="off">
-          <AppDateField
-            {...dateField}
-            minDate={AppDate.getLast3MonthsDates}
-            handleChange={dateFieldChange}
-          />
+          {defaultFields && defaultFields.date && (
+            <AppDateField
+              {...dateField}
+              minDate={AppDate.getLast3MonthsDates}
+              handleChange={dateFieldChange}
+            />
+          )}
           <AppAutocompleteField
             {...categoryField}
             handleChange={categoryFieldChange}

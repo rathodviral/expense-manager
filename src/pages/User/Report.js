@@ -1,20 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   AppCard,
-  AppInputField,
   AppButton,
-  AppAutocompleteField,
   AppDateField,
+  AppDivider,
+  AppListItem,
+  AppCurrencyCountText,
+  AppFilterDialog,
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { AppApiFetch, AppConstant, AppDate } from "../../utilities";
-import { FormControlLabel, Switch, Box } from "@material-ui/core";
+import { Box, List } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
-import { createOptions } from "../../utilities/common";
+import {
+  isFalsyValue,
+  isValueNullOrUndefined,
+  sortByDate,
+  getUsersOptions,
+  getTotal,
+} from "../../utilities/common";
 
 export default function Report(props) {
-  const { getDataEvent } = props;
-  const { showSnackbar, getUserObject } = useContext(AppContext);
+  const { getUserObject } = useContext(AppContext);
   const { incomeCategoryList, expenseCategoryList } = useContext(UserContext);
 
   const { type } = useParams();
@@ -23,12 +30,15 @@ export default function Report(props) {
 
   const { report } = AppConstant;
   const defaultFields = { ...report.fields };
-  const [isPaid, setPaid] = useState(true);
-  const [startDateField, setStartDateField] = useState(null);
-  const [endDateField, setEndDateField] = useState(null);
-  const [categoryField, setCategoryField] = useState(defaultFields.category);
-  const [detailField, setDetailField] = useState(defaultFields.detail);
-  const [amountField, setAmountField] = useState(null);
+  const defaultListFields = { ...report.listFields };
+  const [startDateField, setStartDateField] = useState(defaultFields.startDate);
+  const [endDateField, setEndDateField] = useState(defaultFields.endDate);
+
+  const [defaultExpenseIncomeList, setDefaultExpenseIncomeList] = useState([]);
+  const [expenseIncomeList, setExpenseIncomeList] = useState([]);
+  const [userList, setUserList] = useState([]);
+
+  const [openFilterDialog, setOpenFilterDialog] = useState(false);
 
   useEffect(() => {
     if (typeList.length > 0) {
@@ -37,41 +47,18 @@ export default function Report(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeList]);
 
-  const getFormData = () => {
+  const getQueryData = () => {
     return {
       start: AppDate.getDateIntoString(startDateField.value),
       end: AppDate.getDateIntoString(endDateField.value),
+      isExpense: isExpense ? "1" : "0",
     };
   };
 
-  const setValues = ({ startDate, endDate, category, detail, amount }) => {
-    const categoryList = typeList.map(createOptions);
-    const cField = {
-      ...category,
-      options: categoryList,
-    };
-    const { start } = AppDate.getCurrentMonthDates;
-
-    setStartDateField({ ...startDate, value: start });
+  const setValues = ({ startDate, endDate }) => {
+    setStartDateField(startDate);
     setEndDateField(endDate);
-    setCategoryField(cField);
-    setDetailField(detail);
-    setAmountField(amount);
-  };
-
-  const setSubCategoryOptions = (categoryId) => {
-    const { subCategoryList } = categoryId
-      ? typeList.find((x) => x.id === categoryId)
-      : {
-          subCategoryList: [],
-        };
-    const subCatList = subCategoryList.map(createOptions);
-    const sField = {
-      ...detailField,
-      options: subCatList,
-      value: null,
-    };
-    setDetailField(sField);
+    formSubmit();
   };
 
   const startDateFieldChange = (value, name) => {
@@ -80,24 +67,8 @@ export default function Report(props) {
   };
 
   const endDateFieldChange = (value, name) => {
-    const field = { ...amountField, value };
+    const field = { ...endDateField, value };
     setEndDateField(field);
-  };
-
-  const categoryFieldChange = (value, name) => {
-    const field = { ...categoryField, value };
-    setCategoryField(field);
-    setSubCategoryOptions(value && value.id ? value.id : null);
-  };
-
-  const subCategoryFieldChange = (value, name) => {
-    const field = { ...detailField, value };
-    setDetailField(field);
-  };
-
-  const amountFieldChange = (value, name) => {
-    const field = { ...amountField, value };
-    setAmountField(field);
   };
 
   const validateObject = (formObject, defaultFields) => {
@@ -110,37 +81,77 @@ export default function Report(props) {
   };
 
   const formSubmit = async () => {
-    if (!startDateField.value || startDateField.value === "") {
+    if (isFalsyValue(startDateField.value)) {
       const field = validateObject(startDateField);
       setStartDateField(field);
       return;
     }
-    if (!endDateField.value || endDateField.value === "") {
+    if (isFalsyValue(endDateField.value)) {
       const field = validateObject(endDateField);
       setEndDateField(field);
       return;
     }
-    const { family, username } = getUserObject();
-    // const { create } = report.apiPath;
-    const formData = getFormData();
+    const { family } = getUserObject();
+    const { read } = report.apiPath;
+    const queryData = getQueryData();
     const options = {
-      method: "POST",
-      body: { ...formData, user: username },
-      queryParams: { family },
+      method: "GET",
+      queryParams: { family, ...queryData },
     };
 
-    console.log(options);
-    // const response = await AppApiFetch(create, options);
-    // const { status, message } = await response.json();
-    // showSnackbar(message);
-    // if (status) {
-    //   getDataEvent();
-    // }
+    const response = await AppApiFetch(read, options);
+    const { status, data } = await response.json();
+    if (status) {
+      const mappedList = data
+        .map((item) => {
+          const { category, detail } = item;
+          const categoryItem = typeList.find((x) => x.id === category);
+          const subCategoryItem = categoryItem.subCategoryList.find(
+            (x) => x.id === detail
+          );
+          return {
+            ...item,
+            categoryName: categoryItem.name,
+            subCategoryName: subCategoryItem.name,
+          };
+        })
+        .sort(sortByDate);
+      setDefaultExpenseIncomeList(mappedList);
+      setExpenseIncomeList(mappedList);
+      const uList = getUsersOptions(mappedList);
+      setUserList(uList);
+    }
+  };
+
+  const toggleFilterDialog = (flag) => {
+    setOpenFilterDialog(flag);
+  };
+
+  const emitEvents = (obj) => {
+    toggleFilterDialog(false);
+    if (obj === "reset") {
+      setValues(defaultFields);
+    } else {
+      let list = [...defaultExpenseIncomeList];
+      Object.keys(obj).forEach((x) => {
+        const val = obj[x];
+        if (isValueNullOrUndefined(val)) {
+          list = list.filter((y) => y[x] === val);
+        }
+      });
+      setExpenseIncomeList(list);
+    }
   };
 
   return (
     <div>
-      <AppCard title={`Report`}>
+      <AppCard title={`Report of ${type}`}>
+        <AppCurrencyCountText
+          count={getTotal(expenseIncomeList)}
+          type={type}
+          onClick={(e) => toggleFilterDialog(true)}
+        ></AppCurrencyCountText>
+        <AppDivider />
         <form noValidate autoComplete="off">
           <Box display="flex" flexDirection="row">
             <Box pr={1} width="50%">
@@ -158,42 +169,27 @@ export default function Report(props) {
               />
             </Box>
           </Box>
-
-          <AppAutocompleteField
-            {...categoryField}
-            handleChange={categoryFieldChange}
-          />
-          <AppAutocompleteField
-            {...detailField}
-            handleChange={subCategoryFieldChange}
-          />
-          <AppInputField {...amountField} handleChange={amountFieldChange} />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isPaid}
-                onChange={(e) => setPaid(e.target.checked)}
-                name="checkedB"
-                color="primary"
-              />
-            }
-            label={isPaid ? "Paid" : "Not Paid"}
-          />
-          <Box display="flex" flexDirection="row">
-            <Box pr={1} width="50%">
-              <AppButton onClick={formSubmit}>Search</AppButton>
-            </Box>
-            <Box pl={1} width="50%">
-              <AppButton
-                onClick={(e) => {
-                  setValues(defaultFields);
-                }}
-              >
-                Reset
-              </AppButton>
-            </Box>
-          </Box>
+          <AppButton onClick={formSubmit}>Search</AppButton>
         </form>
+        <AppDivider />
+        <List component="div" disablePadding>
+          {expenseIncomeList.map((item, i) => (
+            <AppListItem
+              key={i}
+              {...item}
+              listItemClick={(e) => {}}
+            ></AppListItem>
+          ))}
+        </List>
+        <AppFilterDialog
+          openDialog={openFilterDialog}
+          toggleDialog={toggleFilterDialog}
+          title={`Filter ${type} List`}
+          emitEvents={emitEvents}
+          defaultList={typeList}
+          userList={userList}
+          defaultFields={defaultListFields}
+        ></AppFilterDialog>
       </AppCard>
     </div>
   );

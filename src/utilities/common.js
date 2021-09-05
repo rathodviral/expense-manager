@@ -92,3 +92,20 @@ export const createOptions = (value) => {
     name: value.name || value,
   };
 };
+
+export const sortByDate = (current, previous) =>
+  new Date(previous.date) - new Date(current.date);
+
+export const getUsersOptions = (list) => {
+  const userList = list.map((x) => x.user);
+  const uniqUserList = [...new Set(userList)];
+  return uniqUserList.map(createOptions);
+};
+
+export const getTotal = (list) => {
+  return list && list.length > 0
+    ? list
+        .map((x) => x.amount)
+        .reduce((accumulator, currentValue) => accumulator + currentValue)
+    : 0;
+};
