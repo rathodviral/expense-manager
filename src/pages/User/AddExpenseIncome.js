@@ -136,7 +136,6 @@ export default function AddExpenseIncome(props) {
   const formSubmit = async () => {
     const formFields = getFormFields();
     const formData = getFormData();
-    console.log(formData);
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
       Object.keys(formFields).forEach((item) => {
         const field = formFields[item];

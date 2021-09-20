@@ -92,9 +92,10 @@ export const createOptions = (value) => {
     name: value.name || value,
   };
 };
-
-export const sortByDate = (current, previous) =>
-  new Date(previous.date) - new Date(current.date);
+//sort_o1_before_o2 ? -1 : sort_o1_after_o2 ? 1 : 0;
+export const sortByDate = (current, previous) => {
+  return Date(current.date) - Date(previous.date);
+};
 
 export const getUsersOptions = (list) => {
   const userList = list.map((x) => x.user);

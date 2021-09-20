@@ -16,6 +16,7 @@ const useStyles = makeStyles({
 export default function AppButton(props) {
   const classes = useStyles();
   const { type, onClick, children } = props;
+
   return (
     <Button
       type="button"

@@ -77,8 +77,6 @@ export default function AppFilterDialog(props) {
   };
 
   const setValues = ({ date, category, detail, amount, user, isPaid }) => {
-    console.log(userList);
-
     const categoryList = defaultList.map(createOptions);
     const cField = {
       ...category,

@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core";
-import { AppTopNavigation } from "../../components";
+import { AppSpinner, AppTopNavigation } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import { AppContext, UserContext } from "../../contexts";
@@ -27,7 +27,10 @@ export default function User() {
     expense: { apiPath },
   } = AppConstant;
 
+  const [showSpinner, setShowSpinner] = useState(true);
+
   const getUserDataEvent = async () => {
+    setShowSpinner(true);
     const { family } = getUserObject();
     const options = {
       method: "GET",
@@ -35,6 +38,7 @@ export default function User() {
     };
     const response = await AppApiFetch(apiPath.read, options);
     const { status, data } = await response.json();
+    setShowSpinner(false);
     if (status) {
       setUserData(data);
     }
@@ -46,28 +50,31 @@ export default function User() {
   }, []);
 
   return (
-    <div className={classes.root}>
-      <AppTopNavigation></AppTopNavigation>
-      <div className={classes.dashboard}>
-        <Switch>
-          <Route exact path={`${path}`}>
-            <Dashboard></Dashboard>
-          </Route>
-          <Route exact path={`${path}/:type`}>
-            <ExpenseIncomeList
-              getUserData={getUserDataEvent}
-            ></ExpenseIncomeList>
-          </Route>
-          <Route exact path={`${path}/:type/add`}>
-            <AddExpenseIncome
-              getUserDataEvent={getUserDataEvent}
-            ></AddExpenseIncome>
-          </Route>
-          <Route exact path={`${path}/:type/report`}>
-            <Report></Report>
-          </Route>
-        </Switch>
+    <React.Fragment>
+      <div className={classes.root}>
+        <AppTopNavigation></AppTopNavigation>
+        <div className={classes.dashboard}>
+          <Switch>
+            <Route exact path={`${path}`}>
+              <Dashboard></Dashboard>
+            </Route>
+            <Route exact path={`${path}/:type`}>
+              <ExpenseIncomeList
+                getUserData={getUserDataEvent}
+              ></ExpenseIncomeList>
+            </Route>
+            <Route exact path={`${path}/:type/add`}>
+              <AddExpenseIncome
+                getUserDataEvent={getUserDataEvent}
+              ></AddExpenseIncome>
+            </Route>
+            <Route exact path={`${path}/:type/report`}>
+              <Report></Report>
+            </Route>
+          </Switch>
+        </div>
       </div>
-    </div>
+      {showSpinner && <AppSpinner />}
+    </React.Fragment>
   );
 }

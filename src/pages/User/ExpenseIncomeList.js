@@ -8,7 +8,7 @@ import {
   AppCurrencyCountText,
   AppFilterDialog,
 } from "../../components";
-import { UserContext } from "../../contexts";
+import { UserContext, AppContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
 import {
@@ -19,6 +19,8 @@ import {
 
 export default function ExpenseIncomeList(props) {
   const { getUserData } = props;
+  const { getUserObject } = useContext(AppContext);
+  const { isAdmin } = getUserObject();
   const { type } = useParams();
   const isExpense = type === "expense";
   const {
@@ -48,7 +50,7 @@ export default function ExpenseIncomeList(props) {
   }, [defaultCategoryList, defaultExpenseList]);
 
   const resetButtonClick = () => {
-    setExpenseIncomeList(defaultExpenseList.sort(sortByDate));
+    setExpenseIncomeList(defaultExpenseList.sort(sortByDate).reverse());
     if (editObj) {
       const { id } = editObj;
       const newEditObj = defaultExpenseList.find((x) => x.id === id);
@@ -57,8 +59,10 @@ export default function ExpenseIncomeList(props) {
   };
 
   const showEditItemDialog = (id) => {
-    toggleEditItemDialog(true);
-    setEditObj({ ...expenseIncomeList.find((x) => x.id === id) });
+    if (isAdmin) {
+      toggleEditItemDialog(true);
+      setEditObj({ ...expenseIncomeList.find((x) => x.id === id) });
+    }
   };
 
   const showFilterDialog = () => {

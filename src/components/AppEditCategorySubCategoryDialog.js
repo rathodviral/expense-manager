@@ -43,7 +43,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
   const defaultFields = getListFromConstant(isSubCategory, "fields");
   const [nameField, setNameField] = useState(null);
   const [detailField, setDetailField] = useState(null);
-  console.log(dialogObj);
+
   useEffect(() => {
     setValues(defaultFields);
     // eslint-disable-next-line react-hooks/exhaustive-deps
