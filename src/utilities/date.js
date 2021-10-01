@@ -22,6 +22,11 @@ const AppDate = {
     const date = typeof dateObj === "string" ? new Date(dateObj) : dateObj;
     return moment(date).format(format);
   },
+  getDateFromString: (date) => {
+    const parts = date.split("-");
+    const mydate = new Date(parts[0], parts[1] - 1, parts[2]);
+    return mydate;
+  },
   getCurrentMonthDates: {
     start: moment().startOf("month").format("YYYY-MM-DD"),
     end: moment().endOf("month").format("YYYY-MM-DD"),

@@ -21,6 +21,7 @@ import {
 } from "../../utilities/common";
 
 export default function Report(props) {
+  const { showSpinner } = props;
   const { getUserObject } = useContext(AppContext);
   const { incomeCategoryList, expenseCategoryList } = useContext(UserContext);
 
@@ -98,10 +99,11 @@ export default function Report(props) {
       method: "GET",
       queryParams: { family, ...queryData },
     };
-
+    showSpinner(true);
     const response = await AppApiFetch(read, options);
     const { status, data } = await response.json();
     if (status) {
+      showSpinner(false);
       const mappedList = data
         .map((item) => {
           const { category, detail } = item;

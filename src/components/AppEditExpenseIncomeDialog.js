@@ -44,9 +44,7 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const { openDialog, toggleDialog, editObj, getUserData, defaultList } = props;
   const { id, isExpense, user } = editObj;
-  const title = `Edit ${isExpense ? "Expense" : "Income"} ${
-    editObj.subCategoryName
-  }`;
+  const title = `Change in ${editObj.subCategoryName}`;
   const defaultFields = getDataFromConstant("fields");
 
   const [isPaid, setPaid] = useState(true);
@@ -114,7 +112,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       options: subCatList,
       value: subCatItem,
     };
-    setDetailField(sField);
+    date.value = AppDate.getDateFromString(editObj.date);
     setDateField(date);
     setCategoryField(cField);
     setDetailField(sField);

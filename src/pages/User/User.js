@@ -69,7 +69,7 @@ export default function User() {
               ></AddExpenseIncome>
             </Route>
             <Route exact path={`${path}/:type/report`}>
-              <Report></Report>
+              <Report showSpinner={setShowSpinner}></Report>
             </Route>
           </Switch>
         </div>

@@ -93,9 +93,8 @@ export const createOptions = (value) => {
   };
 };
 //sort_o1_before_o2 ? -1 : sort_o1_after_o2 ? 1 : 0;
-export const sortByDate = (current, previous) => {
-  return Date(current.date) - Date(previous.date);
-};
+export const sortByDate = (current, previous) =>
+  new Date(current.date) - new Date(previous.date);
 
 export const getUsersOptions = (list) => {
   const userList = list.map((x) => x.user);

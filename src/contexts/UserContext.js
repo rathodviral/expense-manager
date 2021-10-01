@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { AppConstant } from "../utilities";
+import { sortByDate } from "../utilities/common";
 
 export const UserContext = createContext();
 
@@ -45,14 +46,17 @@ const UserContextProvider = (props) => {
     const list = expense.filter((x) => x.isExpense === isExpense);
     const catList = createCategoryList(isExpense, false);
     const subCatList = createSubCategoryList(isExpense);
-    return list.map((x) => {
-      const { category, detail } = x;
-      return {
-        ...x,
-        categoryName: catList.find((y) => y.id === category).name,
-        subCategoryName: subCatList.find((y) => y.id === detail).name,
-      };
-    });
+    return list
+      .map((x) => {
+        const { category, detail } = x;
+        return {
+          ...x,
+          categoryName: catList.find((y) => y.id === category).name,
+          subCategoryName: subCatList.find((y) => y.id === detail).name,
+        };
+      })
+      .sort(sortByDate)
+      .reverse();
   };
 
   const totalCalcuation = (isExpense, isPaid) => {

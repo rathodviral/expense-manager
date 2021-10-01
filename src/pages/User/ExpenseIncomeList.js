@@ -13,14 +13,13 @@ import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
 import {
   isValueNullOrUndefined,
-  sortByDate,
   getUsersOptions,
 } from "../../utilities/common";
 
 export default function ExpenseIncomeList(props) {
   const { getUserData } = props;
   const { getUserObject } = useContext(AppContext);
-  const { isAdmin } = getUserObject();
+  const { username, isAdmin } = getUserObject();
   const { type } = useParams();
   const isExpense = type === "expense";
   const {
@@ -30,6 +29,7 @@ export default function ExpenseIncomeList(props) {
     expenseUserList,
     getDataFromConstant,
   } = useContext(UserContext);
+
   const defaultCategoryList = isExpense
     ? expenseCategoryList
     : incomeCategoryList;
@@ -50,7 +50,7 @@ export default function ExpenseIncomeList(props) {
   }, [defaultCategoryList, defaultExpenseList]);
 
   const resetButtonClick = () => {
-    setExpenseIncomeList(defaultExpenseList.sort(sortByDate).reverse());
+    setExpenseIncomeList(defaultExpenseList);
     if (editObj) {
       const { id } = editObj;
       const newEditObj = defaultExpenseList.find((x) => x.id === id);
@@ -59,9 +59,10 @@ export default function ExpenseIncomeList(props) {
   };
 
   const showEditItemDialog = (id) => {
-    if (isAdmin) {
+    const expIncomeObj = expenseIncomeList.find((x) => x.id === id);
+    if (username === expIncomeObj.user || isAdmin) {
       toggleEditItemDialog(true);
-      setEditObj({ ...expenseIncomeList.find((x) => x.id === id) });
+      setEditObj({ ...expIncomeObj });
     }
   };
 
