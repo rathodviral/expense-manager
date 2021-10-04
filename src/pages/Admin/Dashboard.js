@@ -3,6 +3,8 @@ import { makeStyles } from "@material-ui/core";
 import { AppCountText, AppCard, AppButton } from "../../components";
 import { AdminContext } from "../../contexts";
 import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
+import { expenseList, incomeList } from "../../reducers/category";
 
 const useStyles = makeStyles({
   root: {
@@ -11,7 +13,9 @@ const useStyles = makeStyles({
 });
 
 export default function Dashboard(props) {
-  const { incomeCategoryList, expenseCategoryList } = useContext(AdminContext);
+  // const { incomeCategoryList, expenseCategoryList } = useContext(AdminContext);
+  const expenseCategoryList = useSelector(expenseList);
+  const incomeCategoryList = useSelector(incomeList);
   const classes = useStyles();
   const history = useHistory();
   const cardList = [

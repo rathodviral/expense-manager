@@ -4,15 +4,19 @@ import { useParams } from "react-router-dom";
 import { AppApiFetch, isFalsyValue } from "../../utilities";
 import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../../contexts";
+import { categoryApi } from "../../api";
+import { useDispatch } from "react-redux";
+import { fetchCategory } from "../../reducers/category";
 
 export default function AddCategorySubCategory(props) {
   const { getAdminData } = props;
+  const dispatch = useDispatch();
   const { type, categoryId } = useParams();
   const { showSnackbar, getUserObject } = useContext(AppContext);
   const { getListObj, getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
-  const isSubCategory = categoryId && categoryId !== "";
-  const defaultFields = getListFromConstant(isSubCategory, "fields");
+  // const isSubCategory = categoryId && categoryId !== "";
+  const defaultFields = getListFromConstant("fields");
 
   const [nameField, setNameField] = useState(null);
   const [detailField, setDetailField] = useState(null);
@@ -78,41 +82,29 @@ export default function AddCategorySubCategory(props) {
       });
       return;
     }
-    const { family } = getUserObject();
-    const { create } = getListFromConstant(isSubCategory, "apiPath");
-    const options = {
-      method: "POST",
-      body: {
-        ...formData,
-        categoryId: isSubCategory ? categoryId : undefined,
-        isExpense,
-      },
-      queryParams: { family },
-    };
-
-    const response = await AppApiFetch(create, options);
-    const { status, message } = await response.json();
+    // const response = await AppApiFetch(create, options);
+    const { status, message } = await categoryApi.post(formData, isExpense);
+    // const { status, message } = await response.json();
     showSnackbar(message);
     setValues(defaultFields);
     if (status) {
-      getAdminData();
+      // getAdminData();
+      dispatch(fetchCategory());
     }
   };
 
   return (
     <div>
-      <AppCard title={`Add ${type} ${isSubCategory ? "Sub " : ""} Categories`}>
-        {isSubCategory && (
+      <AppCard title={`Add ${type} Categories`}>
+        {/* {isSubCategory && (
           <Typography variant="h6" style={{ textAlign: "center" }}>
             {getListObj(isExpense, categoryId, "name")}
           </Typography>
-        )}
+        )} */}
         <form noValidate autoComplete="off">
           <AppInputField {...nameField} handleChange={nameFieldChange} />
           <AppInputField {...detailField} handleChange={detailFieldChange} />
-          <AppButton onClick={formSubmit}>
-            Save {isSubCategory && "Sub "}Category
-          </AppButton>
+          <AppButton onClick={formSubmit}>Save Category</AppButton>
         </form>
       </AppCard>
     </div>

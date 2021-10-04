@@ -38,9 +38,9 @@ export default function AppEditCategorySubCategoryDialog(props) {
   const { getListObj, getListFromConstant } = useContext(AdminContext);
 
   const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
-  const { isSubCategory, id, categoryId } = dialogObj;
+  const { id, categoryId } = dialogObj;
   const isExpense = type === "expense";
-  const defaultFields = getListFromConstant(isSubCategory, "fields");
+  const defaultFields = getListFromConstant("fields");
   const [nameField, setNameField] = useState(null);
   const [detailField, setDetailField] = useState(null);
 
@@ -115,12 +115,12 @@ export default function AppEditCategorySubCategoryDialog(props) {
   };
 
   const deleteListItem = async () => {
-    const { isSubCategory, id } = dialogObj;
+    const { id } = dialogObj;
     const { family } = getUserObject();
     const {
       admin: { category, subCategory },
     } = AppConstant;
-    const { apiPath } = isSubCategory ? subCategory : category;
+    const { apiPath } = category;
     const options = {
       method: "DELETE",
       queryParams: { family, id },
@@ -128,7 +128,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
     const response = await AppApiFetch(apiPath.delete, options);
     const { status } = await response.json();
     if (status) {
-      showSnackbar(`${isSubCategory ? "Sub " : ""} Category Deleted.`);
+      showSnackbar(`Category Deleted.`);
       getAdminData();
       toggleDialog(false);
     } else {
@@ -150,10 +150,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
       return;
     }
     const { family } = getUserObject();
-    const { update } = getListFromConstant(isSubCategory, "apiPath");
+    const { update } = getListFromConstant("apiPath");
     const options = {
       method: "PUT",
-      body: { ...formData, categoryId: isSubCategory ? categoryId : undefined },
+      body: { ...formData, categoryId: categoryId },
       queryParams: { family },
     };
     const response = await AppApiFetch(update, options);
@@ -198,21 +198,21 @@ export default function AppEditCategorySubCategoryDialog(props) {
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
-        {isSubCategory && (
+        {/* {isSubCategory && (
           <Typography variant="h6" style={{ textAlign: "center" }}>
             Edit Sub Category for {getListObj(isExpense, categoryId, "name")}
           </Typography>
-        )}
-        {isSubCategory && <AppDivider />}
+        )} */}
+        {/* {isSubCategory && <AppDivider />} */}
         <form noValidate autoComplete="off">
           <AppInputField {...nameField} handleChange={nameFieldChange} />
           <AppInputField {...detailField} handleChange={detailFieldChange} />
           <AppButton onClick={formSubmit}>Save Detail</AppButton>
-          {!isSubCategory && (
+          {/* {!isSubCategory && (
             <AppButton onClick={(e) => history.push(`${type}/add/${id}`)}>
               Add Sub Category
             </AppButton>
-          )}
+          )} */}
         </form>
       </div>
     </Dialog>

@@ -25,7 +25,7 @@ export default function AddExpenseIncome(props) {
   const [isPaid, setPaid] = useState(true);
   const [dateField, setDateField] = useState(null);
   const [categoryField, setCategoryField] = useState(defaultFields.category);
-  const [detailField, setDetailField] = useState(defaultFields.detail);
+  // const [detailField, setDetailField] = useState(defaultFields.detail);
   const [amountField, setAmountField] = useState(null);
   const [noteField, setNoteField] = useState(null);
 
@@ -43,8 +43,8 @@ export default function AddExpenseIncome(props) {
         categoryField.value && categoryField.value.id
           ? categoryField.value.id
           : null,
-      detail:
-        detailField.value && detailField.value.id ? detailField.value.id : null,
+      // detail:
+      //   detailField.value && detailField.value.id ? detailField.value.id : null,
       amount: Number(amountField.value),
       note: noteField.value,
       isExpense,
@@ -56,7 +56,7 @@ export default function AddExpenseIncome(props) {
     return {
       dateField,
       categoryField,
-      detailField,
+      // detailField,
       amountField,
       noteField,
     };
@@ -70,25 +70,25 @@ export default function AddExpenseIncome(props) {
     };
     setDateField(date);
     setCategoryField(cField);
-    setDetailField(detail);
+    // setDetailField(detail);
     setAmountField(amount);
     setNoteField(note);
   };
 
-  const setSubCategoryOptions = (categoryId) => {
-    const { subCategoryList } = categoryId
-      ? typeList.find((x) => x.id === categoryId)
-      : {
-          subCategoryList: [],
-        };
-    const subCatList = subCategoryList.map(createOptions);
-    const sField = {
-      ...detailField,
-      options: subCatList,
-      value: null,
-    };
-    setDetailField(sField);
-  };
+  // const setSubCategoryOptions = (categoryId) => {
+  //   const { subCategoryList } = categoryId
+  //     ? typeList.find((x) => x.id === categoryId)
+  //     : {
+  //         subCategoryList: [],
+  //       };
+  //   const subCatList = subCategoryList.map(createOptions);
+  //   const sField = {
+  //     ...detailField,
+  //     options: subCatList,
+  //     value: null,
+  //   };
+  //   setDetailField(sField);
+  // };
 
   const dateFieldChange = (value, name) => {
     const field = { ...dateField, value };
@@ -98,13 +98,13 @@ export default function AddExpenseIncome(props) {
   const categoryFieldChange = (value, name) => {
     const field = { ...categoryField, value };
     setCategoryField(field);
-    setSubCategoryOptions(value && value.id ? value.id : null);
+    // setSubCategoryOptions(value && value.id ? value.id : null);
   };
 
-  const subCategoryFieldChange = (value, name) => {
-    const field = { ...detailField, value };
-    setDetailField(field);
-  };
+  // const subCategoryFieldChange = (value, name) => {
+  //   const field = { ...detailField, value };
+  //   setDetailField(field);
+  // };
 
   const amountFieldChange = (value, name) => {
     const field = { ...amountField, value };
@@ -128,7 +128,7 @@ export default function AddExpenseIncome(props) {
   const updateFieldValue = (key, obj) => {
     if (key === "dateField") setDateField(obj);
     if (key === "categoryField") setCategoryField(obj);
-    if (key === "detailField") setDetailField(obj);
+    // if (key === "detailField") setDetailField(obj);
     if (key === "amountField") setAmountField(obj);
     if (key === "noteField") setNoteField(obj);
   };
@@ -162,7 +162,7 @@ export default function AddExpenseIncome(props) {
         ...defaultFields,
         category: categoryField,
         date: dateField,
-        detail: detailField,
+        // detail: detailField,
       });
       getUserDataEvent();
     }
@@ -181,10 +181,10 @@ export default function AddExpenseIncome(props) {
             {...categoryField}
             handleChange={categoryFieldChange}
           />
-          <AppAutocompleteField
+          {/* <AppAutocompleteField
             {...detailField}
             handleChange={subCategoryFieldChange}
-          />
+          /> */}
           <AppInputField {...amountField} handleChange={amountFieldChange} />
           <AppInputField {...noteField} handleChange={noteFieldChange} />
           {isExpense && (

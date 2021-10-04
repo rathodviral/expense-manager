@@ -91,7 +91,7 @@ export default function AppListItem(props) {
             </div>
             <div className={classes.displayFlex}>
               <p className={classes.categoryFontStyle}>
-                <b>{subCategoryName}</b> <i>({categoryName})</i>
+                <b>{categoryName}</b>
               </p>
             </div>
             <div className={classes.displayFlex}>

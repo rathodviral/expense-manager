@@ -108,13 +108,13 @@ export default function Report(props) {
         .map((item) => {
           const { category, detail } = item;
           const categoryItem = typeList.find((x) => x.id === category);
-          const subCategoryItem = categoryItem.subCategoryList.find(
-            (x) => x.id === detail
-          );
+          // const subCategoryItem = categoryItem.subCategoryList.find(
+          //   (x) => x.id === detail
+          // );
           return {
             ...item,
             categoryName: categoryItem.name,
-            subCategoryName: subCategoryItem.name,
+            // subCategoryName: subCategoryItem.name,
           };
         })
         .sort(sortByDate);

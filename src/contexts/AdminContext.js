@@ -12,26 +12,20 @@ const AdminContextProvider = (props) => {
     const { category, subCategory } = adminData;
     const list = category.filter((x) => x.isExpense === isExpense);
     return list.map((x) => {
-      const subCategoryList = subCategory.filter((y) => y.categoryId === x.id);
+      // const subCategoryList = subCategory.filter((y) => y.categoryId === x.id);
       return {
         ...x,
-        subCategoryList: subCategoryList,
+        // subCategoryList: subCategoryList,
         isOpen: false,
       };
     });
   };
 
-  const getListFromConstant = (isSubCategory, key) => {
+  const getListFromConstant = (key) => {
     const {
       admin: { category, subCategory },
     } = AppConstant;
-    return key
-      ? isSubCategory
-        ? subCategory[key]
-        : category[key]
-      : isSubCategory
-      ? subCategory
-      : category;
+    return key ? category[key] : category;
   };
 
   const getListObj = (isExpense, categoryId, key) => {

@@ -44,13 +44,13 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const { openDialog, toggleDialog, editObj, getUserData, defaultList } = props;
   const { id, isExpense, user } = editObj;
-  const title = `Change in ${editObj.subCategoryName}`;
+  const title = `Change in ${editObj.categoryName}`;
   const defaultFields = getDataFromConstant("fields");
 
   const [isPaid, setPaid] = useState(true);
   const [dateField, setDateField] = useState(null);
   const [categoryField, setCategoryField] = useState(defaultFields.category);
-  const [detailField, setDetailField] = useState(defaultFields.detail);
+  // const [detailField, setDetailField] = useState(defaultFields.detail);
   const [amountField, setAmountField] = useState(null);
   const [noteField, setNoteField] = useState(null);
 
@@ -71,8 +71,8 @@ export default function AppEditExpenseIncomeDialog(props) {
         categoryField.value && categoryField.value.id
           ? categoryField.value.id
           : null,
-      detail:
-        detailField.value && detailField.value.id ? detailField.value.id : null,
+      // detail:
+      //   detailField.value && detailField.value.id ? detailField.value.id : null,
       amount: Number(amountField.value),
       note:
         user !== username ? `${noteSplit}--Updated by ${username}` : noteSplit,
@@ -87,7 +87,7 @@ export default function AppEditExpenseIncomeDialog(props) {
     return {
       dateField,
       categoryField,
-      detailField,
+      // detailField,
       amountField,
       noteField,
     };
@@ -102,38 +102,38 @@ export default function AppEditExpenseIncomeDialog(props) {
       options: categoryList,
       value: categoryItem,
     };
-    const { subCategoryList } = defaultList.find(
-      (x) => x.id === categoryItem.id
-    );
-    const subCatList = subCategoryList.map(createOptions);
-    const subCatItem = subCatList.find((x) => x.name === subCategoryName);
-    const sField = {
-      ...detail,
-      options: subCatList,
-      value: subCatItem,
-    };
+    // const { subCategoryList } = defaultList.find(
+    //   (x) => x.id === categoryItem.id
+    // );
+    // const subCatList = subCategoryList.map(createOptions);
+    // const subCatItem = subCatList.find((x) => x.name === subCategoryName);
+    // const sField = {
+    //   ...detail,
+    //   options: subCatList,
+    //   value: subCatItem,
+    // };
     date.value = AppDate.getDateFromString(editObj.date);
     setDateField(date);
     setCategoryField(cField);
-    setDetailField(sField);
+    // setDetailField(sField);
     setAmountField({ ...amount, value: editObj.amount });
     setNoteField({ ...note, value: editObj.note });
   };
 
-  const setSubCategoryOptions = (categoryId) => {
-    const { subCategoryList } = categoryId
-      ? defaultList.find((x) => x.id === categoryId)
-      : {
-          subCategoryList: [],
-        };
-    const subCatList = subCategoryList.map(createOptions);
-    const sField = {
-      ...detailField,
-      options: subCatList,
-      value: null,
-    };
-    setDetailField(sField);
-  };
+  // const setSubCategoryOptions = (categoryId) => {
+  //   const { subCategoryList } = categoryId
+  //     ? defaultList.find((x) => x.id === categoryId)
+  //     : {
+  //         subCategoryList: [],
+  //       };
+  //   const subCatList = subCategoryList.map(createOptions);
+  //   const sField = {
+  //     ...detailField,
+  //     options: subCatList,
+  //     value: null,
+  //   };
+  //   setDetailField(sField);
+  // };
 
   const dateFieldChange = (value, name) => {
     const field = { ...dateField, value };
@@ -143,13 +143,13 @@ export default function AppEditExpenseIncomeDialog(props) {
   const categoryFieldChange = (value, name) => {
     const field = { ...categoryField, value };
     setCategoryField(field);
-    setSubCategoryOptions(value && value.id ? value.id : null);
+    // setSubCategoryOptions(value && value.id ? value.id : null);
   };
 
-  const subCategoryFieldChange = (value, name) => {
-    const field = { ...detailField, value };
-    setDetailField(field);
-  };
+  // const subCategoryFieldChange = (value, name) => {
+  //   const field = { ...detailField, value };
+  //   setDetailField(field);
+  // };
 
   const amountFieldChange = (value, name) => {
     const field = { ...amountField, value };
@@ -211,7 +211,7 @@ export default function AppEditExpenseIncomeDialog(props) {
   const updateFieldValue = (key, obj) => {
     if (key === "dateField") setDateField(obj);
     if (key === "categoryField") setCategoryField(obj);
-    if (key === "detailField") setDetailField(obj);
+    // if (key === "detailField") setDetailField(obj);
     if (key === "amountField") setAmountField(obj);
     if (key === "noteField") setNoteField(obj);
   };
@@ -290,10 +290,10 @@ export default function AppEditExpenseIncomeDialog(props) {
             {...categoryField}
             handleChange={categoryFieldChange}
           />
-          <AppAutocompleteField
+          {/* <AppAutocompleteField
             {...detailField}
             handleChange={subCategoryFieldChange}
-          />
+          /> */}
           <AppInputField {...amountField} handleChange={amountFieldChange} />
           <AppInputField {...noteField} handleChange={noteFieldChange} />
           {isExpense && (

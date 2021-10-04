@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: theme.spacing(6),
   },
+  border: {
+    borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+  },
 }));
 
 export default function AppAccordion(props) {
@@ -35,8 +38,12 @@ export default function AppAccordion(props) {
   };
   return (
     <React.Fragment>
-      <ListItem button onClick={toggleCollapse}>
-        <ListItemIcon>
+      <ListItem
+        className={classes.border}
+        button
+        onClick={(e) => listItemClick(false, { name, id, detail, isExpense })}
+      >
+        {/* <ListItemIcon>
           <IconButton
             size="small"
             onClick={(e) => {
@@ -46,16 +53,9 @@ export default function AppAccordion(props) {
           >
             <EditIcon />
           </IconButton>
-        </ListItemIcon>
-        <ListItemText
-          primary={name}
-          secondary={
-            subCategoryList.length > 0
-              ? `Sub Categories (${subCategoryList.length})`
-              : ""
-          }
-        />
-        {subCategoryList.length > 0 ? (
+        </ListItemIcon> */}
+        <ListItemText primary={name} />
+        {/* {subCategoryList.length > 0 ? (
           open ? (
             <ExpandLess />
           ) : (
@@ -63,9 +63,9 @@ export default function AppAccordion(props) {
           )
         ) : (
           ""
-        )}
+        )} */}
       </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      {/* <Collapse in={open} timeout="auto" unmountOnExit>
         {subCategoryList.length > 0 && (
           <List component="div" disablePadding>
             {subCategoryList.map((item, i) => (
@@ -84,7 +84,7 @@ export default function AppAccordion(props) {
             ))}
           </List>
         )}
-      </Collapse>
+      </Collapse> */}
     </React.Fragment>
   );
 }

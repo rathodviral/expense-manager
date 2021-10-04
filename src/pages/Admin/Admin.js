@@ -8,6 +8,8 @@ import AddCategorySubCategory from "./AddCategorySubCategory";
 import { AdminContext, AppContext } from "../../contexts";
 import { useEffect } from "react";
 import { AppApiFetch, AppConstant } from "../../utilities";
+import { useDispatch } from "react-redux";
+import { fetchCategory } from "../../reducers/category";
 
 const useStyles = makeStyles({
   root: {
@@ -29,6 +31,8 @@ export default function Admin() {
     },
   } = AppConstant;
 
+  const dispatch = useDispatch();
+
   const getAdminDataEvent = async () => {
     const { family } = getUserObject();
     const type = "category";
@@ -45,6 +49,7 @@ export default function Admin() {
 
   useEffect(() => {
     getAdminDataEvent();
+    dispatch(fetchCategory());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
