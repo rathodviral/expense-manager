@@ -2,16 +2,14 @@ import { AppApiFetch, AppConstant, AppStorage } from "../utilities";
 
 const {
   login,
-  admin: {
-    category: { apiPath },
-  },
+  expense: { apiPath },
 } = AppConstant;
 
 const { family } = AppStorage.getItemFromStorage(login.storage) || {
   family: null,
 };
 
-export default async function categoryApi(url, options) {
+export default async function expenseApi(url, options) {
   let jsonData = null;
   try {
     const response = await AppApiFetch(url, options);
@@ -20,10 +18,12 @@ export default async function categoryApi(url, options) {
       // Return a result object similar to Axios
       return {
         status: jsonData.status,
-        data:
+        category:
           jsonData.data && jsonData.data.category
             ? jsonData.data.category
             : null,
+        data:
+          jsonData.data && jsonData.data.expense ? jsonData.data.expense : null,
         message: jsonData.message,
       };
     }
@@ -33,16 +33,15 @@ export default async function categoryApi(url, options) {
   }
 }
 
-categoryApi.get = () => {
-  const type = "category";
+expenseApi.get = () => {
   const options = {
     method: "GET",
-    queryParams: { family, type },
+    queryParams: { family },
   };
-  return categoryApi(apiPath.read, options);
+  return expenseApi(apiPath.read, options);
 };
 
-categoryApi.post = (formData, isExpense) => {
+expenseApi.post = (formData, isExpense) => {
   const options = {
     method: "POST",
     body: {
@@ -52,25 +51,24 @@ categoryApi.post = (formData, isExpense) => {
     queryParams: { family },
   };
 
-  return categoryApi(apiPath.create, options);
+  return expenseApi(apiPath.create, options);
 };
 
-categoryApi.update = (formData, categoryId) => {
+expenseApi.update = (formData) => {
   const options = {
     method: "PUT",
-    body: { ...formData, categoryId },
+    body: { ...formData },
     queryParams: { family },
   };
 
-  return categoryApi(apiPath.update, options);
+  return expenseApi(apiPath.update, options);
 };
 
-categoryApi.delete = (formData, categoryId) => {
+expenseApi.delete = (id) => {
   const options = {
-    method: "PUT",
-    body: { ...formData, categoryId, isActive: false },
-    queryParams: { family },
+    method: "DELETE",
+    queryParams: { family, id },
   };
 
-  return categoryApi(apiPath.update, options);
+  return expenseApi(apiPath.update, options);
 };

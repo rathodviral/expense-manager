@@ -11,7 +11,7 @@ import {
 import { useParams } from "react-router-dom";
 import { AppApiFetch, AppConstant, AppDate } from "../../utilities";
 import { Box, List } from "@material-ui/core";
-import { AppContext, UserContext } from "../../contexts";
+import { AppContext } from "../../contexts";
 import {
   isFalsyValue,
   isValueNullOrUndefined,
@@ -19,11 +19,16 @@ import {
   getUsersOptions,
   getTotal,
 } from "../../utilities/common";
+import { useSelector } from "react-redux";
+import {
+  categoryExpenseList,
+  categoryIncomeList,
+} from "../../reducers/expense";
 
 export default function Report(props) {
-  const { showSpinner } = props;
+  const expenseCategoryList = useSelector(categoryExpenseList);
+  const incomeCategoryList = useSelector(categoryIncomeList);
   const { getUserObject } = useContext(AppContext);
-  const { incomeCategoryList, expenseCategoryList } = useContext(UserContext);
 
   const { type } = useParams();
   const isExpense = type === "expense";
@@ -99,22 +104,16 @@ export default function Report(props) {
       method: "GET",
       queryParams: { family, ...queryData },
     };
-    showSpinner(true);
     const response = await AppApiFetch(read, options);
     const { status, data } = await response.json();
     if (status) {
-      showSpinner(false);
       const mappedList = data
         .map((item) => {
-          const { category, detail } = item;
+          const { category } = item;
           const categoryItem = typeList.find((x) => x.id === category);
-          // const subCategoryItem = categoryItem.subCategoryList.find(
-          //   (x) => x.id === detail
-          // );
           return {
             ...item,
             categoryName: categoryItem.name,
-            // subCategoryName: subCategoryItem.name,
           };
         })
         .sort(sortByDate);

@@ -16,3 +16,4 @@ export { default as AppAccordion } from "./AppAccordion";
 export { default as AppFilterDialog } from "./AppFilterDialog";
 export { default as AppEditExpenseIncomeDialog } from "./AppEditExpenseIncomeDialog";
 export { default as AppSpinner } from "./AppSpinner";
+export { default as AppCategoryListItem } from "./AppCategoryListItem";

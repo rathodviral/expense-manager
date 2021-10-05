@@ -48,7 +48,7 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    getAdminDataEvent();
+    // getAdminDataEvent();
     dispatch(fetchCategory());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

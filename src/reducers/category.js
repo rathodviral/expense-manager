@@ -41,4 +41,6 @@ export const expenseList = (state) =>
 export const incomeList = (state) =>
   state.category.data.filter((x) => !x.isExpense);
 
+export const showAdminLoader = (state) => state.category.status === "loading";
+
 export default slice.reducer;

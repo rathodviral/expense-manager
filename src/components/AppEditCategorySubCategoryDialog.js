@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   makeStyles,
   IconButton,
@@ -11,9 +11,12 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { AppApiFetch, AppConstant, isFalsyValue } from "../utilities";
+import { isFalsyValue } from "../utilities";
 import { AdminContext, AppContext } from "../contexts";
-import { AppButton, AppDivider, AppInputField } from ".";
+import { AppButton, AppInputField } from ".";
+import { categoryApi } from "../api";
+import { useDispatch } from "react-redux";
+import { fetchCategory } from "../reducers/category";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -30,15 +33,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AppEditCategorySubCategoryDialog(props) {
   const classes = useStyles();
-  const history = useHistory();
+  const dispatch = useDispatch();
   const { type } = useParams();
 
-  const { getUserObject, showAlertDialogObj, showSnackbar } =
-    useContext(AppContext);
-  const { getListObj, getListFromConstant } = useContext(AdminContext);
+  const { showAlertDialogObj, showSnackbar } = useContext(AppContext);
+  const { getListFromConstant } = useContext(AdminContext);
 
-  const { openDialog, dialogObj, toggleDialog, getAdminData } = props;
-  const { id, categoryId } = dialogObj;
+  const { openDialog, dialogObj, toggleDialog } = props;
+  const { id } = dialogObj;
   const isExpense = type === "expense";
   const defaultFields = getListFromConstant("fields");
   const [nameField, setNameField] = useState(null);
@@ -102,11 +104,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
   };
 
   const alertDeleteListItem = () => {
-    const { isSubCategory, name } = dialogObj;
-    const title = `${isSubCategory ? "Sub " : ""} Category`;
+    const { name } = dialogObj;
     const obj = {
-      title: `Delete ${title}`,
-      message: `Are you sure, you want to delete "${name}" ${title}.`,
+      title: `Delete Category`,
+      message: `Are you sure, you want to delete "${name}" Category.`,
       agreeBtnText: "Agree",
       disagreeBtnText: "Disagree",
       dialogBtnClick: alertBtnClickDeleteListItem,
@@ -115,21 +116,11 @@ export default function AppEditCategorySubCategoryDialog(props) {
   };
 
   const deleteListItem = async () => {
-    const { id } = dialogObj;
-    const { family } = getUserObject();
-    const {
-      admin: { category, subCategory },
-    } = AppConstant;
-    const { apiPath } = category;
-    const options = {
-      method: "DELETE",
-      queryParams: { family, id },
-    };
-    const response = await AppApiFetch(apiPath.delete, options);
-    const { status } = await response.json();
+    const formData = getFormData();
+    const { status } = await categoryApi.delete(formData, id);
     if (status) {
       showSnackbar(`Category Deleted.`);
-      getAdminData();
+      dispatch(fetchCategory());
       toggleDialog(false);
     } else {
       showSnackbar("Some Issue");
@@ -149,18 +140,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
       });
       return;
     }
-    const { family } = getUserObject();
-    const { update } = getListFromConstant("apiPath");
-    const options = {
-      method: "PUT",
-      body: { ...formData, categoryId: categoryId },
-      queryParams: { family },
-    };
-    const response = await AppApiFetch(update, options);
-    const { status, message } = await response.json();
+    const { status, message } = await categoryApi.update(formData, id);
     showSnackbar(message);
     if (status) {
-      getAdminData();
+      dispatch(fetchCategory());
     } else {
       setValues(defaultFields);
     }
@@ -198,21 +181,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
-        {/* {isSubCategory && (
-          <Typography variant="h6" style={{ textAlign: "center" }}>
-            Edit Sub Category for {getListObj(isExpense, categoryId, "name")}
-          </Typography>
-        )} */}
-        {/* {isSubCategory && <AppDivider />} */}
         <form noValidate autoComplete="off">
           <AppInputField {...nameField} handleChange={nameFieldChange} />
           <AppInputField {...detailField} handleChange={detailFieldChange} />
           <AppButton onClick={formSubmit}>Save Detail</AppButton>
-          {/* {!isSubCategory && (
-            <AppButton onClick={(e) => history.push(`${type}/add/${id}`)}>
-              Add Sub Category
-            </AppButton>
-          )} */}
         </form>
       </div>
     </Dialog>

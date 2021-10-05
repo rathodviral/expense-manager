@@ -1,21 +1,31 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { List } from "@material-ui/core";
 import {
   AppCard,
   AppInputField,
   AppDivider,
   AppEditCategorySubCategoryDialog,
-  AppAccordion,
+  AppCategoryListItem,
+  AppSpinner,
 } from "../../components";
-import { AdminContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
+import { useSelector } from "react-redux";
+import {
+  expenseList,
+  incomeList,
+  showAdminLoader,
+} from "../../reducers/category";
 
 export default function Category(props) {
   const { getAdminData } = props;
   const { type } = useParams();
-  const adminCtx = useContext(AdminContext);
-  const defaultList = adminCtx[`${type}CategoryList`];
+  const expenseCategoryList = useSelector(expenseList);
+  const incomeCategoryList = useSelector(incomeList);
+  const defaultList =
+    type === "expense" ? expenseCategoryList : incomeCategoryList;
+
+  const showSpinner = useSelector(showAdminLoader);
 
   const [categoryList, setCategoryList] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -36,10 +46,9 @@ export default function Category(props) {
     setCategoryList(list);
   };
 
-  const listItemClick = (isSubCategory, value) => {
-    // history.push(`${type}/edit/${value.id}`);
+  const listItemClick = (value) => {
     toggleDialog(true);
-    setDialogObj({ ...value, isSubCategory });
+    setDialogObj({ ...value });
   };
 
   const toggleDialog = (flag) => {
@@ -62,11 +71,11 @@ export default function Category(props) {
         <AppDivider />
         <List component="div" disablePadding>
           {categoryList.map((item, i) => (
-            <AppAccordion
+            <AppCategoryListItem
               key={i}
               {...item}
               listItemClick={listItemClick}
-            ></AppAccordion>
+            ></AppCategoryListItem>
           ))}
         </List>
         <AppEditCategorySubCategoryDialog
@@ -76,6 +85,7 @@ export default function Category(props) {
           getAdminData={getAdminData}
         ></AppEditCategorySubCategoryDialog>
       </AppCard>
+      {showSpinner && <AppSpinner />}
     </div>
   );
 }

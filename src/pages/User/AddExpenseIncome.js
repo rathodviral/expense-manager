@@ -11,13 +11,20 @@ import { AppApiFetch, AppDate } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
 import { createOptions, isFalsyValue } from "../../utilities/common";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  categoryExpenseList,
+  categoryIncomeList,
+  fetchExpense,
+} from "../../reducers/expense";
 
 export default function AddExpenseIncome(props) {
-  const { getUserDataEvent } = props;
+  const dispatch = useDispatch();
   const { type } = useParams();
   const { showSnackbar, getUserObject } = useContext(AppContext);
-  const { incomeCategoryList, expenseCategoryList, getDataFromConstant } =
-    useContext(UserContext);
+  const { getDataFromConstant } = useContext(UserContext);
+  const expenseCategoryList = useSelector(categoryExpenseList);
+  const incomeCategoryList = useSelector(categoryIncomeList);
   const isExpense = type === "expense";
   const defaultFields = getDataFromConstant("fields");
   const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
@@ -164,7 +171,8 @@ export default function AddExpenseIncome(props) {
         date: dateField,
         // detail: detailField,
       });
-      getUserDataEvent();
+      // getUserDataEvent();
+      dispatch(fetchExpense());
     }
   };
 

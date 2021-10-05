@@ -38,12 +38,8 @@ export default function AppAccordion(props) {
   };
   return (
     <React.Fragment>
-      <ListItem
-        className={classes.border}
-        button
-        onClick={(e) => listItemClick(false, { name, id, detail, isExpense })}
-      >
-        {/* <ListItemIcon>
+      <ListItem className={classes.border} button onClick={toggleCollapse}>
+        <ListItemIcon>
           <IconButton
             size="small"
             onClick={(e) => {
@@ -53,9 +49,9 @@ export default function AppAccordion(props) {
           >
             <EditIcon />
           </IconButton>
-        </ListItemIcon> */}
+        </ListItemIcon>
         <ListItemText primary={name} />
-        {/* {subCategoryList.length > 0 ? (
+        {subCategoryList.length > 0 ? (
           open ? (
             <ExpandLess />
           ) : (
@@ -63,9 +59,9 @@ export default function AppAccordion(props) {
           )
         ) : (
           ""
-        )} */}
+        )}
       </ListItem>
-      {/* <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} timeout="auto" unmountOnExit>
         {subCategoryList.length > 0 && (
           <List component="div" disablePadding>
             {subCategoryList.map((item, i) => (
@@ -84,7 +80,7 @@ export default function AppAccordion(props) {
             ))}
           </List>
         )}
-      </Collapse> */}
+      </Collapse>
     </React.Fragment>
   );
 }

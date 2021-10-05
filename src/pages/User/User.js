@@ -1,13 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppSpinner, AppTopNavigation } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
-import { AppContext, UserContext } from "../../contexts";
-import { AppApiFetch, AppConstant } from "../../utilities";
 import AddExpenseIncome from "./AddExpenseIncome";
 import ExpenseIncomeList from "./ExpenseIncomeList";
 import Report from "./Report";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchExpense, showUserLoader } from "../../reducers/expense";
 
 const useStyles = makeStyles({
   root: {
@@ -21,31 +21,13 @@ const useStyles = makeStyles({
 export default function User() {
   const classes = useStyles();
   const { path } = useRouteMatch();
-  const { getUserObject } = useContext(AppContext);
-  const { setUserData } = useContext(UserContext);
-  const {
-    expense: { apiPath },
-  } = AppConstant;
 
-  const [showSpinner, setShowSpinner] = useState(true);
+  const dispatch = useDispatch();
 
-  const getUserDataEvent = async () => {
-    setShowSpinner(true);
-    const { family } = getUserObject();
-    const options = {
-      method: "GET",
-      queryParams: { family },
-    };
-    const response = await AppApiFetch(apiPath.read, options);
-    const { status, data } = await response.json();
-    setShowSpinner(false);
-    if (status) {
-      setUserData(data);
-    }
-  };
+  const showSpinner = useSelector(showUserLoader);
 
   useEffect(() => {
-    getUserDataEvent();
+    dispatch(fetchExpense());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,17 +41,13 @@ export default function User() {
               <Dashboard></Dashboard>
             </Route>
             <Route exact path={`${path}/:type`}>
-              <ExpenseIncomeList
-                getUserData={getUserDataEvent}
-              ></ExpenseIncomeList>
+              <ExpenseIncomeList />
             </Route>
             <Route exact path={`${path}/:type/add`}>
-              <AddExpenseIncome
-                getUserDataEvent={getUserDataEvent}
-              ></AddExpenseIncome>
+              <AddExpenseIncome />
             </Route>
             <Route exact path={`${path}/:type/report`}>
-              <Report showSpinner={setShowSpinner}></Report>
+              <Report />
             </Route>
           </Switch>
         </div>

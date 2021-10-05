@@ -46,7 +46,6 @@ export default function AppFilterDialog(props) {
   const [paidField, setPaidField] = useState(true);
   const [dateField, setDateField] = useState(null);
   const [categoryField, setCategoryField] = useState(defaultFields.category);
-  // const [detailField, setDetailField] = useState(defaultFields.detail);
   const [userField, setUserField] = useState(null);
 
   useEffect(() => {
@@ -66,8 +65,6 @@ export default function AppFilterDialog(props) {
         categoryField.value && categoryField.value.id
           ? categoryField.value.id
           : null,
-      // detail:
-      //   detailField.value && detailField.value.id ? detailField.value.id : null,
       user: userField.value && userField.value.id ? userField.value.id : null,
       isPaid:
         paidField.value && !isFalsyValue(paidField.value.id)
@@ -82,27 +79,11 @@ export default function AppFilterDialog(props) {
       ...category,
       options: categoryList,
     };
-    // setDetailField(detail);
     setDateField(date);
     setCategoryField(cField);
     setUserField({ ...user, options: userList });
     setPaidField(isPaid);
   };
-
-  // const setSubCategoryOptions = (categoryId) => {
-  //   const { subCategoryList } = categoryId
-  //     ? defaultList.find((x) => x.id === categoryId)
-  //     : {
-  //         subCategoryList: [],
-  //       };
-  //   const subCatList = subCategoryList.map(createOptions);
-  //   const sField = {
-  //     ...detailField,
-  //     options: subCatList,
-  //     value: null,
-  //   };
-  //   setDetailField(sField);
-  // };
 
   const dateFieldChange = (value, name) => {
     const field = { ...dateField, value };
@@ -112,13 +93,7 @@ export default function AppFilterDialog(props) {
   const categoryFieldChange = (value, name) => {
     const field = { ...categoryField, value };
     setCategoryField(field);
-    // setSubCategoryOptions(value && value.id ? value.id : null);
   };
-
-  // const subCategoryFieldChange = (value, name) => {
-  //   const field = { ...detailField, value };
-  //   setDetailField(field);
-  // };
 
   const paidFieldChange = (value, name) => {
     const field = { ...paidField, value };
@@ -175,10 +150,6 @@ export default function AppFilterDialog(props) {
             {...categoryField}
             handleChange={categoryFieldChange}
           />
-          {/* <AppAutocompleteField
-            {...detailField}
-            handleChange={subCategoryFieldChange}
-          /> */}
           <AppAutocompleteField {...userField} handleChange={userFieldChange} />
           <AppAutocompleteField {...paidField} handleChange={paidFieldChange} />
         </form>

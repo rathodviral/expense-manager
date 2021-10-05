@@ -15,21 +15,30 @@ import {
   isValueNullOrUndefined,
   getUsersOptions,
 } from "../../utilities/common";
+import { useSelector } from "react-redux";
+import {
+  categoryExpenseList,
+  categoryIncomeList,
+  userExpenseList,
+  userIncomeList,
+} from "../../reducers/expense";
 
 export default function ExpenseIncomeList(props) {
-  const { getUserData } = props;
   const { getUserObject } = useContext(AppContext);
   const { username, isAdmin } = getUserObject();
   const { type } = useParams();
   const isExpense = type === "expense";
   const {
-    incomeCategoryList,
-    expenseCategoryList,
-    incomeUserList,
-    expenseUserList,
+    // incomeCategoryList,
+    // expenseCategoryList,
+    // incomeUserList,
+    // expenseUserList,
     getDataFromConstant,
   } = useContext(UserContext);
-
+  const expenseCategoryList = useSelector(categoryExpenseList);
+  const incomeCategoryList = useSelector(categoryIncomeList);
+  const incomeUserList = useSelector(userIncomeList);
+  const expenseUserList = useSelector(userExpenseList);
   const defaultCategoryList = isExpense
     ? expenseCategoryList
     : incomeCategoryList;
@@ -124,7 +133,6 @@ export default function ExpenseIncomeList(props) {
           openDialog={openEditItemDialog}
           toggleDialog={toggleEditItemDialog}
           editObj={{ ...editObj, isExpense }}
-          getUserData={getUserData}
           defaultList={defaultCategoryList}
         ></AppEditExpenseIncomeDialog>
         <AppFilterDialog

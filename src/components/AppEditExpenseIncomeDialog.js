@@ -17,8 +17,11 @@ import AppAutocompleteField from "./AppAutocompleteField";
 import AppInputField from "./AppInputField";
 import AppButton from "./AppButton";
 import { AppContext, UserContext } from "../contexts";
-import { AppApiFetch, AppConstant, AppDate } from "../utilities";
+import { AppDate } from "../utilities";
 import { createOptions, isFalsyValue } from "../utilities/common";
+import { useDispatch } from "react-redux";
+import { fetchExpense } from "../reducers/expense";
+import { expenseApi } from "../api";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -38,11 +41,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AppEditExpenseIncomeDialog(props) {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { getDataFromConstant } = useContext(UserContext);
   const { getUserObject, showAlertDialogObj, showSnackbar } =
     useContext(AppContext);
 
-  const { openDialog, toggleDialog, editObj, getUserData, defaultList } = props;
+  const { openDialog, toggleDialog, editObj, defaultList } = props;
   const { id, isExpense, user } = editObj;
   const title = `Change in ${editObj.categoryName}`;
   const defaultFields = getDataFromConstant("fields");
@@ -50,7 +55,6 @@ export default function AppEditExpenseIncomeDialog(props) {
   const [isPaid, setPaid] = useState(true);
   const [dateField, setDateField] = useState(null);
   const [categoryField, setCategoryField] = useState(defaultFields.category);
-  // const [detailField, setDetailField] = useState(defaultFields.detail);
   const [amountField, setAmountField] = useState(null);
   const [noteField, setNoteField] = useState(null);
 
@@ -71,8 +75,6 @@ export default function AppEditExpenseIncomeDialog(props) {
         categoryField.value && categoryField.value.id
           ? categoryField.value.id
           : null,
-      // detail:
-      //   detailField.value && detailField.value.id ? detailField.value.id : null,
       amount: Number(amountField.value),
       note:
         user !== username ? `${noteSplit}--Updated by ${username}` : noteSplit,
@@ -87,14 +89,13 @@ export default function AppEditExpenseIncomeDialog(props) {
     return {
       dateField,
       categoryField,
-      // detailField,
       amountField,
       noteField,
     };
   };
 
   const setValues = ({ date, category, detail, amount, note }) => {
-    const { subCategoryName, categoryName } = editObj;
+    const { categoryName } = editObj;
     const categoryList = defaultList.map(createOptions);
     const categoryItem = categoryList.find((x) => x.name === categoryName);
     const cField = {
@@ -102,38 +103,12 @@ export default function AppEditExpenseIncomeDialog(props) {
       options: categoryList,
       value: categoryItem,
     };
-    // const { subCategoryList } = defaultList.find(
-    //   (x) => x.id === categoryItem.id
-    // );
-    // const subCatList = subCategoryList.map(createOptions);
-    // const subCatItem = subCatList.find((x) => x.name === subCategoryName);
-    // const sField = {
-    //   ...detail,
-    //   options: subCatList,
-    //   value: subCatItem,
-    // };
     date.value = AppDate.getDateFromString(editObj.date);
     setDateField(date);
     setCategoryField(cField);
-    // setDetailField(sField);
     setAmountField({ ...amount, value: editObj.amount });
     setNoteField({ ...note, value: editObj.note });
   };
-
-  // const setSubCategoryOptions = (categoryId) => {
-  //   const { subCategoryList } = categoryId
-  //     ? defaultList.find((x) => x.id === categoryId)
-  //     : {
-  //         subCategoryList: [],
-  //       };
-  //   const subCatList = subCategoryList.map(createOptions);
-  //   const sField = {
-  //     ...detailField,
-  //     options: subCatList,
-  //     value: null,
-  //   };
-  //   setDetailField(sField);
-  // };
 
   const dateFieldChange = (value, name) => {
     const field = { ...dateField, value };
@@ -143,13 +118,7 @@ export default function AppEditExpenseIncomeDialog(props) {
   const categoryFieldChange = (value, name) => {
     const field = { ...categoryField, value };
     setCategoryField(field);
-    // setSubCategoryOptions(value && value.id ? value.id : null);
   };
-
-  // const subCategoryFieldChange = (value, name) => {
-  //   const field = { ...detailField, value };
-  //   setDetailField(field);
-  // };
 
   const amountFieldChange = (value, name) => {
     const field = { ...amountField, value };
@@ -180,19 +149,10 @@ export default function AppEditExpenseIncomeDialog(props) {
 
   const deleteListItem = async () => {
     const { id } = editObj;
-    const { family } = getUserObject();
-    const {
-      expense: { apiPath },
-    } = AppConstant;
-    const options = {
-      method: "DELETE",
-      queryParams: { family, id },
-    };
-    const response = await AppApiFetch(apiPath.delete, options);
-    const { status } = await response.json();
+    const { status } = await expenseApi.delete(id);
     if (status) {
       showSnackbar(`${isExpense ? "Expense" : "Income"} Deleted.`);
-      getUserData();
+      dispatch(fetchExpense);
       toggleDialog(false);
     } else {
       showSnackbar("Some Issue");
@@ -211,7 +171,6 @@ export default function AppEditExpenseIncomeDialog(props) {
   const updateFieldValue = (key, obj) => {
     if (key === "dateField") setDateField(obj);
     if (key === "categoryField") setCategoryField(obj);
-    // if (key === "detailField") setDetailField(obj);
     if (key === "amountField") setAmountField(obj);
     if (key === "noteField") setNoteField(obj);
   };
@@ -229,19 +188,10 @@ export default function AppEditExpenseIncomeDialog(props) {
       });
       return;
     }
-    const { family } = getUserObject();
-    const { update } = getDataFromConstant("apiPath");
-    const options = {
-      method: "PUT",
-      body: formData,
-      queryParams: { family },
-    };
-    const response = await AppApiFetch(update, options);
-    const { status, message } = await response.json();
+    const { status, message } = await expenseApi.update(formData);
     showSnackbar(message);
     if (status) {
-      getUserData();
-      // toggleDialog(false);
+      dispatch(fetchExpense);
     } else {
       setValues(defaultFields);
     }
@@ -290,10 +240,6 @@ export default function AppEditExpenseIncomeDialog(props) {
             {...categoryField}
             handleChange={categoryFieldChange}
           />
-          {/* <AppAutocompleteField
-            {...detailField}
-            handleChange={subCategoryFieldChange}
-          /> */}
           <AppInputField {...amountField} handleChange={amountFieldChange} />
           <AppInputField {...noteField} handleChange={noteFieldChange} />
           {isExpense && (

@@ -7,9 +7,16 @@ import {
   AppInfoText,
   AppDivider,
 } from "../../components";
-import { AppContext, UserContext } from "../../contexts";
+import { AppContext } from "../../contexts";
 import { useHistory } from "react-router";
 import { AppDate, getCurrencyFormat } from "../../utilities";
+import { useSelector } from "react-redux";
+import {
+  userExpensePaidTotal,
+  userExpenseTotal,
+  userExpenseUnPaidTotal,
+  userIncomeTotal,
+} from "../../reducers/expense";
 
 const useStyles = makeStyles({
   root: {
@@ -18,8 +25,10 @@ const useStyles = makeStyles({
 });
 
 export default function Dashboard(props) {
-  const { totalIncome, totalExpense, totalPaidExpense, totalUnpaidExpense } =
-    useContext(UserContext);
+  const totalIncome = useSelector(userIncomeTotal);
+  const totalExpense = useSelector(userExpenseTotal);
+  const totalPaidExpense = useSelector(userExpensePaidTotal);
+  const totalUnpaidExpense = useSelector(userExpenseUnPaidTotal);
   const classes = useStyles();
   const { getUserObject } = useContext(AppContext);
   const history = useHistory();

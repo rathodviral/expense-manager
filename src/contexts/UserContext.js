@@ -20,26 +20,17 @@ const UserContextProvider = (props) => {
   const [totalUnpaidExpense, setTotalUnpaidExpense] = useState(0);
 
   const createCategoryList = (isExpense, subCategoryAdd = true) => {
-    const { category, subCategory } = userData;
+    const { category } = userData;
     const list = category.filter((x) => x.isExpense === isExpense);
     return subCategoryAdd
       ? list.map((x) => {
-          // const subCategoryList = subCategory.filter(
-          //   (y) => y.categoryId === x.id
-          // );
           return {
             ...x,
-            // subCategoryList: subCategoryList,
             isOpen: false,
           };
         })
       : list;
   };
-
-  // const createSubCategoryList = (isExpense) => {
-  //   const { subCategory } = userData;
-  //   return subCategory.filter((x) => x.isExpense === isExpense);
-  // };
 
   const createUserList = (isExpense) => {
     const { expense } = userData;
@@ -48,11 +39,10 @@ const UserContextProvider = (props) => {
     // const subCatList = createSubCategoryList(isExpense);
     return list
       .map((x) => {
-        const { category, detail } = x;
+        const { category } = x;
         return {
           ...x,
           categoryName: catList.find((y) => y.id === category).name,
-          // subCategoryName: subCatList.find((y) => y.id === detail).name,
         };
       })
       .sort(sortByDate)
