@@ -113,7 +113,8 @@ export default function Report(props) {
           const categoryItem = typeList.find((x) => x.id === category);
           return {
             ...item,
-            categoryName: categoryItem.name,
+            categoryName:
+              categoryItem && categoryItem.name ? categoryItem.name : null,
           };
         })
         .sort(sortByDate);

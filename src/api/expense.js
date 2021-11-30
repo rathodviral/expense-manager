@@ -34,9 +34,10 @@ export default async function expenseApi(url, options) {
 }
 
 expenseApi.get = () => {
+  const type = "category_only_all";
   const options = {
     method: "GET",
-    queryParams: { family },
+    queryParams: { family, type },
   };
   return expenseApi(apiPath.read, options);
 };

@@ -32,9 +32,9 @@ const AppConstant = {
     category: {
       apiPath: {
         read: "read.php",
-        create: "category/create.php",
-        update: "category/update.php",
-        delete: "category/delete.php",
+        create: "category_only/create.php",
+        update: "category_only/update.php",
+        delete: "category_only/delete.php",
       },
       fields: {
         name: {
@@ -50,36 +50,6 @@ const AppConstant = {
         detail: {
           name: "detail",
           label: "Category Detail",
-          type: "text",
-          helperText: null,
-          isDisabled: false,
-          isError: false,
-          multiline: true,
-          rows: 4,
-          value: "",
-        },
-      },
-    },
-    subCategory: {
-      apiPath: {
-        create: "sub_category/create.php",
-        update: "sub_category/update.php",
-        delete: "sub_category/delete.php",
-      },
-      fields: {
-        name: {
-          name: "name",
-          label: "Sub Category Name",
-          type: "text",
-          helperText: null,
-          isDisabled: false,
-          isError: false,
-          multiline: false,
-          value: "",
-        },
-        detail: {
-          name: "detail",
-          label: "Sub Category Detail",
           type: "text",
           helperText: null,
           isDisabled: false,
@@ -113,17 +83,6 @@ const AppConstant = {
       category: {
         name: "category",
         label: "Expense Category",
-        type: "select",
-        helperText: null,
-        isDisabled: false,
-        isError: false,
-        multiline: false,
-        value: null,
-        options: [],
-      },
-      detail: {
-        name: "detail",
-        label: "Expense Sub Category",
         type: "select",
         helperText: null,
         isDisabled: false,
@@ -202,17 +161,6 @@ const AppConstant = {
         value: null,
         options: [],
       },
-      detail: {
-        name: "detail",
-        label: "Expense Sub Category",
-        type: "select",
-        helperText: null,
-        isDisabled: false,
-        isError: false,
-        multiline: false,
-        value: null,
-        options: [],
-      },
     },
   },
   report: {
@@ -271,17 +219,6 @@ const AppConstant = {
       category: {
         name: "category",
         label: "Expense Category",
-        type: "select",
-        helperText: null,
-        isDisabled: false,
-        isError: false,
-        multiline: false,
-        value: null,
-        options: [],
-      },
-      detail: {
-        name: "detail",
-        label: "Expense Sub Category",
         type: "select",
         helperText: null,
         isDisabled: false,

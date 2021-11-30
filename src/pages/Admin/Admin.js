@@ -35,7 +35,7 @@ export default function Admin() {
 
   const getAdminDataEvent = async () => {
     const { family } = getUserObject();
-    const type = "category";
+    const type = "category_only";
     const options = {
       method: "GET",
       queryParams: { family, type },

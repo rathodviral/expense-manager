@@ -34,7 +34,7 @@ export default async function categoryApi(url, options) {
 }
 
 categoryApi.get = () => {
-  const type = "category";
+  const type = "category_only";
   const options = {
     method: "GET",
     queryParams: { family, type },
