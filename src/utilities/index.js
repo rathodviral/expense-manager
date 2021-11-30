@@ -12,4 +12,5 @@ export {
   createOptions,
   isValueNullOrUndefined,
   isFalsyValue,
+  sortByName,
 } from "./common.js";

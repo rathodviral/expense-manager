@@ -109,3 +109,6 @@ export const getTotal = (list) => {
         .reduce((accumulator, currentValue) => accumulator + currentValue)
     : 0;
 };
+
+export const sortByName = (a, b) =>
+  a.name > b.name ? 1 : b.name > a.name ? -1 : 0;

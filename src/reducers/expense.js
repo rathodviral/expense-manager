@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { expenseApi } from "../api";
+import { sortByName } from "../utilities";
 
 const initialState = {
   category: [],
@@ -50,16 +51,34 @@ const totalCalcuation = (userData, isExpense, isPaid) => {
 };
 
 export const categoryExpenseList = (state) =>
-  state.expense.category.filter((x) => x.isExpense);
+  state.expense.category.filter((x) => x.isExpense).sort(sortByName);
 
 export const categoryIncomeList = (state) =>
-  state.expense.category.filter((x) => !x.isExpense);
+  state.expense.category.filter((x) => !x.isExpense).sort(sortByName);
 
 export const userExpenseList = (state) =>
-  state.expense.data.filter((x) => x.isExpense);
+  state.expense.data
+    .filter((x) => x.isExpense)
+    .map((x) => {
+      const list = categoryExpenseList(state);
+      const { name } = list.find((y) => y.id === x.category);
+      return {
+        ...x,
+        categoryName: name,
+      };
+    });
 
 export const userIncomeList = (state) =>
-  state.expense.data.filter((x) => !x.isExpense);
+  state.expense.data
+    .filter((x) => !x.isExpense)
+    .map((x) => {
+      const list = categoryIncomeList(state);
+      const { name } = list.find((y) => y.id === x.category);
+      return {
+        ...x,
+        categoryName: name,
+      };
+    });
 
 export const userExpenseTotal = (state) =>
   totalCalcuation(state.expense.data, true);

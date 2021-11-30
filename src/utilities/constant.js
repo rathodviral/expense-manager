@@ -163,7 +163,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: null,
+        value: new Date(),
         minDate: false,
       },
       user: {

@@ -91,7 +91,7 @@ export default function Dashboard(props) {
           count={count}
           type={type}
           onClick={(e) => {
-            history.push(`./user/${type}`);
+            if (count > 0) history.push(`./user/${type}`);
           }}
         ></AppCurrencyCountText>
         {isButtonShow && (

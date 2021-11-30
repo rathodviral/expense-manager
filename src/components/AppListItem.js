@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
   },
   categoryFontStyle: {
-    fontSize: "1rem",
+    fontSize: "1.2rem",
     margin: 0,
     textTransform: "capitalize",
   },

@@ -13,7 +13,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import AppDateField from "./AppDateField";
 import AppAutocompleteField from "./AppAutocompleteField";
 import AppButton from "./AppButton";
-import { AppDate, createOptions, isFalsyValue } from "../utilities";
+import {
+  AppConstant,
+  AppDate,
+  AppStorage,
+  createOptions,
+  isFalsyValue,
+} from "../utilities";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -74,15 +80,30 @@ export default function AppFilterDialog(props) {
   };
 
   const setValues = ({ date, category, detail, amount, user, isPaid }) => {
+    const storage = AppStorage.getItemFromStorage(AppConstant.expense.storage);
     const categoryList = defaultList.map(createOptions);
+    const categoryItem =
+      storage && storage.category
+        ? categoryList.find((x) => x.id === storage.category)
+        : null;
     const cField = {
       ...category,
       options: categoryList,
+      value: categoryItem,
     };
+    if (storage && storage.date)
+      date.value = AppDate.getDateFromString(storage.date);
     setDateField(date);
     setCategoryField(cField);
-    setUserField({ ...user, options: userList });
-    setPaidField(isPaid);
+    const userItem =
+      storage && storage.user
+        ? userList.find((x) => x.name === storage.user)
+        : null;
+    setUserField({ ...user, options: userList, value: userItem });
+    setPaidField({
+      ...isPaid,
+      value: storage && storage.isPaid ? { id: true, name: "Paid" } : null,
+    });
   };
 
   const dateFieldChange = (value, name) => {
@@ -106,12 +127,14 @@ export default function AppFilterDialog(props) {
   };
 
   const resetEvent = () => {
+    AppStorage.removeItemFromStorage(AppConstant.expense.storage);
     setValues(defaultFields);
     emitEvents("reset");
   };
 
   const filterEvent = () => {
     const formData = getFormData();
+    AppStorage.setItemInStorage(AppConstant.expense.storage, formData);
     emitEvents(formData);
   };
 

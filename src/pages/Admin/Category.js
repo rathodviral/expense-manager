@@ -9,7 +9,7 @@ import {
   AppSpinner,
 } from "../../components";
 import { useParams } from "react-router-dom";
-import { windowScrollTop } from "../../utilities";
+import { windowScrollTop, sortByName } from "../../utilities";
 import { useSelector } from "react-redux";
 import {
   expenseList,
@@ -23,7 +23,11 @@ export default function Category(props) {
   const expenseCategoryList = useSelector(expenseList);
   const incomeCategoryList = useSelector(incomeList);
   const defaultList =
-    type === "expense" ? expenseCategoryList : incomeCategoryList;
+    type === "expense"
+      ? expenseCategoryList.sort(sortByName)
+      : incomeCategoryList.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
 
   const showSpinner = useSelector(showAdminLoader);
 
@@ -34,6 +38,7 @@ export default function Category(props) {
 
   useEffect(() => {
     windowScrollTop();
+    console.log(expenseCategoryList);
     setCategoryList(defaultList);
   }, [defaultList]);
 
