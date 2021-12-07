@@ -19,7 +19,7 @@ function App() {
           <UserContextProvider>
             <div className="app">
               <Container maxWidth="xs" className="app-container">
-                <Router basename={"v2"}>
+                <Router>
                   <Switch>
                     <Route exact path="/">
                       <Home />
@@ -27,9 +27,9 @@ function App() {
                     <Route path="/login">
                       <Login />
                     </Route>
-                    <Route path="/admin">
+                    {/* <Route path="/admin">
                       <Admin />
-                    </Route>
+                    </Route> */}
                     <Route path="/user">
                       <User />
                     </Route>

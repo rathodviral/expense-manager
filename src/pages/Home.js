@@ -42,7 +42,7 @@ export default function Home() {
     const { username, isAdmin } = getUserObject();
     if (username) {
       if (isAdmin) {
-        history.replace({ pathname: "/admin" });
+        history.replace({ pathname: "/user" });
       } else {
         history.replace({ pathname: "/user" });
       }

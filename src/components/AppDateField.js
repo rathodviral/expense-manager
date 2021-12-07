@@ -14,6 +14,7 @@ export default function AppDateField(props) {
     helperText = "",
     format = "YYYY-MM-DD",
     minDate = AppDate.getPreviousThirdDay,
+    maxDate = AppDate.getPreviousThirdDay,
   } = props;
   const [fieldValue, setFieldValue] = useState(value);
 
@@ -40,6 +41,7 @@ export default function AppDateField(props) {
       }}
       disableFuture={true}
       minDate={minDate}
+      maxDate={maxDate}
       fullWidth
     />
   );

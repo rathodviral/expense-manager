@@ -49,10 +49,12 @@ const UserContextProvider = (props) => {
     return list
       .map((x) => {
         const { category, detail } = x;
+        const cat = catList.find((y) => y.id === category);
+        const subcat = subCatList.find((y) => y.id === detail);
         return {
           ...x,
-          categoryName: catList.find((y) => y.id === category).name,
-          subCategoryName: subCatList.find((y) => y.id === detail).name,
+          categoryName: cat ? cat.name : "V2",
+          subCategoryName: subcat ? subcat.name : "V2",
         };
       })
       .sort(sortByDate)

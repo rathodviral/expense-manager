@@ -46,15 +46,15 @@ export default function AppTopNavigation() {
   };
 
   const adminMenuItem = [
-    { name: "Dashboard", path: "/admin" },
-    { name: "Add Expense Category", path: "/admin/expense/add" },
-    { name: "Add Income Category", path: "/admin/income/add" },
-    { name: "User Dashboard", path: "/user" },
+    // { name: "Dashboard", path: "/admin" },
+    // { name: "Add Expense Category", path: "/admin/expense/add" },
+    // { name: "Add Income Category", path: "/admin/income/add" },
+    // { name: "User Dashboard", path: "/user" },
     { name: "Expense Report", path: "/user/expense/report" },
     { name: "Income Report", path: "/user/income/report" },
   ];
   const userMenuItem = [
-    { name: "User Dashboard", path: "/user/" },
+    // { name: "User Dashboard", path: "/user/" },
     { name: "Expense Report", path: "/user/expense/report" },
     { name: "Income Report", path: "/user/income/report" },
   ];

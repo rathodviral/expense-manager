@@ -25,7 +25,7 @@ export default function Report(props) {
   const { getUserObject } = useContext(AppContext);
   const { incomeCategoryList, expenseCategoryList } = useContext(UserContext);
 
-  const { type } = useParams();
+  const { type = "expense" } = useParams();
   const isExpense = type === "expense";
   const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
 
@@ -107,6 +107,7 @@ export default function Report(props) {
       const mappedList = data
         .map((item) => {
           const { category, detail } = item;
+          console.log(item);
           const categoryItem = typeList.find((x) => x.id === category);
           const subCategoryItem = categoryItem.subCategoryList.find(
             (x) => x.id === detail
@@ -155,7 +156,7 @@ export default function Report(props) {
         ></AppCurrencyCountText>
         <AppDivider />
         <form noValidate autoComplete="off">
-          <Box display="flex" flexDirection="row">
+          {/* <Box display="flex" flexDirection="row">
             <Box pr={1} width="50%">
               <AppDateField
                 {...startDateField}
@@ -170,7 +171,19 @@ export default function Report(props) {
                 handleChange={endDateFieldChange}
               />
             </Box>
-          </Box>
+          </Box> */}
+          <AppDateField
+            {...startDateField}
+            minDate={AppDate.getDateFromString("2021-02-01")}
+            maxDate={AppDate.getDateFromString("2021-11-30")}
+            handleChange={startDateFieldChange}
+          />
+          <AppDateField
+            {...endDateField}
+            minDate={AppDate.getDateFromString("2021-02-01")}
+            maxDate={AppDate.getDateFromString("2021-11-30")}
+            handleChange={endDateFieldChange}
+          />
           <AppButton onClick={formSubmit}>Search</AppButton>
         </form>
         <AppDivider />

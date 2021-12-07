@@ -229,7 +229,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: start,
+        value: AppDate.getDateFromString("2021-11-01"),
       },
       endDate: {
         name: "endDate",
@@ -239,7 +239,7 @@ const AppConstant = {
         isDisabled: false,
         isError: false,
         multiline: false,
-        value: AppDate.getDateIntoString(),
+        value: AppDate.getDateFromString("2021-11-30"),
       },
     },
     listFields: {

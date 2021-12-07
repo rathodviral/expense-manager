@@ -56,7 +56,8 @@ export default function User() {
         <div className={classes.dashboard}>
           <Switch>
             <Route exact path={`${path}`}>
-              <Dashboard></Dashboard>
+              {/* <Dashboard></Dashboard> */}
+              <Report showSpinner={setShowSpinner}></Report>
             </Route>
             <Route exact path={`${path}/:type`}>
               <ExpenseIncomeList
