@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { expenseApi } from "../api";
 import { sortByName } from "../utilities";
+import { sortByDate } from "../utilities/common";
 
 const initialState = {
   category: [],
@@ -66,7 +67,9 @@ export const userExpenseList = (state) =>
         ...x,
         categoryName: name,
       };
-    });
+    })
+    .sort(sortByDate)
+    .reverse();
 
 export const userIncomeList = (state) =>
   state.expense.data
@@ -78,7 +81,9 @@ export const userIncomeList = (state) =>
         ...x,
         categoryName: name,
       };
-    });
+    })
+    .sort(sortByDate)
+    .reverse();
 
 export const userExpenseTotal = (state) =>
   totalCalcuation(state.expense.data, true);

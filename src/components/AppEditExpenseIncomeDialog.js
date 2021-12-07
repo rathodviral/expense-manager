@@ -152,7 +152,7 @@ export default function AppEditExpenseIncomeDialog(props) {
     const { status } = await expenseApi.delete(id);
     if (status) {
       showSnackbar(`${isExpense ? "Expense" : "Income"} Deleted.`);
-      dispatch(fetchExpense);
+      dispatch(fetchExpense());
       toggleDialog(false);
     } else {
       showSnackbar("Some Issue");
@@ -191,7 +191,7 @@ export default function AppEditExpenseIncomeDialog(props) {
     const { status, message } = await expenseApi.update(formData);
     showSnackbar(message);
     if (status) {
-      dispatch(fetchExpense);
+      dispatch(fetchExpense());
     } else {
       setValues(defaultFields);
     }
