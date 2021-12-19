@@ -38,7 +38,6 @@ export default function Category(props) {
 
   useEffect(() => {
     windowScrollTop();
-    console.log(expenseCategoryList);
     setCategoryList(defaultList);
   }, [defaultList]);
 

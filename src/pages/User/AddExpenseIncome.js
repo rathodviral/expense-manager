@@ -140,7 +140,8 @@ export default function AddExpenseIncome(props) {
     if (key === "noteField") setNoteField(obj);
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    e.preventDefault();
     const formFields = getFormFields();
     const formData = getFormData();
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
@@ -179,7 +180,7 @@ export default function AddExpenseIncome(props) {
   return (
     <div>
       <AppCard title={`Add ${type}`}>
-        <form noValidate autoComplete="off">
+        <form noValidate autoComplete="off" onClick={formSubmit}>
           <AppDateField
             {...dateField}
             minDate={AppDate.getLast3MonthsDates}
@@ -208,7 +209,7 @@ export default function AddExpenseIncome(props) {
               label={isPaid ? "Paid" : "Not Paid"}
             />
           )}
-          <AppButton onClick={formSubmit}>Save {type}</AppButton>
+          <AppButton>Save {type}</AppButton>
         </form>
       </AppCard>
     </div>

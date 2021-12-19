@@ -127,7 +127,8 @@ export default function AppEditCategorySubCategoryDialog(props) {
     }
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    e.preventDefault();
     const formFields = getFormFields();
     const formData = getFormData();
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
@@ -181,10 +182,10 @@ export default function AppEditCategorySubCategoryDialog(props) {
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
-        <form noValidate autoComplete="off">
+        <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <AppInputField {...nameField} handleChange={nameFieldChange} />
           <AppInputField {...detailField} handleChange={detailFieldChange} />
-          <AppButton onClick={formSubmit}>Save Detail</AppButton>
+          <AppButton>Save Detail</AppButton>
         </form>
       </div>
     </Dialog>

@@ -86,7 +86,8 @@ export default function Report(props) {
     };
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    if (e) e.preventDefault();
     if (isFalsyValue(startDateField.value)) {
       const field = validateObject(startDateField);
       setStartDateField(field);
@@ -154,24 +155,24 @@ export default function Report(props) {
           onClick={(e) => toggleFilterDialog(true)}
         ></AppCurrencyCountText>
         <AppDivider />
-        <form noValidate autoComplete="off">
+        <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <Box display="flex" flexDirection="row">
             <Box pr={1} width="50%">
               <AppDateField
                 {...startDateField}
-                minDate={AppDate.getPreviousThreeMonth}
+                minDate={AppDate.getDateFromString("2021-12-01")}
                 handleChange={startDateFieldChange}
               />
             </Box>
             <Box pl={1} width="50%">
               <AppDateField
                 {...endDateField}
-                minDate={AppDate.getPreviousThreeMonth}
+                minDate={AppDate.getDateFromString("2021-12-01")}
                 handleChange={endDateFieldChange}
               />
             </Box>
           </Box>
-          <AppButton onClick={formSubmit}>Search</AppButton>
+          <AppButton>Search</AppButton>
         </form>
         <AppDivider />
         <List component="div" disablePadding>

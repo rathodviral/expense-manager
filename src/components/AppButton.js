@@ -19,7 +19,7 @@ export default function AppButton(props) {
 
   return (
     <Button
-      type="button"
+      type="submit"
       variant="contained"
       color="primary"
       className={`${classes.button} ${type ? classes[type] : ""}`}

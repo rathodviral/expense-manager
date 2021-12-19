@@ -33,6 +33,12 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     textTransform: "capitalize",
   },
+  expense: {
+    color: "#dc3545",
+  },
+  income: {
+    color: "#28a745",
+  },
 }));
 
 export default function AppListItem(props) {
@@ -43,7 +49,6 @@ export default function AppListItem(props) {
     isPaid,
     categoryName,
     user,
-    subCategoryName,
     listItemClick,
     note,
     id,
@@ -71,7 +76,7 @@ export default function AppListItem(props) {
         primary={
           <div>
             <div className={classes.displayFlex}>
-              <Typography variant="h6">
+              <Typography variant="h6" color="primary">
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: "INR",
@@ -90,7 +95,11 @@ export default function AppListItem(props) {
               </p>
             </div>
             <div className={classes.displayFlex}>
-              <p className={classes.categoryFontStyle}>
+              <p
+                className={`${classes.categoryFontStyle} ${isExpense} ${
+                  isExpense ? classes.expense : classes.income
+                }`}
+              >
                 <b>{categoryName}</b>
               </p>
             </div>

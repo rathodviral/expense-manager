@@ -78,7 +78,9 @@ export default function Login() {
     if (key === "passwordField") setPasswordField(obj);
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    e.preventDefault();
+    console.log("check");
     const formFields = getFormFields();
     const formData = getFormData();
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
@@ -113,13 +115,13 @@ export default function Login() {
   return (
     <div className={classes.root}>
       <AppCard title="Expense Manager">
-        <form noValidate autoComplete="off">
+        <form onSubmit={formSubmit}>
           <AppInputField {...userField} handleChange={usernameFieldChange} />
           <AppInputField
             {...passwordField}
             handleChange={passwordFieldChange}
           />
-          <AppButton onClick={formSubmit}>Login</AppButton>
+          <AppButton>Login</AppButton>
         </form>
       </AppCard>
     </div>

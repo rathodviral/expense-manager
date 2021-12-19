@@ -175,7 +175,8 @@ export default function AppEditExpenseIncomeDialog(props) {
     if (key === "noteField") setNoteField(obj);
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    e.preventDefault();
     const formFields = getFormFields();
     const formData = getFormData();
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
@@ -229,7 +230,7 @@ export default function AppEditExpenseIncomeDialog(props) {
         </Toolbar>
       </AppBar>
       <div style={{ padding: "1rem" }}>
-        <form noValidate autoComplete="off">
+        <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <AppDateField
             {...dateField}
             minDate={AppDate.getLast3MonthsDates}
@@ -255,11 +256,8 @@ export default function AppEditExpenseIncomeDialog(props) {
               label={isPaid ? "Paid" : "Not Paid"}
             />
           )}
+          <AppButton>Update {isExpense ? "Expense" : "Income"}</AppButton>
         </form>
-
-        <AppButton onClick={() => formSubmit()}>
-          Update {isExpense ? "Expense" : "Income"}
-        </AppButton>
       </div>
     </Dialog>
   );

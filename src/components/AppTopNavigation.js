@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import { AppContext } from "../contexts";
 import { AppConstant, AppStorage } from "../utilities";
 import { useHistory } from "react-router-dom";
@@ -36,13 +37,17 @@ export default function AppTopNavigation() {
 
   const handleMenuClose = (page) => {
     setAnchorEl(null);
-    history.replace({ pathname: page });
+    if (typeof page === "string") history.replace({ pathname: page });
   };
 
   const handleLogoutClick = (event) => {
     const { login } = AppConstant;
     AppStorage.removeItemFromStorage(login.storage);
     history.replace({ pathname: "/login" });
+  };
+
+  const handleBackClick = (event) => {
+    history.goBack();
   };
 
   const adminMenuItem = [
@@ -87,6 +92,15 @@ export default function AppTopNavigation() {
     <div className={classes.root}>
       <AppBar position="fixed">
         <Toolbar>
+          <IconButton
+            edge="start"
+            aria-label="back navigation"
+            aria-haspopup="false"
+            onClick={handleBackClick}
+            color="inherit"
+          >
+            <ChevronLeft />
+          </IconButton>
           <Typography variant="h6" className={classes.title}>
             {username} {family}
           </Typography>

@@ -69,7 +69,8 @@ export default function AddCategorySubCategory(props) {
     if (key === "detail") setDetailField(obj);
   };
 
-  const formSubmit = async () => {
+  const formSubmit = async (e) => {
+    e.preventDefault();
     const formFields = getFormFields();
     const formData = getFormData();
     if (Object.values(formData).some((item) => isFalsyValue(item))) {
@@ -101,10 +102,10 @@ export default function AddCategorySubCategory(props) {
             {getListObj(isExpense, categoryId, "name")}
           </Typography>
         )} */}
-        <form noValidate autoComplete="off">
+        <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <AppInputField {...nameField} handleChange={nameFieldChange} />
           <AppInputField {...detailField} handleChange={detailFieldChange} />
-          <AppButton onClick={formSubmit}>Save Category</AppButton>
+          <AppButton>Save Category</AppButton>
         </form>
       </AppCard>
     </div>
