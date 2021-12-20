@@ -180,7 +180,7 @@ export default function AddExpenseIncome(props) {
   return (
     <div>
       <AppCard title={`Add ${type}`}>
-        <form noValidate autoComplete="off" onClick={formSubmit}>
+        <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <AppDateField
             {...dateField}
             minDate={AppDate.getLast3MonthsDates}

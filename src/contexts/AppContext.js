@@ -70,6 +70,21 @@ const AppContextProvider = (props) => {
     setAlertDialogObj(defaultAlertDialogObj);
   };
 
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawerStatus = (event, status) => {
+    console.log(event, status);
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setDrawerOpen(status === "toggle" ? !isDrawerOpen : status);
+  };
+
   useEffect(() => {
     //   body.setAttribute("data-typography", "poppins");
     resizeWindow();
@@ -90,6 +105,8 @@ const AppContextProvider = (props) => {
         alertDialogObj,
         showAlertDialogObj,
         hideAlertDialogObj,
+        isDrawerOpen,
+        toggleDrawerStatus,
       }}
     >
       {props.children}

@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import { AppContext } from "../contexts";
 import { AppConstant, AppStorage } from "../utilities";
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AppTopNavigation() {
   const classes = useStyles();
-  const { getUserObject } = useContext(AppContext);
+  const { getUserObject, toggleDrawerStatus } = useContext(AppContext);
   const history = useHistory();
   const { username, isAdmin, family } = getUserObject();
   const [anchorEl, setAnchorEl] = useState(false);
@@ -55,11 +56,15 @@ export default function AppTopNavigation() {
     { name: "Add Expense Category", path: "/admin/expense/add" },
     { name: "Add Income Category", path: "/admin/income/add" },
     { name: "User Dashboard", path: "/user" },
+    { name: "Add Expense", path: "/user/expense/add" },
+    { name: "Add Income", path: "/user/income/add" },
     { name: "Expense Report", path: "/user/expense/report" },
     { name: "Income Report", path: "/user/income/report" },
   ];
   const userMenuItem = [
     { name: "User Dashboard", path: "/user/" },
+    { name: "Add Expense", path: "/user/expense/add" },
+    { name: "Add Income", path: "/user/income/add" },
     { name: "Expense Report", path: "/user/expense/report" },
     { name: "Income Report", path: "/user/income/report" },
   ];
@@ -72,7 +77,7 @@ export default function AppTopNavigation() {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      {isAdmin &&
+      {/* {isAdmin &&
         adminMenuItem.map((item, i) => (
           <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
             {item.name}
@@ -83,7 +88,7 @@ export default function AppTopNavigation() {
           <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
             {item.name}
           </MenuItem>
-        ))}
+        ))} */}
       <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );
@@ -100,6 +105,15 @@ export default function AppTopNavigation() {
             color="inherit"
           >
             <ChevronLeft />
+          </IconButton>
+          <IconButton
+            edge="start"
+            aria-label="menu"
+            aria-haspopup="false"
+            onClick={(e) => toggleDrawerStatus(e, "toggle")}
+            color="inherit"
+          >
+            <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             {username} {family}

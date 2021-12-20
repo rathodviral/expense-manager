@@ -76,7 +76,7 @@ export default function AppListItem(props) {
         primary={
           <div>
             <div className={classes.displayFlex}>
-              <Typography variant="h6" color="primary">
+              <Typography variant="h6" color={isPaid ? "primary" : "secondary"}>
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: "INR",

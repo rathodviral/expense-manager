@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import { AppSpinner, AppTopNavigation } from "../../components";
+import { AppSpinner, AppTopNavigation, AppDrawer } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AddExpenseIncome from "./AddExpenseIncome";
@@ -35,6 +35,7 @@ export default function User() {
     <React.Fragment>
       <div className={classes.root}>
         <AppTopNavigation></AppTopNavigation>
+        <AppDrawer />
         <div className={classes.dashboard}>
           <Switch>
             <Route exact path={`${path}`}>
