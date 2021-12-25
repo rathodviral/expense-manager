@@ -96,7 +96,7 @@ export default function AddCategorySubCategory(props) {
 
   return (
     <div>
-      <AppCard title={`Add ${type} Categories`}>
+      <AppCard>
         {/* {isSubCategory && (
           <Typography variant="h6" style={{ textAlign: "center" }}>
             {getListObj(isExpense, categoryId, "name")}

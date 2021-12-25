@@ -61,7 +61,7 @@ export default function Category(props) {
 
   return (
     <div>
-      <AppCard title={`${type} Categories`}>
+      <AppCard>
         <AppInputField
           name="search"
           label="Search Categories"

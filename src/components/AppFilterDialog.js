@@ -55,7 +55,7 @@ export default function AppFilterDialog(props) {
   const [userField, setUserField] = useState(null);
 
   useEffect(() => {
-    if (defaultList.length > 0) {
+    if (defaultFields && defaultList.length > 0) {
       setValues(defaultFields);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,9 +91,11 @@ export default function AppFilterDialog(props) {
       options: categoryList,
       value: categoryItem,
     };
-    if (storage && storage.date)
-      date.value = AppDate.getDateFromString(storage.date);
-    setDateField(date);
+    if (date) {
+      if (storage && storage.date)
+        date.value = AppDate.getDateFromString(storage.date);
+      setDateField(date);
+    }
     setCategoryField(cField);
     const userItem =
       storage && storage.user

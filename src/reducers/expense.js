@@ -21,7 +21,11 @@ export const fetchExpense = createAsyncThunk(
 export const slice = createSlice({
   name: "expense",
   initialState,
-  reducers: {},
+  reducers: {
+    toggleLoader: (state, action) => {
+      state.status = action.payload ? "loading" : "succeeded";
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchExpense.pending, (state, action) => {
@@ -98,5 +102,7 @@ export const userExpenseUnPaidTotal = (state) =>
   totalCalcuation(state.expense.data, true, false);
 
 export const showUserLoader = (state) => state.expense.status === "loading";
+
+export const { toggleLoader } = slice.actions;
 
 export default slice.reducer;

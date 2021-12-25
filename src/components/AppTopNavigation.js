@@ -38,7 +38,7 @@ export default function AppTopNavigation() {
 
   const handleMenuClose = (page) => {
     setAnchorEl(null);
-    if (typeof page === "string") history.replace({ pathname: page });
+    if (typeof page === "string") history.push({ pathname: page });
   };
 
   const handleLogoutClick = (event) => {
@@ -68,6 +68,12 @@ export default function AppTopNavigation() {
     { name: "Expense Report", path: "/user/expense/report" },
     { name: "Income Report", path: "/user/income/report" },
   ];
+  const defaultAdminMenuItem = [
+    { name: "Expense Category List", path: "/admin/expense" },
+    { name: "Income Category List", path: "/admin/income" },
+    { name: "User Expense List", path: "/user/expense" },
+    { name: "User Income List", path: "/user/income" },
+  ];
 
   const renderMenu = (
     <Menu
@@ -89,9 +95,21 @@ export default function AppTopNavigation() {
             {item.name}
           </MenuItem>
         ))}
-      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>
+        Want to logout, {username}?
+      </MenuItem>
     </Menu>
   );
+
+  const pageTitle = () => {
+    const page = history.location.pathname;
+    const list = isAdmin
+      ? [...adminMenuItem, ...defaultAdminMenuItem]
+      : userMenuItem;
+    return list.some((x) => x.path === page)
+      ? list.find((x) => x.path === page).name
+      : "Dashboard";
+  };
 
   return (
     <div className={classes.root}>
@@ -116,7 +134,7 @@ export default function AppTopNavigation() {
             <MenuIcon />
           </IconButton> */}
           <Typography variant="h6" className={classes.title}>
-            {username} {family}
+            {pageTitle()}
           </Typography>
           {username && (
             <IconButton

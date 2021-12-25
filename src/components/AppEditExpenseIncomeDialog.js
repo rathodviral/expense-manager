@@ -19,9 +19,14 @@ import AppButton from "./AppButton";
 import { AppContext, UserContext } from "../contexts";
 import { AppDate } from "../utilities";
 import { createOptions, isFalsyValue } from "../utilities/common";
-import { useDispatch } from "react-redux";
-import { fetchExpense } from "../reducers/expense";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchExpense,
+  showUserLoader,
+  toggleLoader,
+} from "../reducers/expense";
 import { expenseApi } from "../api";
+import { AppSpinner } from ".";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -42,6 +47,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AppEditExpenseIncomeDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const showSpinner = useSelector(showUserLoader);
 
   const { getDataFromConstant } = useContext(UserContext);
   const { getUserObject, showAlertDialogObj, showSnackbar } =
@@ -148,6 +154,7 @@ export default function AppEditExpenseIncomeDialog(props) {
   };
 
   const deleteListItem = async () => {
+    dispatch(toggleLoader(true));
     const { id } = editObj;
     const { status } = await expenseApi.delete(id);
     if (status) {
@@ -155,6 +162,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       dispatch(fetchExpense());
       toggleDialog(false);
     } else {
+      dispatch(toggleLoader(false));
       showSnackbar("Some Issue");
     }
   };
@@ -189,12 +197,14 @@ export default function AppEditExpenseIncomeDialog(props) {
       });
       return;
     }
+    dispatch(toggleLoader(true));
     const { status, message } = await expenseApi.update(formData);
     showSnackbar(message);
     if (status) {
       dispatch(fetchExpense());
     } else {
       setValues(defaultFields);
+      dispatch(toggleLoader(false));
     }
   };
 
@@ -259,6 +269,7 @@ export default function AppEditExpenseIncomeDialog(props) {
           <AppButton>Update {isExpense ? "Expense" : "Income"}</AppButton>
         </form>
       </div>
+      {showSpinner && <AppSpinner />}
     </Dialog>
   );
 }

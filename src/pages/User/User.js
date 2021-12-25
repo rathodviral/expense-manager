@@ -24,7 +24,7 @@ export default function User() {
 
   const dispatch = useDispatch();
 
-  const showSpinner = useSelector(showUserLoader);
+  // const showSpinner = useSelector(showUserLoader);
 
   useEffect(() => {
     dispatch(fetchExpense());
@@ -53,7 +53,7 @@ export default function User() {
           </Switch>
         </div>
       </div>
-      {showSpinner && <AppSpinner />}
+      {/* {showSpinner && <AppSpinner />} */}
     </React.Fragment>
   );
 }

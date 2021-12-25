@@ -5,6 +5,7 @@ import {
   AppButton,
   AppAutocompleteField,
   AppDateField,
+  AppSpinner,
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { AppApiFetch, AppDate } from "../../utilities";
@@ -16,6 +17,8 @@ import {
   categoryExpenseList,
   categoryIncomeList,
   fetchExpense,
+  showUserLoader,
+  toggleLoader,
 } from "../../reducers/expense";
 
 export default function AddExpenseIncome(props) {
@@ -23,12 +26,12 @@ export default function AddExpenseIncome(props) {
   const { type } = useParams();
   const { showSnackbar, getUserObject } = useContext(AppContext);
   const { getDataFromConstant } = useContext(UserContext);
+  const showSpinner = useSelector(showUserLoader);
   const expenseCategoryList = useSelector(categoryExpenseList);
   const incomeCategoryList = useSelector(categoryIncomeList);
   const isExpense = type === "expense";
   const defaultFields = getDataFromConstant("fields");
   const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
-
   const [isPaid, setPaid] = useState(true);
   const [dateField, setDateField] = useState(null);
   const [categoryField, setCategoryField] = useState(defaultFields.category);
@@ -154,6 +157,7 @@ export default function AddExpenseIncome(props) {
       });
       return;
     }
+    dispatch(toggleLoader(true));
     const { family, username } = getUserObject();
     const { create } = getDataFromConstant("apiPath");
 
@@ -174,12 +178,14 @@ export default function AddExpenseIncome(props) {
       });
       // getUserDataEvent();
       dispatch(fetchExpense());
+    } else {
+      dispatch(toggleLoader(false));
     }
   };
 
   return (
     <div>
-      <AppCard title={`Add ${type}`}>
+      <AppCard>
         <form noValidate autoComplete="off" onSubmit={formSubmit}>
           <AppDateField
             {...dateField}
@@ -212,6 +218,7 @@ export default function AddExpenseIncome(props) {
           <AppButton>Save {type}</AppButton>
         </form>
       </AppCard>
+      {showSpinner && <AppSpinner />}
     </div>
   );
 }

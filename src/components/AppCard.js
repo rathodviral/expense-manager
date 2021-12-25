@@ -19,14 +19,14 @@ const useStyles = makeStyles({
 });
 
 export default function AppCard(props) {
-  const { title = "", children } = props;
+  const { title = null, children } = props;
   const classes = useStyles();
 
   return (
     <Card className={classes.card} variant="outlined">
       <CardContent>
-        <Typography className={classes.title}>{title}</Typography>
-        <AppDivider />
+        {title && <Typography className={classes.title}>{title}</Typography>}
+        {title && <AppDivider />}
         {children}
       </CardContent>
     </Card>

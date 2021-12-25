@@ -148,7 +148,7 @@ export default function Report(props) {
 
   return (
     <div>
-      <AppCard title={`Report of ${type}`}>
+      <AppCard>
         <AppCurrencyCountText
           count={getTotal(expenseIncomeList)}
           type={type}
@@ -156,7 +156,7 @@ export default function Report(props) {
         ></AppCurrencyCountText>
         <AppDivider />
         <form noValidate autoComplete="off" onSubmit={formSubmit}>
-          <Box display="flex" flexDirection="row">
+          {/* <Box display="flex" flexDirection="row">
             <Box pr={1} width="50%">
               <AppDateField
                 {...startDateField}
@@ -171,7 +171,17 @@ export default function Report(props) {
                 handleChange={endDateFieldChange}
               />
             </Box>
-          </Box>
+          </Box> */}
+          <AppDateField
+            {...startDateField}
+            minDate={AppDate.getDateFromString("2021-12-01")}
+            handleChange={startDateFieldChange}
+          />
+          <AppDateField
+            {...endDateField}
+            minDate={AppDate.getDateFromString("2021-12-01")}
+            handleChange={endDateFieldChange}
+          />
           <AppButton>Search</AppButton>
         </form>
         <AppDivider />

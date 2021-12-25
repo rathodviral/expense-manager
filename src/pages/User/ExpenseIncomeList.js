@@ -113,7 +113,7 @@ export default function ExpenseIncomeList(props) {
 
   return (
     <div>
-      <AppCard title={`${type} List`}>
+      <AppCard>
         <AppCurrencyCountText
           count={getTotal()}
           type={type}
