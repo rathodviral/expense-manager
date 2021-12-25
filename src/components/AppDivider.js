@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles({
   root: {
     backgroundColor: "rgba(0, 0, 0, 0.12)",
-    margin: "1rem 0",
+    margin: "0.5rem 0",
     height: 1,
   },
 });

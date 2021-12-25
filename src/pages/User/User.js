@@ -35,7 +35,7 @@ export default function User() {
     <React.Fragment>
       <div className={classes.root}>
         <AppTopNavigation></AppTopNavigation>
-        <AppDrawer />
+        {/* <AppDrawer /> */}
         <div className={classes.dashboard}>
           <Switch>
             <Route exact path={`${path}`}>

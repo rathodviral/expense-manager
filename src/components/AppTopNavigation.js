@@ -77,7 +77,7 @@ export default function AppTopNavigation() {
       open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
-      {/* {isAdmin &&
+      {isAdmin &&
         adminMenuItem.map((item, i) => (
           <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
             {item.name}
@@ -88,7 +88,7 @@ export default function AppTopNavigation() {
           <MenuItem key={i} onClick={(e) => handleMenuClose(item.path)}>
             {item.name}
           </MenuItem>
-        ))} */}
+        ))}
       <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );
@@ -106,7 +106,7 @@ export default function AppTopNavigation() {
           >
             <ChevronLeft />
           </IconButton>
-          <IconButton
+          {/* <IconButton
             edge="start"
             aria-label="menu"
             aria-haspopup="false"
@@ -114,7 +114,7 @@ export default function AppTopNavigation() {
             color="inherit"
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <Typography variant="h6" className={classes.title}>
             {username} {family}
           </Typography>

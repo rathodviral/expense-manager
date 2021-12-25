@@ -71,5 +71,5 @@ expenseApi.delete = (id) => {
     queryParams: { family, id },
   };
 
-  return expenseApi(apiPath.update, options);
+  return expenseApi(apiPath.delete, options);
 };
