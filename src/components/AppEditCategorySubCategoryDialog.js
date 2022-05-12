@@ -7,7 +7,7 @@ import {
   Slide,
   Dialog,
   AppBar,
-  Toolbar,
+  Toolbar
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -20,11 +20,11 @@ import { fetchCategory } from "../reducers/category";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    position: "relative",
+    position: "relative"
   },
   saveButton: {
-    marginLeft: "auto",
-  },
+    marginLeft: "auto"
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -39,7 +39,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
   const { showAlertDialogObj, showSnackbar } = useContext(AppContext);
   const { getListFromConstant } = useContext(AdminContext);
 
-  const { openDialog, dialogObj, toggleDialog } = props;
+  const { openDialog, dialogObj, toggleDialog, loadCategories } = props;
   const { id } = dialogObj;
   const isExpense = type === "expense";
   const defaultFields = getListFromConstant("fields");
@@ -57,14 +57,14 @@ export default function AppEditCategorySubCategoryDialog(props) {
       detail: detailField.value,
       isExpense,
       isActive: true,
-      id,
+      id
     };
   };
 
   const getFormFields = () => {
     return {
       nameField,
-      detailField,
+      detailField
     };
   };
 
@@ -88,7 +88,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
       ...formObject,
       isError: true,
       label: "Error",
-      helperText: `Enter ${formObject.label}, it's required field`,
+      helperText: `Enter ${formObject.label}, it's required field`
     };
   };
 
@@ -110,7 +110,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
       message: `Are you sure, you want to delete "${name}" Category.`,
       agreeBtnText: "Agree",
       disagreeBtnText: "Disagree",
-      dialogBtnClick: alertBtnClickDeleteListItem,
+      dialogBtnClick: alertBtnClickDeleteListItem
     };
     showAlertDialogObj(obj);
   };
@@ -144,7 +144,7 @@ export default function AppEditCategorySubCategoryDialog(props) {
     const { status, message } = await categoryApi.update(formData, id);
     showSnackbar(message);
     if (status) {
-      dispatch(fetchCategory());
+      loadCategories();
     } else {
       setValues(defaultFields);
     }

@@ -3,12 +3,12 @@ import { AppApiFetch, AppConstant, AppStorage } from "../utilities";
 const {
   login,
   admin: {
-    category: { apiPath },
-  },
+    category: { apiPath }
+  }
 } = AppConstant;
 
 const { family } = AppStorage.getItemFromStorage(login.storage) || {
-  family: null,
+  family: null
 };
 
 export default async function categoryApi(url, options) {
@@ -24,7 +24,7 @@ export default async function categoryApi(url, options) {
           jsonData.data && jsonData.data.category
             ? jsonData.data.category
             : null,
-        message: jsonData.message,
+        message: jsonData.message
       };
     }
     throw new Error(response.statusText);
@@ -34,10 +34,12 @@ export default async function categoryApi(url, options) {
 }
 
 categoryApi.get = () => {
+  const { family } = AppStorage.getItemFromStorage(login.storage);
+  console.log(family);
   const type = "category_only";
   const options = {
     method: "GET",
-    queryParams: { family, type },
+    queryParams: { family, type }
   };
   return categoryApi(apiPath.read, options);
 };
@@ -47,9 +49,9 @@ categoryApi.post = (formData, isExpense) => {
     method: "POST",
     body: {
       ...formData,
-      isExpense,
+      isExpense
     },
-    queryParams: { family },
+    queryParams: { family }
   };
 
   return categoryApi(apiPath.create, options);
@@ -59,7 +61,7 @@ categoryApi.update = (formData, categoryId) => {
   const options = {
     method: "PUT",
     body: { ...formData, categoryId },
-    queryParams: { family },
+    queryParams: { family }
   };
 
   return categoryApi(apiPath.update, options);
@@ -69,7 +71,7 @@ categoryApi.delete = (formData, categoryId) => {
   const options = {
     method: "PUT",
     body: { ...formData, categoryId, isActive: false },
-    queryParams: { family },
+    queryParams: { family }
   };
 
   return categoryApi(apiPath.update, options);

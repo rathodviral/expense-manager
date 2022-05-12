@@ -1,55 +1,34 @@
-import React, { useContext } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppTopNavigation } from "../../components";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Category from "./Category";
 import AddCategorySubCategory from "./AddCategorySubCategory";
-import { AdminContext, AppContext } from "../../contexts";
 import { useEffect } from "react";
-import { AppApiFetch, AppConstant } from "../../utilities";
-import { useDispatch } from "react-redux";
-import { fetchCategory } from "../../reducers/category";
+import { connect } from "react-redux";
+import {
+  isCategoriesLoad,
+  loadCategories,
+  getExpenseTypeCategories,
+  getIncomeTypeCategories
+} from "../../reducers";
 
 const useStyles = makeStyles({
   root: {
-    width: "100%",
+    width: "100%"
   },
   dashboard: {
-    marginTop: "4.8rem",
-  },
+    marginTop: "4.8rem"
+  }
 });
 
-export default function Admin() {
+const Admin = (props) => {
   const classes = useStyles();
   const { path } = useRouteMatch();
-  const { getUserObject } = useContext(AppContext);
-  const { setAdminData } = useContext(AdminContext);
-  const {
-    admin: {
-      category: { apiPath },
-    },
-  } = AppConstant;
-
-  const dispatch = useDispatch();
-
-  const getAdminDataEvent = async () => {
-    const { family } = getUserObject();
-    const type = "category_only";
-    const options = {
-      method: "GET",
-      queryParams: { family, type },
-    };
-    const response = await AppApiFetch(apiPath.read, options);
-    const { status, data } = await response.json();
-    if (status) {
-      setAdminData(data);
-    }
-  };
 
   useEffect(() => {
-    // getAdminDataEvent();
-    dispatch(fetchCategory());
+    props.loadCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,23 +38,27 @@ export default function Admin() {
       <div className={classes.dashboard}>
         <Switch>
           <Route exact path={`${path}`}>
-            <Dashboard></Dashboard>
+            <Dashboard {...props} />
           </Route>
           <Route exact path={`${path}/:type`}>
-            <Category getAdminData={getAdminDataEvent}></Category>
+            <Category {...props} />
           </Route>
           <Route exact path={`${path}/:type/add`}>
-            <AddCategorySubCategory
-              getAdminData={getAdminDataEvent}
-            ></AddCategorySubCategory>
+            <AddCategorySubCategory {...props} />
           </Route>
           <Route exact path={`${path}/:type/add/:categoryId`}>
-            <AddCategorySubCategory
-              getAdminData={getAdminDataEvent}
-            ></AddCategorySubCategory>
+            <AddCategorySubCategory {...props} />
           </Route>
         </Switch>
       </div>
     </div>
   );
-}
+};
+
+const mapStateToProps = (state) => ({
+  loading: isCategoriesLoad(state),
+  expenseTypeList: getExpenseTypeCategories(state),
+  incomeTypeList: getIncomeTypeCategories(state)
+});
+
+export default connect(mapStateToProps, { loadCategories })(Admin);

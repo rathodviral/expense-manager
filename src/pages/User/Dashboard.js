@@ -5,30 +5,33 @@ import {
   AppCard,
   AppButton,
   AppInfoText,
-  AppDivider,
+  AppDivider
 } from "../../components";
 import { AppContext } from "../../contexts";
 import { useHistory } from "react-router";
 import { AppDate, getCurrencyFormat } from "../../utilities";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
 import {
-  userExpensePaidTotal,
-  userExpenseTotal,
-  userExpenseUnPaidTotal,
-  userIncomeTotal,
-} from "../../reducers/expense";
+  getExpenseTypeDataPaidTotal,
+  getExpenseTypeDataTotal,
+  getIncomeTypeDataTotal,
+  getIncomeTypeDataUnPaidTotal,
+  isExpensesLoad
+} from "../../reducers";
 
 const useStyles = makeStyles({
   root: {
-    width: "100%",
-  },
+    width: "100%"
+  }
 });
 
-export default function Dashboard(props) {
-  const totalIncome = useSelector(userIncomeTotal);
-  const totalExpense = useSelector(userExpenseTotal);
-  const totalPaidExpense = useSelector(userExpensePaidTotal);
-  const totalUnpaidExpense = useSelector(userExpenseUnPaidTotal);
+const Dashboard = ({
+  loading,
+  totalIncome,
+  totalExpense,
+  totalPaidExpense,
+  totalUnpaidExpense
+}) => {
   const classes = useStyles();
   const { getUserObject } = useContext(AppContext);
   const history = useHistory();
@@ -40,30 +43,43 @@ export default function Dashboard(props) {
       type: totalIncome - totalPaidExpense > 0 ? "income" : "expense",
       count: totalIncome - totalPaidExpense,
       isButtonShow: false,
-      text: `${getCurrencyFormat(totalIncome)} - ${getCurrencyFormat(
-        totalPaidExpense
-      )}`,
+      text: loading
+        ? "--"
+        : `${getCurrencyFormat(totalIncome)} - ${getCurrencyFormat(
+            totalPaidExpense
+          )}`,
       textList: [
-        { title: "Income", text: getCurrencyFormat(totalIncome) },
-        { title: "Paid Expense", text: getCurrencyFormat(totalPaidExpense) },
-      ],
+        {
+          title: "Income",
+          text: loading ? "--" : getCurrencyFormat(totalIncome)
+        },
+        {
+          title: "Paid Expense",
+          text: loading ? "--" : getCurrencyFormat(totalPaidExpense)
+        }
+      ]
     },
     {
       title: "Expense",
       type: "expense",
       count: totalExpense,
       isButtonShow: true,
-      text: `${getCurrencyFormat(totalUnpaidExpense)} + ${getCurrencyFormat(
-        totalPaidExpense
-      )}`,
+      text: loading
+        ? "--"
+        : `${getCurrencyFormat(totalUnpaidExpense)} + ${getCurrencyFormat(
+            totalPaidExpense
+          )}`,
       textList: [
         {
           title: "Unpaid",
-          text: getCurrencyFormat(totalUnpaidExpense),
+          text: loading ? "--" : getCurrencyFormat(totalUnpaidExpense)
         },
-        { title: "Paid", text: getCurrencyFormat(totalPaidExpense) },
-      ],
-    },
+        {
+          title: "Paid",
+          text: loading ? "--" : getCurrencyFormat(totalPaidExpense)
+        }
+      ]
+    }
   ];
 
   if (isAdmin) {
@@ -71,7 +87,7 @@ export default function Dashboard(props) {
       title: "Income",
       type: "income",
       count: totalIncome,
-      isButtonShow: true,
+      isButtonShow: true
     };
   }
 
@@ -115,4 +131,14 @@ export default function Dashboard(props) {
       ))}
     </div>
   );
-}
+};
+
+const mapStateToProps = (state) => ({
+  loading: isExpensesLoad(state),
+  totalExpense: getExpenseTypeDataTotal(state),
+  totalIncome: getIncomeTypeDataTotal(state),
+  totalUnpaidExpense: getExpenseTypeDataPaidTotal(state),
+  totalPaidExpense: getIncomeTypeDataUnPaidTotal(state)
+});
+
+export default connect(mapStateToProps)(Dashboard);

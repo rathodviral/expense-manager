@@ -5,30 +5,23 @@ import {
   AppButton,
   AppAutocompleteField,
   AppDateField,
-  AppSpinner,
+  AppSpinner
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { AppApiFetch, AppDate } from "../../utilities";
 import { FormControlLabel, Switch } from "@material-ui/core";
 import { AppContext, UserContext } from "../../contexts";
 import { createOptions, isFalsyValue } from "../../utilities/common";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  categoryExpenseList,
-  categoryIncomeList,
-  fetchExpense,
-  showUserLoader,
-  toggleLoader,
-} from "../../reducers/expense";
 
-export default function AddExpenseIncome(props) {
-  const dispatch = useDispatch();
+export default function AddExpenseIncome({
+  loading,
+  loadExpenses,
+  expenseCategoryList,
+  incomeCategoryList
+}) {
   const { type } = useParams();
   const { showSnackbar, getUserObject } = useContext(AppContext);
   const { getDataFromConstant } = useContext(UserContext);
-  const showSpinner = useSelector(showUserLoader);
-  const expenseCategoryList = useSelector(categoryExpenseList);
-  const incomeCategoryList = useSelector(categoryIncomeList);
   const isExpense = type === "expense";
   const defaultFields = getDataFromConstant("fields");
   const typeList = isExpense ? expenseCategoryList : incomeCategoryList;
@@ -58,7 +51,7 @@ export default function AddExpenseIncome(props) {
       amount: Number(amountField.value),
       note: noteField.value,
       isExpense,
-      isPaid,
+      isPaid
     };
   };
 
@@ -68,7 +61,7 @@ export default function AddExpenseIncome(props) {
       categoryField,
       // detailField,
       amountField,
-      noteField,
+      noteField
     };
   };
 
@@ -76,7 +69,7 @@ export default function AddExpenseIncome(props) {
     const categoryList = typeList.map(createOptions);
     const cField = {
       ...category,
-      options: categoryList,
+      options: categoryList
     };
     setDateField(date);
     setCategoryField(cField);
@@ -131,7 +124,7 @@ export default function AddExpenseIncome(props) {
       ...formObject,
       isError: true,
       label: "Error",
-      helperText: `Enter ${formObject.label}, it's required field`,
+      helperText: `Enter ${formObject.label}, it's required field`
     };
   };
 
@@ -157,14 +150,13 @@ export default function AddExpenseIncome(props) {
       });
       return;
     }
-    dispatch(toggleLoader(true));
+    // dispatch(toggleLoader(true));
     const { family, username } = getUserObject();
     const { create } = getDataFromConstant("apiPath");
-
     const options = {
       method: "POST",
       body: { ...formData, user: username },
-      queryParams: { family },
+      queryParams: { family }
     };
     const response = await AppApiFetch(create, options);
     const { status, message } = await response.json();
@@ -173,13 +165,11 @@ export default function AddExpenseIncome(props) {
       setValues({
         ...defaultFields,
         category: categoryField,
-        date: dateField,
+        date: dateField
         // detail: detailField,
       });
       // getUserDataEvent();
-      dispatch(fetchExpense());
-    } else {
-      dispatch(toggleLoader(false));
+      loadExpenses();
     }
   };
 
@@ -218,7 +208,7 @@ export default function AddExpenseIncome(props) {
           <AppButton>Save {type}</AppButton>
         </form>
       </AppCard>
-      {showSpinner && <AppSpinner />}
+      {loading && <AppSpinner />}
     </div>
   );
 }

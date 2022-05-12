@@ -6,39 +6,29 @@ import {
   AppEditExpenseIncomeDialog,
   AppListItem,
   AppCurrencyCountText,
-  AppFilterDialog,
+  AppFilterDialog
 } from "../../components";
 import { UserContext, AppContext } from "../../contexts";
 import { useParams } from "react-router-dom";
 import { windowScrollTop } from "../../utilities";
 import {
   isValueNullOrUndefined,
-  getUsersOptions,
+  getUsersOptions
 } from "../../utilities/common";
-import { useSelector } from "react-redux";
-import {
-  categoryExpenseList,
-  categoryIncomeList,
-  userExpenseList,
-  userIncomeList,
-} from "../../reducers/expense";
 
-export default function ExpenseIncomeList(props) {
+export default function ExpenseIncomeList({
+  loading,
+  loadExpenses,
+  expenseCategoryList,
+  incomeCategoryList,
+  incomeUserList,
+  expenseUserList
+}) {
   const { getUserObject } = useContext(AppContext);
   const { username, isAdmin } = getUserObject();
   const { type } = useParams();
   const isExpense = type === "expense";
-  const {
-    // incomeCategoryList,
-    // expenseCategoryList,
-    // incomeUserList,
-    // expenseUserList,
-    getDataFromConstant,
-  } = useContext(UserContext);
-  const expenseCategoryList = useSelector(categoryExpenseList);
-  const incomeCategoryList = useSelector(categoryIncomeList);
-  const incomeUserList = useSelector(userIncomeList);
-  const expenseUserList = useSelector(userExpenseList);
+  const { getDataFromConstant } = useContext(UserContext);
   const defaultCategoryList = isExpense
     ? expenseCategoryList
     : incomeCategoryList;
@@ -56,7 +46,7 @@ export default function ExpenseIncomeList(props) {
     windowScrollTop();
     resetButtonClick();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultCategoryList, defaultExpenseList]);
+  }, [loading]);
 
   const resetButtonClick = () => {
     setExpenseIncomeList(defaultExpenseList);
@@ -75,17 +65,11 @@ export default function ExpenseIncomeList(props) {
     }
   };
 
-  const showFilterDialog = () => {
-    toggleFilterDialog(true);
-  };
+  const showFilterDialog = () => toggleFilterDialog(true);
 
-  const toggleEditItemDialog = (flag) => {
-    setOpenEditItemDialog(flag);
-  };
+  const toggleEditItemDialog = (flag) => setOpenEditItemDialog(flag);
 
-  const toggleFilterDialog = (flag) => {
-    setOpenFilterDialog(flag);
-  };
+  const toggleFilterDialog = (flag) => setOpenFilterDialog(flag);
 
   const emitEvents = (obj) => {
     if (obj === "reset") {
@@ -134,6 +118,8 @@ export default function ExpenseIncomeList(props) {
           toggleDialog={toggleEditItemDialog}
           editObj={{ ...editObj, isExpense }}
           defaultList={defaultCategoryList}
+          loading={loading}
+          loadExpenses={loadExpenses}
         ></AppEditExpenseIncomeDialog>
         <AppFilterDialog
           openDialog={openFilterDialog}

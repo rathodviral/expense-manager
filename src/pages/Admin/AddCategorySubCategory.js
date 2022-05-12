@@ -1,19 +1,19 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppCard, AppInputField, AppButton } from "../../components";
 import { useParams } from "react-router-dom";
-import { AppApiFetch, isFalsyValue } from "../../utilities";
-import { Typography } from "@material-ui/core";
 import { AdminContext, AppContext } from "../../contexts";
 import { categoryApi } from "../../api";
-import { useDispatch } from "react-redux";
-import { fetchCategory } from "../../reducers/category";
+import { isFalsyValue } from "../../utilities";
 
-export default function AddCategorySubCategory(props) {
-  const { getAdminData } = props;
-  const dispatch = useDispatch();
-  const { type, categoryId } = useParams();
-  const { showSnackbar, getUserObject } = useContext(AppContext);
-  const { getListObj, getListFromConstant } = useContext(AdminContext);
+export default function AddCategorySubCategory({
+  loadCategories,
+  loading,
+  expenseTypeList,
+  incomeTypeList
+}) {
+  const { type } = useParams();
+  const { showSnackbar } = useContext(AppContext);
+  const { getListFromConstant } = useContext(AdminContext);
   const isExpense = type === "expense";
   // const isSubCategory = categoryId && categoryId !== "";
   const defaultFields = getListFromConstant("fields");
@@ -29,14 +29,14 @@ export default function AddCategorySubCategory(props) {
   const getFormData = () => {
     return {
       name: nameField.value,
-      detail: detailField.value,
+      detail: detailField.value
     };
   };
 
   const getFormFields = () => {
     return {
       nameField,
-      detailField,
+      detailField
     };
   };
 
@@ -60,7 +60,7 @@ export default function AddCategorySubCategory(props) {
       ...formObject,
       isError: true,
       label: "Error",
-      helperText: `Enter ${formObject.label}, it's required field`,
+      helperText: `Enter ${formObject.label}, it's required field`
     };
   };
 
@@ -83,14 +83,11 @@ export default function AddCategorySubCategory(props) {
       });
       return;
     }
-    // const response = await AppApiFetch(create, options);
     const { status, message } = await categoryApi.post(formData, isExpense);
-    // const { status, message } = await response.json();
     showSnackbar(message);
     setValues(defaultFields);
     if (status) {
-      // getAdminData();
-      dispatch(fetchCategory());
+      loadCategories();
     }
   };
 

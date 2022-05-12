@@ -6,28 +6,27 @@ import {
   AppDivider,
   AppListItem,
   AppCurrencyCountText,
-  AppFilterDialog,
+  AppFilterDialog
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { AppApiFetch, AppConstant, AppDate } from "../../utilities";
-import { Box, List } from "@material-ui/core";
+import { List } from "@material-ui/core";
 import { AppContext } from "../../contexts";
 import {
   isFalsyValue,
   isValueNullOrUndefined,
   sortByDate,
   getUsersOptions,
-  getTotal,
+  getTotal
 } from "../../utilities/common";
-import { useSelector } from "react-redux";
-import {
-  categoryExpenseList,
-  categoryIncomeList,
-} from "../../reducers/expense";
 
-export default function Report(props) {
-  const expenseCategoryList = useSelector(categoryExpenseList);
-  const incomeCategoryList = useSelector(categoryIncomeList);
+export default function Report({
+  loading,
+  expenseCategoryList,
+  incomeCategoryList,
+  incomeUserList,
+  expenseUserList
+}) {
   const { getUserObject } = useContext(AppContext);
 
   const { type } = useParams();
@@ -49,15 +48,16 @@ export default function Report(props) {
   useEffect(() => {
     if (typeList.length > 0) {
       setValues(defaultFields);
+      setExpenseIncomeList(isExpense ? expenseUserList : incomeUserList);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typeList]);
+  }, [loading]);
 
   const getQueryData = () => {
     return {
       start: AppDate.getDateIntoString(startDateField.value),
       end: AppDate.getDateIntoString(endDateField.value),
-      isExpense: isExpense ? "1" : "0",
+      isExpense: isExpense ? "1" : "0"
     };
   };
 
@@ -82,7 +82,7 @@ export default function Report(props) {
       ...formObject,
       isError: true,
       label: "Error",
-      helperText: `Enter ${formObject.label}, it's required field`,
+      helperText: `Enter ${formObject.label}, it's required field`
     };
   };
 
@@ -103,7 +103,7 @@ export default function Report(props) {
     const queryData = getQueryData();
     const options = {
       method: "GET",
-      queryParams: { family, ...queryData },
+      queryParams: { family, ...queryData }
     };
     const response = await AppApiFetch(read, options);
     const { status, data } = await response.json();
@@ -115,7 +115,7 @@ export default function Report(props) {
           return {
             ...item,
             categoryName:
-              categoryItem && categoryItem.name ? categoryItem.name : null,
+              categoryItem && categoryItem.name ? categoryItem.name : null
           };
         })
         .sort(sortByDate);
@@ -156,22 +156,6 @@ export default function Report(props) {
         ></AppCurrencyCountText>
         <AppDivider />
         <form noValidate autoComplete="off" onSubmit={formSubmit}>
-          {/* <Box display="flex" flexDirection="row">
-            <Box pr={1} width="50%">
-              <AppDateField
-                {...startDateField}
-                minDate={AppDate.getDateFromString("2021-12-01")}
-                handleChange={startDateFieldChange}
-              />
-            </Box>
-            <Box pl={1} width="50%">
-              <AppDateField
-                {...endDateField}
-                minDate={AppDate.getDateFromString("2021-12-01")}
-                handleChange={endDateFieldChange}
-              />
-            </Box>
-          </Box> */}
           <AppDateField
             {...startDateField}
             minDate={AppDate.getDateFromString("2021-12-01")}

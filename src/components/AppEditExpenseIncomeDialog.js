@@ -8,7 +8,7 @@ import {
   AppBar,
   Toolbar,
   FormControlLabel,
-  Switch,
+  Switch
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -19,25 +19,21 @@ import AppButton from "./AppButton";
 import { AppContext, UserContext } from "../contexts";
 import { AppDate } from "../utilities";
 import { createOptions, isFalsyValue } from "../utilities/common";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchExpense,
-  showUserLoader,
-  toggleLoader,
-} from "../reducers/expense";
+import { useDispatch } from "react-redux";
+import { fetchExpense, toggleLoader } from "../reducers/expense";
 import { expenseApi } from "../api";
 import { AppSpinner } from ".";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    position: "relative",
+    position: "relative"
   },
   saveButton: {
-    marginLeft: "auto",
+    marginLeft: "auto"
   },
   title: {
-    textTransform: "capitalize",
-  },
+    textTransform: "capitalize"
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -47,13 +43,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AppEditExpenseIncomeDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const showSpinner = useSelector(showUserLoader);
 
   const { getDataFromConstant } = useContext(UserContext);
   const { getUserObject, showAlertDialogObj, showSnackbar } =
     useContext(AppContext);
 
-  const { openDialog, toggleDialog, editObj, defaultList } = props;
+  const {
+    openDialog,
+    toggleDialog,
+    editObj,
+    defaultList,
+    loading,
+    loadExpenses
+  } = props;
   const { id, isExpense, user } = editObj;
   const title = `Change in ${editObj.categoryName}`;
   const defaultFields = getDataFromConstant("fields");
@@ -87,7 +89,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       isExpense,
       isPaid,
       id,
-      user,
+      user
     };
   };
 
@@ -96,7 +98,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       dateField,
       categoryField,
       amountField,
-      noteField,
+      noteField
     };
   };
 
@@ -107,7 +109,7 @@ export default function AppEditExpenseIncomeDialog(props) {
     const cField = {
       ...category,
       options: categoryList,
-      value: categoryItem,
+      value: categoryItem
     };
     date.value = AppDate.getDateFromString(editObj.date);
     setDateField(date);
@@ -148,7 +150,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       message: `Are you sure, you want to delete ${title}.`,
       agreeBtnText: "Agree",
       disagreeBtnText: "Disagree",
-      dialogBtnClick: alertBtnClickDeleteListItem,
+      dialogBtnClick: alertBtnClickDeleteListItem
     };
     showAlertDialogObj(obj);
   };
@@ -172,7 +174,7 @@ export default function AppEditExpenseIncomeDialog(props) {
       ...formObject,
       isError: true,
       label: "Error",
-      helperText: `Enter ${formObject.label}, it's required field`,
+      helperText: `Enter ${formObject.label}, it's required field`
     };
   };
 
@@ -197,14 +199,15 @@ export default function AppEditExpenseIncomeDialog(props) {
       });
       return;
     }
-    dispatch(toggleLoader(true));
+    // dispatch(toggleLoader(true));
     const { status, message } = await expenseApi.update(formData);
     showSnackbar(message);
     if (status) {
-      dispatch(fetchExpense());
+      // dispatch(fetchExpense());
+      loadExpenses();
     } else {
       setValues(defaultFields);
-      dispatch(toggleLoader(false));
+      // dispatch(toggleLoader(false));
     }
   };
 
@@ -269,7 +272,7 @@ export default function AppEditExpenseIncomeDialog(props) {
           <AppButton>Update {isExpense ? "Expense" : "Income"}</AppButton>
         </form>
       </div>
-      {showSpinner && <AppSpinner />}
+      {loading && <AppSpinner />}
     </Dialog>
   );
 }

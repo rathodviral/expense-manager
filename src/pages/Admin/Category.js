@@ -6,30 +6,24 @@ import {
   AppDivider,
   AppEditCategorySubCategoryDialog,
   AppCategoryListItem,
-  AppSpinner,
+  AppSpinner
 } from "../../components";
 import { useParams } from "react-router-dom";
 import { windowScrollTop, sortByName } from "../../utilities";
-import { useSelector } from "react-redux";
-import {
-  expenseList,
-  incomeList,
-  showAdminLoader,
-} from "../../reducers/category";
 
-export default function Category(props) {
-  const { getAdminData } = props;
+const Category = ({
+  loadCategories,
+  loading,
+  expenseTypeList,
+  incomeTypeList
+}) => {
   const { type } = useParams();
-  const expenseCategoryList = useSelector(expenseList);
-  const incomeCategoryList = useSelector(incomeList);
   const defaultList =
     type === "expense"
-      ? expenseCategoryList.sort(sortByName)
-      : incomeCategoryList.sort((a, b) =>
+      ? expenseTypeList.sort(sortByName)
+      : incomeTypeList.sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
         );
-
-  const showSpinner = useSelector(showAdminLoader);
 
   const [categoryList, setCategoryList] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -39,7 +33,8 @@ export default function Category(props) {
   useEffect(() => {
     windowScrollTop();
     setCategoryList(defaultList);
-  }, [defaultList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   const handleChange = (value) => {
     setSearchText(value);
@@ -55,9 +50,7 @@ export default function Category(props) {
     setDialogObj({ ...value });
   };
 
-  const toggleDialog = (flag) => {
-    setOpenDialog(flag);
-  };
+  const toggleDialog = (flag) => setOpenDialog(flag);
 
   return (
     <div>
@@ -86,10 +79,12 @@ export default function Category(props) {
           openDialog={openDialog}
           dialogObj={dialogObj}
           toggleDialog={toggleDialog}
-          getAdminData={getAdminData}
+          loadCategories={loadCategories}
         ></AppEditCategorySubCategoryDialog>
       </AppCard>
-      {showSpinner && <AppSpinner />}
+      {loading && <AppSpinner />}
     </div>
   );
-}
+};
+
+export default Category;

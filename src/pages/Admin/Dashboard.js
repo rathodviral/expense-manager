@@ -2,23 +2,27 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 import { AppCountText, AppCard, AppButton } from "../../components";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
-import { expenseList, incomeList } from "../../reducers/category";
 
 const useStyles = makeStyles({
   root: {
-    width: "100%",
-  },
+    width: "100%"
+  }
 });
 
-export default function Dashboard(props) {
-  const expenseCategoryList = useSelector(expenseList);
-  const incomeCategoryList = useSelector(incomeList);
+const Dashboard = ({ loading, expenseTypeList, incomeTypeList }) => {
   const classes = useStyles();
   const history = useHistory();
   const cardList = [
-    { title: "Expense", type: "expense", count: expenseCategoryList.length },
-    { title: "Income", type: "income", count: incomeCategoryList.length },
+    {
+      title: "Expense",
+      type: "expense",
+      count: loading ? "--" : expenseTypeList.length
+    },
+    {
+      title: "Income",
+      type: "income",
+      count: loading ? "--" : incomeTypeList.length
+    }
   ];
 
   const Card = (props) => {
@@ -51,4 +55,6 @@ export default function Dashboard(props) {
       ))}
     </div>
   );
-}
+};
+
+export default Dashboard;
