@@ -5,7 +5,6 @@ import { Switch, Route, useRouteMatch } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AddExpenseIncome from "./AddExpenseIncome";
 import ExpenseIncomeList from "./ExpenseIncomeList";
-import Report from "./Report";
 import { connect } from "react-redux";
 import {
   getExpenseTypeCategories,
@@ -15,6 +14,7 @@ import {
   isExpensesLoad,
   loadExpenses
 } from "../../reducers";
+import Report from "../Report";
 
 const useStyles = makeStyles({
   root: {
@@ -50,9 +50,9 @@ const User = (props) => {
             <Route exact path={`${path}/:type/add`}>
               <AddExpenseIncome {...props} />
             </Route>
-            <Route exact path={`${path}/:type/report`}>
+            {/* <Route exact path={`${path}/:type/report`}>
               <Report {...props} />
-            </Route>
+            </Route> */}
           </Switch>
         </div>
       </div>

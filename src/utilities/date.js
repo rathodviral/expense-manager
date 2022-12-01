@@ -12,7 +12,7 @@ const calculateDates = (m) => {
     start: `${year}-${month === 10 || month === 11 ? month : "0" + cMonth}-01`,
     end: `${year}-${
       month === 10 || month === 11 ? month : "0" + cMonth
-    }-${days}`,
+    }-${days}`
   };
 };
 
@@ -29,13 +29,11 @@ const AppDate = {
   },
   getCurrentMonthDates: {
     start: moment().startOf("month").format("YYYY-MM-DD"),
-    end: moment().endOf("month").format("YYYY-MM-DD"),
+    end: moment().endOf("month").format("YYYY-MM-DD")
   },
-  getLast3MonthsDates: [0, 1, 2].map((x) => {
-    return calculateDates(x);
-  }),
+  getLast3MonthsDates: [0, 1, 2].map((x) => calculateDates(x)),
   getPreviousThirdDay: moment().subtract(3, "days"),
-  getPreviousThreeMonth: moment().subtract(6, "months"),
+  getPreviousThreeMonth: moment().subtract(6, "months")
 };
 
 export default AppDate;

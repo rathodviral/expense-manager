@@ -6,10 +6,11 @@ import { Home, Login, Admin, User } from "./pages";
 import {
   AdminContextProvider,
   AppContextProvider,
-  UserContextProvider,
+  UserContextProvider
 } from "./contexts";
 import { AppSnackbar, AppAlertDialog } from "./components";
 import MomentUtils from "@date-io/moment";
+import Report from "./pages/Report";
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
                     </Route>
                     <Route path="/user">
                       <User />
+                    </Route>
+                    <Route exact path="/report">
+                      <Report />
                     </Route>
                   </Switch>
                 </Router>

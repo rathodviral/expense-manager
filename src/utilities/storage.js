@@ -16,6 +16,21 @@
 //   };
 // }
 
+// export default class AppStorage {
+//   constructor(key) {
+//     this.key = key;
+//   }
+//   setItemInStorage(value) {
+//     window.localStorage.setItem(this.key, JSON.stringify(value));
+//   }
+//   getItemFromStorage() {
+//     return JSON.parse(window.localStorage.getItem(this.key));
+//   }
+//   removeItemFromStorage() {
+//     window.localStorage.removeItem(this.key);
+//   }
+// }
+
 const AppStorage = {
   setItemInStorage: (key, value) => {
     window.localStorage.setItem(key, JSON.stringify(value));
@@ -25,6 +40,6 @@ const AppStorage = {
   },
   removeItemFromStorage: (key) => {
     window.localStorage.removeItem(key);
-  },
+  }
 };
 export default AppStorage;

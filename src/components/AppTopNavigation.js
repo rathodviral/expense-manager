@@ -6,10 +6,9 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import { AppContext } from "../contexts";
 import { AppConstant, AppStorage } from "../utilities";
@@ -17,24 +16,22 @@ import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   title: {
     flexGrow: 1,
-    textTransform: "capitalize",
-  },
+    textTransform: "capitalize"
+  }
 }));
 
 export default function AppTopNavigation() {
   const classes = useStyles();
-  const { getUserObject, toggleDrawerStatus } = useContext(AppContext);
+  const { getUserObject } = useContext(AppContext);
   const history = useHistory();
-  const { username, isAdmin, family } = getUserObject();
+  const { username, isAdmin } = getUserObject();
   const [anchorEl, setAnchorEl] = useState(false);
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
 
   const handleMenuClose = (page) => {
     setAnchorEl(null);
@@ -47,9 +44,7 @@ export default function AppTopNavigation() {
     history.replace({ pathname: "/login" });
   };
 
-  const handleBackClick = (event) => {
-    history.goBack();
-  };
+  const handleBackClick = () => history.goBack();
 
   const adminMenuItem = [
     { name: "Dashboard", path: "/admin" },
@@ -58,21 +53,21 @@ export default function AppTopNavigation() {
     { name: "User Dashboard", path: "/user" },
     { name: "Add Expense", path: "/user/expense/add" },
     { name: "Add Income", path: "/user/income/add" },
-    { name: "Expense Report", path: "/user/expense/report" },
-    { name: "Income Report", path: "/user/income/report" },
+    { name: "Expense Report", path: "/report" },
+    { name: "Income Report", path: "/report" }
   ];
   const userMenuItem = [
     { name: "User Dashboard", path: "/user/" },
     { name: "Add Expense", path: "/user/expense/add" },
     { name: "Add Income", path: "/user/income/add" },
-    { name: "Expense Report", path: "/user/expense/report" },
-    { name: "Income Report", path: "/user/income/report" },
+    { name: "Expense Report", path: "/report" },
+    { name: "Income Report", path: "/report" }
   ];
   const defaultAdminMenuItem = [
     { name: "Expense Category List", path: "/admin/expense" },
     { name: "Income Category List", path: "/admin/income" },
     { name: "User Expense List", path: "/user/expense" },
-    { name: "User Income List", path: "/user/income" },
+    { name: "User Income List", path: "/user/income" }
   ];
 
   const renderMenu = (
@@ -111,19 +106,25 @@ export default function AppTopNavigation() {
       : "Dashboard";
   };
 
+  const disableBackButton = isAdmin
+    ? history.location.pathname === "/admin"
+    : history.location.pathname === "/user";
+
   return (
     <div className={classes.root}>
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton
-            edge="start"
-            aria-label="back navigation"
-            aria-haspopup="false"
-            onClick={handleBackClick}
-            color="inherit"
-          >
-            <ChevronLeft />
-          </IconButton>
+          {!disableBackButton && (
+            <IconButton
+              edge="start"
+              aria-label="back navigation"
+              aria-haspopup="false"
+              onClick={handleBackClick}
+              color="inherit"
+            >
+              <ChevronLeft />
+            </IconButton>
+          )}
           {/* <IconButton
             edge="start"
             aria-label="menu"

@@ -1,5 +1,5 @@
-const baseURL = "http://viralrathod.live/server";
-// const baseURL = "http://localhost/expense-manager-server";
+// const baseURL = "http://viralrathod.live/server";
+const baseURL = "http://localhost/expense-manager-server";
 // const baseURL = "http://192.168.0.108/expense-manager-server";
 
 export default function AppApiFetch(apiEndPointName, options) {
@@ -9,13 +9,13 @@ export default function AppApiFetch(apiEndPointName, options) {
     method = "GET",
     queryParams = null,
     body = {},
-    setContentType = true,
+    setContentType = true
   } = options;
 
   let headers = setContentType
     ? {
         "Content-Type": isTypeJson ? "application/json" : "multipart/form-data",
-        ...options.headers,
+        ...options.headers
       }
     : { ...options.headers };
 
@@ -40,7 +40,7 @@ export default function AppApiFetch(apiEndPointName, options) {
 
   let apiOptions = {
     method,
-    headers,
+    headers
   };
 
   if (method !== "GET") {
